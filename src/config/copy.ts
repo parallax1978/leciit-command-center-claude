@@ -1,21 +1,23 @@
 import type { ScreenId } from './media'
 
 /**
- * All customer-facing copy for the landing page. Plain language for business
- * owners. Usefulness before module names. No unverified claims.
+ * All customer-facing copy. Broad business positioning: plan, create,
+ * delegate, grow. Body copy and section headings stay in sentence case;
+ * the H1 and every button label use Initial Caps.
  */
 export const HERO = {
-  headline: 'Take control of your marketing, from plan to done.',
-  support:
-    'See where your business stands online, decide what needs attention, and get the work done. Command Center puts marketing tools, Lara AI, and Legiit freelancers in one place.',
-  secondaryAction: 'Watch product overview',
+  eyebrow: 'Your AI Powered Business Command Center',
+  h1Line1: 'Run Your Business.',
+  h1Line2: 'Without Doing Everything Yourself.',
+  subhead: 'AI tools and expert freelancers to help you plan, create, delegate, and grow.',
   walkthroughAction: 'Explore Command Center',
 } as const
 
-export interface CapabilityItem {
-  lead?: string
-  text: string
-}
+export const INTRO = {
+  eyebrow: 'Built around your business',
+  title: 'One place to move your business forward.',
+  body: 'Get help deciding what comes next, creating what you need, and getting the work done.',
+} as const
 
 export interface SectionMedia {
   screen: ScreenId
@@ -24,111 +26,78 @@ export interface SectionMedia {
 
 export interface ProductSectionCopy {
   id: string
-  eyebrow: string
+  label: string
   title: string
-  lead: string
-  /** Optional second paragraph, used to place business context or an example naturally. */
+  paragraphs: [string, string]
+  bullets: string[]
   note?: string
-  listTitle: string
-  items: CapabilityItem[]
   media: SectionMedia[]
   mediaSide: 'left' | 'right'
-  /** Wider media column for short, wide captures. */
-  mediaWidth: 'balanced' | 'wide'
   tinted: boolean
 }
 
 export const PRODUCT_SECTIONS: ProductSectionCopy[] = [
   {
-    id: 'position',
-    eyebrow: 'Online position',
-    title: 'Understand your online position',
-    lead:
-      'Before you spend time or money, see what customers and search engines actually find. Command Center checks your website, your search and AI visibility, your local presence and reviews, and how you compare with competitors, then keeps it all in one place.',
-    note: 'It works from the business details you set up: what you offer, who you serve, your brand voice, your competitors, and your focus keywords.',
-    listTitle: 'What you can check',
-    items: [
-      { text: 'Website and SEO health, with technical and on-page checks' },
-      { text: 'Keywords and backlinks' },
-      { text: 'Visibility in search results and in AI assistants' },
-      { text: 'Local presence and reviews' },
-      { text: 'Competitor research' },
-      { text: 'Connected performance data from your analytics' },
+    id: 'business-ai',
+    label: '01 · Put AI to work',
+    title: 'Put AI to work on your business.',
+    paragraphs: [
+      'Build from your business details, offers, customer profiles, and brand voice. Command Center helps create that context from your website, so you can review and refine it as you get started.',
+      'Work through your next steps with Lara, explore ideas with AI advisors, and develop your direction with strategy tools. AI focus groups give you simulated feedback to consider as you work on business ideas and decisions.',
     ],
-    media: [{ screen: 'visibility', caption: 'Actual screen: the Online Visibility area, open on the Backlinks tab.' }],
+    bullets: ['Editable business context built from your website', 'Lara assistance and “Do This Next” recommendations', 'Strategy, experiments, AI advisors, and AI focus groups'],
+    media: [{ screen: 'priorities', caption: 'Actual screen: a Do This Next recommendation with its reason and the Do it with Lara option.' }],
     mediaSide: 'right',
-    mediaWidth: 'balanced',
     tinted: false,
   },
   {
-    id: 'priorities',
-    eyebrow: 'Priorities',
-    title: 'Know what deserves attention',
-    lead:
-      'Checks produce long lists. Do This Next turns them into one clear next move. Each action shows the finding behind it, why it matters, and what it affects, so you can decide what to do first.',
-    note: 'In the screen shown, the finding is an unconnected Google Business Profile. The action explains what connecting it unlocks and offers three ways forward: do it yourself, do it with Lara, or mark it done.',
-    listTitle: 'How priorities work',
-    items: [
-      { text: 'Business overview and Legiit Score summarize where you stand' },
-      { text: 'Do This Next shows the recommended action' },
-      { text: 'Every action explains its reason and expected impact' },
-      { text: 'Strategy playbooks put actions in context' },
-      { text: 'Prioritized tasks carry the plan into your work list' },
+    id: 'visibility',
+    label: '02 · Grow your visibility',
+    title: 'Get found on Google and in AI answers.',
+    paragraphs: [
+      'Give potential customers more ways to find your business when they search for what you sell. Use built-in SEO, GEO, and AEO tools to research relevant searches, generate answers to customer questions, and create content around those opportunities.',
+      'Find articles and “best-of” lists to approach for coverage, with contact routes where available. Use keyword research, site health checks, and on-page SEO checks to support the work on your own website.',
     ],
-    media: [{ screen: 'priorities', caption: 'Actual screen: a Do This Next recommendation with its reason, impact note, and available actions.' }],
+    bullets: ['Research keywords and customer questions', 'Generate direct answers and content starters', 'Find sources and placement opportunities'],
+    media: [{ screen: 'ai-visibility', caption: 'Actual screen: the AI Visibility tools for finding what to target, answering buyer questions, and seeing how AI answers.' }],
     mediaSide: 'left',
-    mediaWidth: 'balanced',
     tinted: true,
   },
   {
-    id: 'execution',
-    eyebrow: 'Execution',
-    title: 'Get the marketing work done',
-    lead:
-      'Every priority comes with a way to act on it. Do the work yourself with the built-in tools, work through it with Lara, or find a Legiit freelancer who does this kind of work. You choose the route and stay in control.',
-    listTitle: 'Three ways to get it done',
-    items: [
-      { lead: 'Use the tools.', text: 'Research and marketing tools, SEO and visibility tools, and content tools: briefs, an editor, and social content.' },
-      { lead: 'Work with Lara.', text: 'Lara AI helps you understand a finding, prepare the work, and draft it. You review the result before anything goes live.' },
-      { lead: 'Hire a specialist.', text: 'When a task needs an expert, Command Center shows relevant Legiit freelancers. You pick who to hire, and services are purchased separately.' },
+    id: 'content',
+    label: '03 · Create what you need',
+    title: 'Create the content and visuals your business needs.',
+    paragraphs: [
+      'Turn a topic into an article draft, build a brief for a writer, or create social captions and images. Keep the work connected to what your business sells, who it serves, and how it should sound.',
+      'Open content in the editor to build it out, refine it with AI, and save your work. You have a starting point and tools to develop it into something you can use.',
     ],
-    media: [
-      { screen: 'specialist-help', caption: 'Actual screen: backlink data with a Browse Backlink Services action, the route from a finding to specialist help.' },
-      { screen: 'services', caption: 'Actual screen: a recommended service card. Freelancer services are purchased separately.' },
-    ],
+    bullets: ['Articles, blog and landing-page starters, and briefs', 'Customer answers and social captions', 'Brand guides, image creation, and your image gallery'],
+    media: [{ screen: 'brief-builder', caption: 'Actual screen: Brief Builder at step 1, before a keyword has been chosen.' }],
     mediaSide: 'right',
-    mediaWidth: 'wide',
     tinted: false,
   },
   {
-    id: 'management',
-    eyebrow: 'Ongoing management',
-    title: 'Keep work and progress connected',
-    lead:
-      'Marketing rarely finishes in one sitting. Tasks, orders, reports, and connected analytics live together, so you can see what is in progress, what a freelancer delivered, and how your numbers change over time.',
-    listTitle: 'What stays connected',
-    items: [
-      { lead: 'Tasks.', text: 'The actions you decided to take, in one list.' },
-      { lead: 'Orders.', text: 'Freelancer work you purchased, with its status.' },
-      { lead: 'Reports.', text: 'A record of checks and progress you can revisit.' },
-      { lead: 'Connected analytics.', text: 'Performance data once your accounts are linked.' },
+    id: 'expert-help',
+    label: '04 · Get expert help',
+    title: 'Bring in expert help when you need it.',
+    paragraphs: [
+      'Use the tools yourself or choose a Legiit freelancer to help carry out the work. Relevant services are available alongside your business tools, so you have a way to get help when a task needs a specialist.',
+      'Keep tasks and orders connected to your business, with reports and connected analytics available to review progress. Return to the same workspace to continue the work and check the results.',
     ],
-    media: [{ screen: 'performance', caption: 'Actual screen: the Your numbers area before analytics are connected. Values show N/A until you connect a data source.' }],
+    bullets: ['Find specialists for the work your business needs', 'Choose the services your business needs', 'Follow tasks, orders, and performance in one place'],
+    note: 'Freelance services are purchased separately.',
+    media: [
+      { screen: 'specialist-help', caption: 'Actual screen: backlink data with a Browse Backlink Services action, the route from a business need to specialist help.' },
+      { screen: 'services', caption: 'Actual screen: a recommended service, alongside your business tools.' },
+    ],
     mediaSide: 'left',
-    mediaWidth: 'wide',
     tinted: true,
   },
 ]
 
-export const OFFER_COPY = {
-  eyebrow: 'Pricing',
-  title: 'Try it for 7 days. Then one price for one business.',
-  coversTitle: 'What your subscription covers',
-} as const
-
 export const FINAL_CTA = {
-  title: 'Start with one business.',
-  body: 'Sign in or create your Legiit account, set up your business, and see your first priorities.',
+  title: 'Put your next business move into action.',
+  body: 'Bring your plans, tools, and expert help together in Command Center.',
 } as const
 
 export const FOOTER = {
@@ -137,10 +106,10 @@ export const FOOTER = {
 
 export interface WalkthroughChapter {
   id: string
+  /** Also used as a chapter button label, so Initial Caps. */
   title: string
   body: string
   screen: ScreenId | null
-  /** Shown when no capture exists for the chapter. */
   noScreenNote?: string
   caption?: string
 }
@@ -149,50 +118,50 @@ export interface WalkthroughChapter {
 export const WALKTHROUGH: WalkthroughChapter[] = [
   {
     id: 'overview',
-    title: 'Business overview',
+    title: 'Business Overview',
     body: 'Command Center starts from your business details: what you offer, who you serve, your brand voice, your competitors, and your focus keywords. The overview brings your numbers and your Legiit Score together in one place.',
     screen: 'performance',
     caption: 'Actual screen: the Your numbers area of the overview before analytics are connected. N/A means no data source is linked yet.',
   },
   {
+    id: 'priority',
+    title: 'Do This Next',
+    body: 'Do This Next turns findings into a single recommended action, with the reason and the expected impact. You can do it yourself, do it with Lara, or mark it done.',
+    screen: 'priorities',
+    caption: 'Actual screen: a Do This Next recommendation.',
+  },
+  {
     id: 'visibility',
-    title: 'Online visibility',
+    title: 'Online Visibility',
     body: 'See how your website, keywords, backlinks, local presence, and reviews look from the outside, and how competitors compare. The Backlinks tab shown here is one part of that picture.',
     screen: 'visibility',
     caption: 'Actual screen: Online Visibility, Backlinks tab.',
   },
   {
     id: 'ai-visibility',
-    title: 'AI visibility',
-    body: 'Check whether AI assistants mention your business when people ask about a business like yours, find the questions worth targeting, and track changes over time.',
+    title: 'AI Visibility',
+    body: 'Research the questions customers ask, generate direct answers, and see how AI assistants answer, so you can create content around real opportunities.',
     screen: 'ai-visibility',
     caption: 'Actual screen: AI Visibility, before the first check has been run.',
   },
   {
-    id: 'priority',
-    title: 'A useful priority',
-    body: 'Do This Next turns findings into a single recommended action, with the reason and the expected impact. You can do it yourself, do it with Lara, or mark it done.',
-    screen: 'priorities',
-    caption: 'Actual screen: a Do This Next recommendation.',
-  },
-  {
-    id: 'tools',
-    title: 'Tools and Lara',
-    body: 'Research, marketing, and content tools sit alongside the checks. Lara AI helps you understand a finding, prepare the work, and draft it. You review the result. Brief Builder, shown here, is one of the content tools.',
+    id: 'content',
+    title: 'Content And Visuals',
+    body: 'Turn a topic into an article draft, build a brief for a writer, or create social captions and images. Brief Builder, shown here, is one of the content tools.',
     screen: 'brief-builder',
-    caption: 'Actual screen: Brief Builder, one of the content tools.',
+    caption: 'Actual screen: Brief Builder at step 1.',
   },
   {
     id: 'specialists',
-    title: 'Access to specialists',
-    body: 'When a task needs an expert, Command Center points to relevant Legiit freelancers. You choose who to hire, and services are purchased separately.',
+    title: 'Expert Help',
+    body: 'When a task needs a specialist, Command Center points to relevant Legiit freelancers. You choose who to hire, and services are purchased separately.',
     screen: 'specialist-help',
     caption: 'Actual screen: backlink data with a Browse Backlink Services action.',
   },
   {
     id: 'ongoing',
-    title: 'Ongoing work',
-    body: 'Tasks hold the actions you decided to take. Orders track freelancer work you purchased and its status. Reports keep a record of checks and progress, and connected analytics show performance once your accounts are linked.',
+    title: 'Tasks And Orders',
+    body: 'Tasks hold the actions you decided to take. Orders track freelancer work you purchased and its status. Reports keep a record of progress, and connected analytics show performance once your accounts are linked.',
     screen: null,
     noScreenNote: 'No capture of the tasks, orders, or reports screens was supplied for this page, so this chapter is described in text.',
   },

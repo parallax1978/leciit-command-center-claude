@@ -13,9 +13,7 @@ export function FinalCta() {
         <p className="lead mx-auto mt-4 max-w-xl">{FINAL_CTA.body}</p>
         <div className="mt-8 flex flex-col items-center gap-3">
           <PrimaryCta placement="final" className="w-full sm:w-auto" />
-          <p className="text-[15px] font-medium text-ink">
-            {OFFER.trialLabel}. {OFFER.termsShort}
-          </p>
+          <p className="text-[15px] font-medium text-ink">{OFFER.heroTerms}</p>
         </div>
       </Container>
     </section>

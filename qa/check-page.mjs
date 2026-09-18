@@ -37,7 +37,7 @@ const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PAT
 const results = []
 const pass = (m) => results.push({ ok: true, m })
 const fail = (m) => results.push({ ok: false, m })
-const CTA = 'https://dashboard.legiit.com/'
+const CTA = 'https://legiit.com/command-center/start'
 
 for (const width of [360, 390, 768, 1440]) {
   const context = await browser.newContext({ viewport: { width, height: 900 }, deviceScaleFactor: 1 })
@@ -89,6 +89,23 @@ for (const width of [360, 390, 768, 1440]) {
           }
         : null,
       smallTargets: targets,
+      heroButton: (() => {
+        const a = document.querySelector('a[data-cta-placement="hero"]')
+        const cs = getComputedStyle(a)
+        const r = a.getBoundingClientRect()
+        const parent = a.parentElement.getBoundingClientRect()
+        return { font: cs.fontSize, weight: cs.fontWeight, lh: cs.lineHeight, pt: cs.paddingTop, pl: cs.paddingLeft, gap: cs.gap, border: cs.borderTopWidth, radius: cs.borderTopLeftRadius, bg: cs.backgroundColor, color: cs.color, h: Math.round(r.height), w: Math.round(r.width), centered: Math.abs(r.left + r.width / 2 - (parent.left + parent.width / 2)) < 2, overflow: r.right > window.innerWidth || r.left < 0, declaredBorder: (() => { for (const sheet of document.styleSheets) { try { for (const rule of sheet.cssRules) { if (rule.selectorText && rule.selectorText.includes('border-\\[1\\.25px\\]')) return rule.style.borderWidth } } catch { /* cross-origin */ } } return null })(), icon: a.querySelector('svg')?.getAttribute('width'), iconHidden: a.querySelector('svg') ? getComputedStyle(a.querySelector('svg')).display === 'none' : true }
+      })(),
+      otherButtons: ['header', 'offer', 'final'].map((p) => { const a = document.querySelector(`a[data-cta-placement="${p}"]`); const cs = getComputedStyle(a); return { p, font: cs.fontSize, h: Math.round(a.getBoundingClientRect().height), bg: cs.backgroundColor, color: cs.color, text: a.textContent.trim() } }),
+      h1Lines: Array.from(document.querySelectorAll('#hero-heading span')).map((sp) => ({ text: sp.textContent, gradient: getComputedStyle(sp).backgroundImage.includes('linear-gradient'), transparent: getComputedStyle(sp).color === 'rgba(0, 0, 0, 0)', lines: Math.round(sp.getBoundingClientRect().height / parseFloat(getComputedStyle(sp).lineHeight)) })),
+      subheadWords: document.querySelector('#hero-heading + p')?.textContent.trim().split(/\s+/).length,
+      heroActions: document.querySelector('#hero-heading').closest('div').querySelectorAll('a, button').length,
+      offerBg: getComputedStyle(document.querySelector('#offer > div > div')).backgroundImage,
+      notInitialCaps: Array.from(document.querySelectorAll('button, a[data-cta-placement], a[href="#main"]'))
+        .map((b) => (b.textContent || '').trim())
+        .filter((t) => t && t.split(/\s+/).filter((w) => /[A-Za-z]/.test(w)).some((w) => !/^[^A-Za-z]*[A-Z0-9]/.test(w))),
+      title: document.title,
+      metaDesc: document.querySelector('meta[name="description"]')?.content,
       words: document.body.innerText.trim().split(/\s+/).length,
       headings: Array.from(document.querySelectorAll('h1,h2,h3')).map((h) => `${h.tagName}:${h.textContent.trim().slice(0, 40)}`),
     }
@@ -96,18 +113,20 @@ for (const width of [360, 390, 768, 1440]) {
 
   m.scrollWidth <= m.innerWidth ? pass(`${width}: no horizontal overflow`) : fail(`${width}: overflow ${m.scrollWidth}>${m.innerWidth}`)
   const expectedSections = [
-    'Take control of your marketing, from plan to done.',
-    'Understand your online position',
-    'Know what deserves attention',
-    'Get the marketing work done',
-    'Keep work and progress connected',
-    'Try it for 7 days. Then one price for one business.',
-    'Common questions',
-    'Start with one business.',
+    'Run Your Business.Without Doing Everything Yourself.',
+    'One place to move your business forward.',
+    'Put AI to work on your business.',
+    'Get found on Google and in AI answers.',
+    'Create the content and visuals your business needs.',
+    'Bring in expert help when you need it.',
+    'Put Command Center to work for your business.',
+    'Before you start.',
+    'Put your next business move into action.',
   ]
   JSON.stringify(m.sections) === JSON.stringify(expectedSections) ? pass(`${width}: section order correct (${m.sections.length})`) : fail(`${width}: sections ${JSON.stringify(m.sections)}`)
   m.ctas.length === 4 && m.ctas.every((c) => c.href === CTA) ? pass(`${width}: 4 CTAs -> ${CTA}`) : fail(`${width}: CTAs ${JSON.stringify(m.ctas)}`)
-  m.externalLinks.every((h) => h === CTA) ? pass(`${width}: no other external links`) : fail(`${width}: external ${JSON.stringify(m.externalLinks)}`)
+  const allowedExternal = new Set([CTA, 'https://legiit.com/privacy', 'https://legiit.com/terms'])
+  m.externalLinks.every((h) => allowedExternal.has(h)) ? pass(`${width}: only the trial, Privacy, and Terms links leave the page`) : fail(`${width}: external ${JSON.stringify(m.externalLinks)}`)
   m.imgsFailed.length === 0 ? pass(`${width}: all images loaded`) : fail(`${width}: failed images ${m.imgsFailed}`)
   m.imgsWithoutDims === 0 ? pass(`${width}: all images reserve dimensions`) : fail(`${width}: ${m.imgsWithoutDims} images without dimensions`)
   m.lazyBelowFold >= 5 ? pass(`${width}: ${m.lazyBelowFold} below-fold images lazy`) : fail(`${width}: only ${m.lazyBelowFold} lazy images`)
@@ -119,6 +138,27 @@ for (const width of [360, 390, 768, 1440]) {
     pass(`${width}: video rendered ${m.video.width}px wide`)
   } else fail(`${width}: no video element`)
   m.smallTargets.length === 0 ? pass(`${width}: all targets >= 44px`) : fail(`${width}: small targets ${JSON.stringify(m.smallTargets)}`)
+  {
+    const hb = m.heroButton
+    const expectFont = width <= 900 ? '18.75px' : '20px'
+    const expectPl = width < 380 ? '20px' : '30px'
+    const iconOk = width < 420 ? hb.iconHidden : hb.icon === '23.75' && !hb.iconHidden
+    const sizeOk = hb.font === expectFont && hb.weight === '700' && hb.lh === (width <= 900 ? '26.25px' : '28px') && hb.h >= 67 && hb.h <= 72 && hb.pt === '18.75px' && hb.pl === expectPl && hb.gap === '25px' && hb.declaredBorder === '1.25px' && parseFloat(hb.border) >= 1 && hb.radius === '8.75px' && iconOk
+    const colorOk = hb.bg === 'rgb(106, 19, 207)' && hb.color === 'rgb(255, 255, 255)'
+    sizeOk && colorOk && hb.centered && !hb.overflow ? pass(`${width}: hero button ${hb.w}x${hb.h}, ${hb.font}/${hb.weight}, purple on white, centered`) : fail(`${width}: hero button ${JSON.stringify(hb)}`)
+    const others = m.otherButtons
+    others.every((b) => b.font === '16px' || b.font === '15px') && others.every((b) => b.h < 67) ? pass(`${width}: header, offer, and closing buttons keep standard sizes`) : fail(`${width}: other buttons ${JSON.stringify(others)}`)
+    const offerBtn = others.find((b) => b.p === 'offer')
+    offerBtn.bg === 'rgb(255, 255, 255)' && offerBtn.color === 'rgb(106, 19, 207)' ? pass(`${width}: pricing button is white with purple text`) : fail(`${width}: pricing button ${JSON.stringify(offerBtn)}`)
+    m.h1Lines.length === 2 && !m.h1Lines[0].gradient && m.h1Lines[1].gradient && m.h1Lines[1].transparent ? pass(`${width}: H1 line 1 dark, line 2 gradient`) : fail(`${width}: h1 ${JSON.stringify(m.h1Lines)}`)
+    if (width >= 1024) m.h1Lines[0].lines === 1 && m.h1Lines[1].lines === 1 ? pass(`${width}: H1 breaks into exactly two lines on desktop`) : fail(`${width}: H1 line counts ${JSON.stringify(m.h1Lines.map((l) => l.lines))}`)
+    m.subheadWords === 13 ? pass(`${width}: subhead is 13 words`) : fail(`${width}: subhead words ${m.subheadWords}`)
+    m.heroActions === 1 ? pass(`${width}: exactly one hero action`) : fail(`${width}: hero actions ${m.heroActions}`)
+    const offerGradientOk = /linear-gradient\(115deg/.test(m.offerBg)
+    offerGradientOk ? pass(`${width}: offer box uses the 115deg brand gradient`) : fail(`${width}: offer bg ${m.offerBg}`)
+    m.notInitialCaps.length === 0 ? pass(`${width}: every button label is Initial Caps`) : fail(`${width}: labels ${JSON.stringify(m.notInitialCaps)}`)
+    m.title === 'Legiit Command Center | Run And Grow Your Business' && /plan, create, delegate, and grow/.test(m.metaDesc) ? pass(`${width}: title and meta description set`) : fail(`${width}: metadata ${m.title} / ${m.metaDesc}`)
+  }
   const vtt = mediaResponses.find((r) => r.file.endsWith('.vtt'))
   vtt && vtt.status === 200 && /text\/vtt/.test(vtt.type) ? pass(`${width}: caption file served same-origin as text/vtt`) : fail(`${width}: vtt response ${JSON.stringify(mediaResponses)}`)
   const webm = mediaResponses.find((r) => r.file.endsWith('.webm'))
@@ -154,11 +194,12 @@ for (const width of [360, 390, 768, 1440]) {
     const v = document.querySelector('video')
     return { present: !!v, canAvc1: document.createElement('video').canPlayType('video/mp4; codecs="avc1.42E01E"'), error: v?.error?.code ?? null, src: v?.currentSrc?.split('/').pop() ?? null }
   })
-  await page.getByRole('button', { name: 'Watch product overview' }).click()
+  await page.locator('video').scrollIntoViewIfNeeded()
+  await page.locator('video').click({ position: { x: 40, y: 40 } })
   await page.waitForTimeout(900)
   const playing = await page.evaluate(() => {
     const v = document.querySelector('video')
-    const box = document.getElementById('product-overview')
+    const box = v ?? document.getElementById('product-overview')
     const r = box.getBoundingClientRect()
     return {
       videoPresent: !!v,
@@ -171,7 +212,7 @@ for (const width of [360, 390, 768, 1440]) {
       src: v?.currentSrc?.split('/').pop() ?? null,
     }
   })
-  playing.inView ? pass(`${width}: Watch product overview scrolls the player into view`) : fail(`${width}: watch action did not scroll (${JSON.stringify(playing)})`)
+  playing.inView ? pass(`${width}: player is in view`) : fail(`${width}: player not in view (${JSON.stringify(playing)})`)
   if (playing.videoPresent && playing.paused === false) {
     const via = codec.canAvc1 === '' && /webm/.test(playing.src) ? ' via the WebM fallback because this Chromium has no H.264 decoder' : ''
     pass(`${width}: playback started from the click${via} (src ${playing.src}, t=${playing.currentTime.toFixed(2)}s, ${playing.cues} caption cues, captions ${playing.mode})`)
@@ -205,17 +246,17 @@ for (const width of [360, 390, 768, 1440]) {
   chapters === 7 ? pass(`${width}: walkthrough lists 7 chapters`) : fail(`${width}: walkthrough chapters ${chapters}`)
   const focusIn = await page.evaluate(() => !!document.activeElement?.closest('dialog[open]'))
   focusIn ? pass(`${width}: focus moved into walkthrough`) : fail(`${width}: focus not in walkthrough`)
-  const prevDisabled = await dialog.getByRole('button', { name: 'Previous' }).isDisabled()
-  await dialog.getByRole('button', { name: 'Next' }).click()
+  const prevDisabled = await dialog.getByRole('button', { name: 'Previous', exact: true }).isDisabled()
+  await dialog.getByRole('button', { name: 'Next', exact: true }).click()
   const ch2 = await dialog.locator('h3').textContent()
-  await dialog.getByRole('button', { name: 'Previous' }).click()
+  await dialog.getByRole('button', { name: 'Previous', exact: true }).click()
   const ch1 = await dialog.locator('h3').textContent()
-  prevDisabled && ch2 === 'Online visibility' && ch1 === 'Business overview' ? pass(`${width}: Next/Previous work`) : fail(`${width}: walkthrough nav prev=${prevDisabled} ch2=${ch2} ch1=${ch1}`)
+  prevDisabled && ch2 === 'Do This Next' && ch1 === 'Business Overview' ? pass(`${width}: Next/Previous work`) : fail(`${width}: walkthrough nav prev=${prevDisabled} ch2=${ch2} ch1=${ch1}`)
   await dialog.locator('nav button').last().click()
   const last = await dialog.locator('h3').textContent()
   const noScreen = await dialog.getByText('No screen for this chapter').count()
-  const nextDisabled = await dialog.getByRole('button', { name: 'Next' }).isDisabled()
-  last === 'Ongoing work' && noScreen === 1 && nextDisabled ? pass(`${width}: last chapter is text-only and Next disables`) : fail(`${width}: last chapter ${last} noScreen=${noScreen} nextDisabled=${nextDisabled}`)
+  const nextDisabled = await dialog.getByRole('button', { name: 'Next', exact: true }).isDisabled()
+  last === 'Tasks And Orders' && noScreen === 1 && nextDisabled ? pass(`${width}: last chapter is text-only and Next disables`) : fail(`${width}: last chapter ${last} noScreen=${noScreen} nextDisabled=${nextDisabled}`)
   await dialog.locator('nav button').nth(2).click()
   await page.waitForFunction(() => {
     const img = document.querySelector('dialog[open] section img')
@@ -237,7 +278,7 @@ for (const width of [360, 390, 768, 1440]) {
   restored ? pass(`${width}: Escape closes walkthrough and restores focus`) : fail(`${width}: focus not restored after walkthrough`)
 
   // Enlarge dialog on the first product screen
-  const enlarge = page.getByRole('button', { name: /Enlarge the Online Visibility screenshot/ })
+  const enlarge = page.getByRole('button', { name: /Enlarge the Do This Next screenshot/ })
   await enlarge.scrollIntoViewIfNeeded()
   await enlarge.click()
   await page.locator('dialog[open]').waitFor({ state: 'visible' })
@@ -252,11 +293,11 @@ for (const width of [360, 390, 768, 1440]) {
   dialogImgs === 1 && stillInside && restored2 && lockReleased ? pass(`${width}: enlarge dialog opens, traps Tab, closes, restores focus`) : fail(`${width}: enlarge imgs=${dialogImgs} inside=${stillInside} restored=${restored2} lock=${lockReleased}`)
 
   // Allowances disclosure
-  const allow = page.getByRole('button', { name: 'Plan allowances' })
+  const allow = page.getByRole('button', { name: 'See Plan Allowances And Benefits' })
   await allow.scrollIntoViewIfNeeded()
   await allow.click()
   const allowText = await page.locator('#' + (await allow.getAttribute('aria-controls')).replace(/:/g, '\\:')).innerText()
-  const allowOk = /25 Backlink Data/.test(allowText) && /50,000 AI credits per month/.test(allowText) && (await allow.getAttribute('aria-expanded')) === 'true'
+  const allowOk = /25 Backlink Data/.test(allowText) && /50,000 monthly AI credits/.test(allowText) && /2% back in Legiit Bucks/.test(allowText) && (await allow.getAttribute('aria-expanded')) === 'true'
   allowOk ? pass(`${width}: allowances disclosure works`) : fail(`${width}: allowances ${allowText}`)
 
   // FAQ
@@ -282,7 +323,7 @@ for (const width of [360, 390, 768, 1440]) {
     order.push(await page.evaluate(() => (document.activeElement?.getAttribute('aria-label') || document.activeElement?.textContent || document.activeElement?.tagName || '').trim().slice(0, 34)))
   }
   console.log('Tab order:', order.join(' -> '))
-  order[0] === 'Skip to content' ? pass('keyboard: skip link first') : fail(`keyboard: first ${order[0]}`)
+  order[0] === 'Skip To Content' ? pass('keyboard: skip link first') : fail(`keyboard: first ${order[0]}`)
   const skip = await page.evaluate(() => {
     const a = document.querySelector('a[href="#main"]')
     a.focus()
@@ -298,11 +339,15 @@ for (const width of [360, 390, 768, 1440]) {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } })
   const page = await context.newPage()
   await page.route('**/legiit-logo*.png', (r) => r.abort())
-  await page.route('**/visibility-*.jpg', (r) => r.abort())
+  await page.route('**/priorities-*.jpg', (r) => r.abort())
   await page.route('**/command-center-overview-*.mp4', (r) => r.abort())
   await page.route('**/command-center-overview-*.webm', (r) => r.abort())
   await page.goto(base, { waitUntil: 'networkidle' })
-  await page.waitForTimeout(500)
+  // The section image is lazy, so bring it into range before expecting its error fallback.
+  await page.locator('img[alt*="Do This Next"]').first().scrollIntoViewIfNeeded().catch(() => {})
+  await page.waitForSelector('figure [role="img"]', { timeout: 8000 }).catch(() => {})
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }))
+  await page.waitForTimeout(300)
   const fb = await page.evaluate(() => ({
     logoText: document.querySelector('header a')?.textContent?.trim().startsWith('Legiit'),
     logoImgs: document.querySelectorAll('header img').length,

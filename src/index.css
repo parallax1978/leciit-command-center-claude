@@ -38,7 +38,7 @@
 
 @layer components {
   .eyebrow {
-    @apply font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-brand-purple;
+    @apply text-[13px] font-semibold tracking-[0.02em] text-brand-purple;
   }
   .btn-focus {
     @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-purple;

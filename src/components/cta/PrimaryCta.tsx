@@ -1,29 +1,30 @@
-import { LinkButton } from '../ui/Button'
+import { LinkButton, iconClass, iconSize } from '../ui/Button'
 import { ArrowRight } from '../ui/Icons'
-import { CTA_URL, PRIMARY_CTA_LABEL, COMPACT_CTA_LABEL } from '../../config/site'
+import { CTA_URL, HEADER_CTA_LABEL, PRIMARY_CTA_LABEL } from '../../config/site'
 import { track } from '../../lib/analytics'
 
 interface PrimaryCtaProps {
   placement: 'header' | 'hero' | 'offer' | 'final'
-  size?: 'md' | 'lg'
   className?: string
-  /** Header only: show the compact label below the sm breakpoint. */
-  compactOnMobile?: boolean
 }
 
-/** The one commercial CTA treatment. Every instance links to CTA_URL exactly. */
-export function PrimaryCta({ placement, size = 'lg', className = '', compactOnMobile = false }: PrimaryCtaProps) {
+const config = {
+  header: { label: HEADER_CTA_LABEL, size: 'md', variant: 'primary' },
+  hero: { label: PRIMARY_CTA_LABEL, size: 'hero', variant: 'primary' },
+  offer: { label: PRIMARY_CTA_LABEL, size: 'lg', variant: 'inverse' },
+  final: { label: PRIMARY_CTA_LABEL, size: 'lg', variant: 'primary' },
+} as const
+
+/**
+ * The shared trial button. Every placement links to CTA_URL exactly.
+ * Only the hero placement carries the 25% size increase.
+ */
+export function PrimaryCta({ placement, className = '' }: PrimaryCtaProps) {
+  const { label, size, variant } = config[placement]
   return (
-    <LinkButton href={CTA_URL} size={size} className={className} data-cta-placement={placement} onClick={() => track('cta_click', { placement })}>
-      {compactOnMobile ? (
-        <>
-          <span className="sm:hidden">{COMPACT_CTA_LABEL}</span>
-          <span className="hidden sm:inline">{PRIMARY_CTA_LABEL}</span>
-        </>
-      ) : (
-        PRIMARY_CTA_LABEL
-      )}
-      <ArrowRight size={18} className={compactOnMobile ? 'hidden sm:block' : ''} />
+    <LinkButton href={CTA_URL} size={size} variant={variant} className={className} data-cta-placement={placement} onClick={() => track('cta_click', { placement })}>
+      {label}
+      <ArrowRight size={iconSize[size]} className={iconClass[size]} />
     </LinkButton>
   )
 }

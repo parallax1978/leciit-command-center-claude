@@ -1,7 +1,7 @@
 import { useId, useState } from 'react'
 import { Container } from '../ui/Container'
 import { Plus } from '../ui/Icons'
-import { FAQ_ITEMS } from '../../config/faq'
+import { FAQ_COPY, FAQ_ITEMS } from '../../config/faq'
 import { track } from '../../lib/analytics'
 
 export function Faq() {
@@ -24,9 +24,9 @@ export function Faq() {
       <Container>
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-16">
           <div>
-            <p className="eyebrow">Questions</p>
+            <p className="eyebrow">{FAQ_COPY.eyebrow}</p>
             <h2 id="faq-heading" className="h2 mt-3">
-              Common questions
+              {FAQ_COPY.title}
             </h2>
           </div>
           <div className="border-t border-line-strong">

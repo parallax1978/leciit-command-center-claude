@@ -4,48 +4,58 @@ export interface FaqItem {
   answer: string[]
 }
 
+export const FAQ_COPY = {
+  eyebrow: 'A few things to know',
+  title: 'Before you start.',
+} as const
+
+/** Questions are button labels, so they use Initial Caps. Answers stay in sentence case. */
 export const FAQ_ITEMS: FaqItem[] = [
   {
-    id: 'who',
-    question: 'Who is Command Center for?',
+    id: 'create',
+    question: 'What Can I Actually Create In Command Center?',
     answer: [
-      'Business owners who want to run their own marketing with a clear plan, whether they do the work themselves, use Lara, or hire help for specific tasks. You do not need an agency or a marketing background to use it.',
+      'Create article drafts, direct answers to customer questions, content briefs, social captions, and images. Research can also become a blog or landing-page starter that you develop in the Content Editor.',
     ],
   },
   {
-    id: 'manage',
-    question: 'What does it help me manage?',
+    id: 'search',
+    question: 'Can It Help With Google And AI Search?',
     answer: [
-      'Your online position: website health, search and AI visibility, local presence and reviews, and competitors. The priorities that come out of it. The work you do with the tools or with Lara, the freelancers you hire, and the tasks, orders, reports, and analytics that keep it connected.',
+      'Yes. Built-in SEO, GEO, and AEO tools help you research opportunities, create relevant content and answers, identify placement targets, and review your visibility as you work.',
     ],
   },
   {
-    id: 'after-click',
-    question: 'What happens after I click the trial button?',
+    id: 'business-info',
+    question: 'Does It Use Information About My Business?',
     answer: [
-      'You go to the Legiit dashboard, where you sign in or create an account first. Then you set up your business: details, offers, customer avatars, brand voice, competitors, and focus keywords.',
-      'Command Center builds its overview and priorities from that setup. The click itself does not run an audit.',
+      'Command Center helps gather information from your website during setup, including your offers, customer profiles, and brand voice. You can review and edit that information so the workspace reflects your business.',
     ],
   },
   {
-    id: 'included',
-    question: 'What is included, and what costs extra?',
+    id: 'do-it-for-me',
+    question: 'Can I Get Someone To Do The Work For Me?',
     answer: [
-      'Your subscription covers the platform tools, Lara AI assistance, Do This Next priorities, and the management features for one business, within the plan allowances.',
-      'Freelancer services are separate. You choose a Legiit freelancer and pay for that service when you order it.',
+      'You can find and hire Legiit freelancers for the work you want help with. You choose and purchase those services separately from the Command Center subscription.',
     ],
   },
   {
-    id: 'another-business',
-    question: 'Can I add another business?',
-    answer: ['Yes. Each additional business is $10/month and gets its own setup, overview, and priorities.'],
+    id: 'automatic',
+    question: 'Does Command Center Publish Or Run Everything Automatically?',
+    answer: [
+      'You choose which actions to take, review the work you create, and decide what to publish or delegate. Available tools and Lara assistance help you carry out those steps.',
+    ],
   },
   {
-    id: 'lara',
-    question: 'What does Lara do?',
+    id: 'trial',
+    question: 'What Happens When I Start My Trial?',
     answer: [
-      'Lara is the AI assistant inside Command Center. Lara helps you understand a finding, prepare the work behind a priority, and draft content. You review what Lara produces and decide what to publish or send.',
-      'Lara does not carry out every recommendation for you and does not hire freelancers on your behalf.',
+      'You’ll go to Legiit to create an account or sign in, then set up your business and review the trial terms. Some features need connected accounts or a separate tool run.',
     ],
+  },
+  {
+    id: 'more-businesses',
+    question: 'Can I Add More Than One Business?',
+    answer: ['Yes. One business is included at $39/month after the trial, and additional businesses are $10/month each.'],
   },
 ]
