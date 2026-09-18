@@ -41,7 +41,9 @@ Standard `lg` buttons are 16px/600 text, 54px minimum height, 15px by 24px paddi
 
 ### Brand gradient use
 
-Line 2 of the H1: `linear-gradient(95deg, #6A13CF 12%, #C71E92 98%)` as clipped text. Offer box background: `linear-gradient(115deg, #6A13CF 0%, #C71E92 100%)` with white headings, price, body, and checkmarks, secondary text at `rgba(255,255,255,0.95)`, dividers at 0.26 opacity, trial badge outline at 0.45 opacity, and a white button with `#6A13CF` text. All other buttons are solid `#6A13CF`.
+Line 2 of the H1: `linear-gradient(95deg, #6A13CF 12%, #C71E92 98%)` as clipped text. Offer box background: `linear-gradient(115deg, #6A13CF 0%, #C71E92 100%)` with white headings, price, body, and checkmarks, secondary text at `rgba(255,255,255,0.95)`, dividers at 0.26 opacity, trial badge outline at 0.45 opacity, and a white button with `#6A13CF` text and no shadow.
+
+Purple buttons (header, hero, closing) use the same treatment as the Lovable build: `linear-gradient(to right in oklab, #6A13CF, #C71E92)` with a plain sRGB gradient declared first as the fallback, the brand shadow `0 14px 32px -14px rgba(98,16,192,0.48)`, and `brightness(0.95)` on hover. The class is `.btn-brand` in `src/index.css`; the build lowers the oklab interpolation to equivalent colour stops for browsers that lack it.
 
 ## Reference mapping
 
@@ -138,10 +140,10 @@ A CTA click is not a signup or an activated trial. Attributing registrations, bu
 
 ## Verification
 
-Run on the production build with `npm run check` (typecheck, 12 content tests, build) and `node qa/check-page.mjs` (166 checks, all passing) at 360, 390, 768, and 1440 px:
+Run on the production build with `npm run check` (typecheck, 12 content tests, build) and `node qa/check-page.mjs` (170 checks, all passing) at 360, 390, 768, and 1440 px:
 
 - No horizontal overflow at any width; nine body sections in the required order (hero, intro, four product sections, offer, FAQ, closing); four trial buttons, all `https://legiit.com/command-center/start`; the only other outbound links are Privacy and Terms.
-- Hero button: 20px/700 text at 1440 and 18.75px at 900 and below, 1.4 line height, 67.5px minimum height, 18.75px by 30px padding, 25px gap, 1.25px declared border, 8.75px radius, solid `#6A13CF` on white, centered, never overflowing, icon 23.75px where shown. Header, pricing, and closing buttons keep standard sizes; the pricing button is white with `#6A13CF` text.
+- Hero button: 20px/700 text at 1440 and 18.75px at 900 and below, 1.4 line height, 67.5px minimum height, 18.75px by 30px padding, 25px gap, 1.25px declared border, 8.75px radius, brand gradient with the brand shadow and white text, centered, never overflowing, icon 23.75px where shown. Header and closing buttons carry the same gradient. Header, pricing, and closing buttons keep standard sizes; the pricing button is white with `#6A13CF` text.
 - H1 line 1 dark, line 2 gradient text, exactly two lines at desktop widths and natural wrapping on phones; subhead is 13 words; exactly one hero action; offer box on the 115deg gradient; every button label in Initial Caps; title and meta description set.
 - Every image reserves width and height, decodes after scrolling (lazy loading works), and the logo, screenshot, and video fallbacks render when their files are blocked.
 - Video: controls on, no autoplay, poster set, metadata loads at 42.0 s, MP4 requested first and served as `video/mp4` (206), WebM served as `video/webm`, VTT served same-origin as `text/vtt`, one English caption track in `showing` mode with 6 cues; playback starts from the player's own control and runs to `ended` at 1280 x 720 with the play, progress, and complete hooks firing from real media events.

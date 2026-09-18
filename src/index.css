@@ -43,6 +43,16 @@
   .btn-focus {
     @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-purple;
   }
+  /* Brand gradient buttons: purple to magenta, left to right, interpolated in oklab for clean midtones. */
+  .btn-brand {
+    color: #fff;
+    background-image: linear-gradient(to right, #6a13cf, #c71e92);
+    background-image: linear-gradient(to right in oklab, #6a13cf, #c71e92);
+    box-shadow: 0 14px 32px -14px rgba(98, 16, 192, 0.48);
+  }
+  .btn-brand:hover {
+    filter: brightness(0.95);
+  }
   .h2 {
     @apply text-[1.875rem] font-semibold leading-[1.1] tracking-[-0.02em] text-ink sm:text-[2.25rem] lg:text-[2.5rem];
   }

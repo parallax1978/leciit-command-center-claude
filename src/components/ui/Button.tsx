@@ -10,10 +10,10 @@ type Size = 'sm' | 'md' | 'lg' | 'hero'
  * overridden by a shared base class.
  */
 const baseClass =
-  'inline-flex items-center justify-center transition-colors motion-reduce:transition-none btn-focus disabled:cursor-not-allowed disabled:opacity-50 select-none'
+  'inline-flex items-center justify-center transition-[color,background-color,border-color,filter] motion-reduce:transition-none btn-focus disabled:cursor-not-allowed disabled:opacity-50 select-none'
 
 const variantClass: Record<Variant, string> = {
-  primary: 'border-brand-purple bg-brand-purple text-white hover:border-[#5a0fb3] hover:bg-[#5a0fb3]',
+  primary: 'btn-brand border-transparent',
   inverse: 'border-white bg-white text-brand-purple hover:bg-[#F3EBFC] focus-visible:!outline-white',
   secondary: 'border-line-strong bg-canvas text-ink hover:bg-canvas-sunken',
   ghost: 'border-transparent text-ink hover:bg-canvas-sunken',
