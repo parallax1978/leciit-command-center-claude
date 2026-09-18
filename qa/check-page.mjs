@@ -186,8 +186,8 @@ for (const width of [360, 390, 768, 1440]) {
 {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } })
   const page = await context.newPage()
-  await page.route('**/legiit-logo.png', (r) => r.abort())
-  await page.route('**/product/ai-visibility.jpg', (r) => r.abort())
+  await page.route('**/legiit-logo*.png', (r) => r.abort())
+  await page.route('**/ai-visibility*.jpg', (r) => r.abort())
   await page.goto(base, { waitUntil: 'networkidle' })
   await page.waitForTimeout(300)
   const fb = await page.evaluate(() => ({

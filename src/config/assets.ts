@@ -3,10 +3,14 @@
  *
  * The product capture is an actual Command Center interface screenshot
  * supplied for this project. It is interface evidence, never a customer
- * result. Source URLs are recorded in the README.
+ * result. Source URLs are recorded in the README. Importing through Vite
+ * gives hashed, base-aware URLs so the build works under any deploy path.
  */
+import logoUrl from '../assets/legiit-logo.png'
+import screenshotUrl from '../assets/ai-visibility.jpg'
+
 export const LOGO = {
-  src: '/legiit-logo.png',
+  src: logoUrl,
   alt: 'Legiit',
   /** Natural size of the supplied light-background logo. */
   width: 2253,
@@ -15,7 +19,7 @@ export const LOGO = {
 } as const
 
 export const PRODUCT_SCREENSHOT = {
-  src: '/product/ai-visibility.jpg',
+  src: screenshotUrl,
   width: 1000,
   height: 818,
   caption: 'Inside Command Center: AI Visibility',

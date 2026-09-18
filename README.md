@@ -56,7 +56,7 @@ All editable content lives in `src/config/`:
 | `cta.ts` | `CTA_BASE_URL` (`https://dashboard.legiit.com/`), `PAGE_VARIANT` (`'C'`), `PRIMARY_CTA_LABEL` |
 | `offer.ts` | Every price, inclusion, allowance label and note. The page reads only from here. |
 | `demoVideo.ts` | `DEMO_VIDEO = { src: '', embedUrl: '', poster: '', captions: '' }` and `resolveDemoSource` |
-| `assets.ts` | Logo and product screenshot paths, natural sizes, alt text, caption |
+| `assets.ts` | Logo and product screenshot imports, natural sizes, alt text, caption |
 | `faq.ts` | The five questions and answers |
 | `customerEvidence.ts` | `CUSTOMER_EVIDENCE`, `null` until approved material exists |
 
@@ -76,8 +76,8 @@ Deliberately absent because unconfirmed: card requirement, cancellation rules, r
 
 | Asset | Source | Bundled at |
 |-------|--------|-----------|
-| Logo (light background) | `https://dashboard.legiit.com/frontend/images/project_image/logos/Legiit_Logo_LightBG.png` | `public/legiit-logo.png` (2253 x 1024, rendered at natural ratio) |
-| AI Visibility screenshot | `https://legiit-command-center-growth.chrismwalker.chatgpt.site/product/ai-visibility.jpg` | `public/product/ai-visibility.jpg` (1000 x 818) |
+| Logo (light background) | `https://dashboard.legiit.com/frontend/images/project_image/logos/Legiit_Logo_LightBG.png` | `src/assets/legiit-logo.png` (2253 x 1024, rendered at natural ratio) |
+| AI Visibility screenshot | `https://legiit-command-center-growth.chrismwalker.chatgpt.site/product/ai-visibility.jpg` | `src/assets/ai-visibility.jpg` (1000 x 818) |
 
 The screenshot is an actual interface capture and is presented only as interface evidence, captioned "Inside Command Center: AI Visibility". It is never a customer-results claim, and nothing is layered over it. If the logo fails to load, the header and footer render the word "Legiit". If the screenshot fails, the media region shows a text description, keeps the caption, and hides the full-size preview control.
 
