@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+  body {
+    @apply bg-canvas text-ink font-sans antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid #6a13cf;
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: #eee3fb;
+  }
+  dialog::backdrop {
+    background: rgba(15, 15, 20, 0.62);
+  }
+  [hidden] {
+    display: none !important;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-ink-muted;
+  }
+  .label-chip {
+    @apply inline-flex items-center gap-1.5 rounded-md border border-line bg-canvas-sunken px-2 py-1 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-ink-soft;
+  }
+  .hairline {
+    @apply border-t border-line;
+  }
+  .btn-focus {
+    @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-purple;
+  }
+}
