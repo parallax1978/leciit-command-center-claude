@@ -4,46 +4,48 @@ export interface FaqItem {
   answer: string[]
 }
 
-/** Answers use only the verified product and offer facts. Keep paragraphs to two sentences. */
 export const FAQ_ITEMS: FaqItem[] = [
   {
-    id: 'after-click',
-    question: 'What happens after I click?',
+    id: 'who',
+    question: 'Who is Command Center for?',
     answer: [
-      'You continue to Legiit and sign in or create an account. Then you add your website and business details, and choose your first task in Command Center.',
-      'The button on this page does not run a check or complete setup by itself.',
+      'Business owners who want to run their own marketing with a clear plan, whether they do the work themselves, use Lara, or hire help for specific tasks. You do not need an agency or a marketing background to use it.',
     ],
+  },
+  {
+    id: 'manage',
+    question: 'What does it help me manage?',
+    answer: [
+      'Your online position: website health, search and AI visibility, local presence and reviews, and competitors. The priorities that come out of it. The work you do with the tools or with Lara, the freelancers you hire, and the tasks, orders, reports, and analytics that keep it connected.',
+    ],
+  },
+  {
+    id: 'after-click',
+    question: 'What happens after I click the trial button?',
+    answer: [
+      'You go to the Legiit dashboard, where you sign in or create an account first. Then you set up your business: details, offers, customer avatars, brand voice, competitors, and focus keywords.',
+      'Command Center builds its overview and priorities from that setup. The click itself does not run an audit.',
+    ],
+  },
+  {
+    id: 'included',
+    question: 'What is included, and what costs extra?',
+    answer: [
+      'Your subscription covers the platform tools, Lara AI assistance, Do This Next priorities, and the management features for one business, within the plan allowances.',
+      'Freelancer services are separate. You choose a Legiit freelancer and pay for that service when you order it.',
+    ],
+  },
+  {
+    id: 'another-business',
+    question: 'Can I add another business?',
+    answer: ['Yes. Each additional business is $10/month and gets its own setup, overview, and priorities.'],
   },
   {
     id: 'lara',
-    question: 'What does Lara help with? Is the work automatic?',
+    question: 'What does Lara do?',
     answer: [
-      'Lara gives AI assistance inside Command Center, such as preparing a brief or a draft from a Do This Next priority.',
-      'You review the result. Nothing is published or changed on your website for you.',
-    ],
-  },
-  {
-    id: 'subscription',
-    question: 'What does the subscription include?',
-    answer: [
-      '$39/month after the 7-day free trial covers one business, full dashboard access, support, and 50,000 monthly AI credits. Published allowances are 3 audits, 5 keywords, and 25 Backlink Data.',
-      'Each additional business is $10/month. Purchases earn 2% back in Legiit Bucks.',
-    ],
-  },
-  {
-    id: 'freelance',
-    question: 'Are freelance services included?',
-    answer: [
-      'No. When a task needs paid help, Command Center points you to relevant freelance-service categories on the Legiit platform, and you buy those services separately.',
-      'A recommended category is not an assigned freelancer or a completed order.',
-    ],
-  },
-  {
-    id: 'assistants',
-    question: 'Which AI assistants are checked?',
-    answer: [
-      'The AI Visibility checkup covers ChatGPT, Gemini, Claude, and Grok. Tracking shows what changes after you act.',
-      'Better visibility or new customers are not guaranteed.',
+      'Lara is the AI assistant inside Command Center. Lara helps you understand a finding, prepare the work behind a priority, and draft content. You review what Lara produces and decide what to publish or send.',
+      'Lara does not carry out every recommendation for you and does not hire freelancers on your behalf.',
     ],
   },
 ]

@@ -28,19 +28,25 @@
   [hidden] {
     display: none !important;
   }
+  video::cue {
+    background: rgba(15, 15, 20, 0.82);
+    color: #fff;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
 }
 
 @layer components {
   .eyebrow {
-    @apply font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-ink-muted;
-  }
-  .label-chip {
-    @apply inline-flex items-center gap-1.5 rounded-md border border-line bg-canvas-sunken px-2 py-1 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-ink-soft;
-  }
-  .hairline {
-    @apply border-t border-line;
+    @apply font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-brand-purple;
   }
   .btn-focus {
     @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-purple;
+  }
+  .h2 {
+    @apply text-[1.875rem] font-semibold leading-[1.1] tracking-[-0.02em] text-ink sm:text-[2.25rem] lg:text-[2.5rem];
+  }
+  .lead {
+    @apply text-[17px] leading-relaxed text-ink-soft sm:text-lg;
   }
 }

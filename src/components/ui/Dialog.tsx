@@ -8,20 +8,18 @@ interface DialogProps {
   title: string
   description?: string
   children: ReactNode
+  size?: 'lg' | 'xl'
 }
 
-const FOCUSABLE = 'a[href], button:not([disabled]), textarea, input, select, video[controls], iframe, [tabindex]:not([tabindex="-1"])'
+const FOCUSABLE = 'a[href], button:not([disabled]), textarea, input, select, video[controls], [tabindex]:not([tabindex="-1"])'
 
 /**
- * Accessible modal built on the native <dialog> element.
- *
- * - showModal() makes the rest of the page inert and contains focus.
- * - A Tab handler also loops focus for browsers with partial support.
- * - Escape closes through the native cancel event.
- * - Focus moves to the Close control on open and returns to the opener on close.
- * - Children unmount on close, so any media inside stops.
+ * Accessible modal on the native <dialog> element: showModal() makes the page
+ * inert, Tab is looped as a safeguard, Escape closes via the cancel event,
+ * focus starts on the Close control and returns to the opener, page scroll is
+ * locked while open, and children unmount on close so media stops.
  */
-export function Dialog({ open, onClose, title, description, children }: DialogProps) {
+export function Dialog({ open, onClose, title, description, children, size = 'xl' }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null)
   const openerRef = useRef<HTMLElement | null>(null)
   const titleId = useId()
@@ -55,7 +53,7 @@ export function Dialog({ open, onClose, title, description, children }: DialogPr
     }
     const handleKeydown = (event: KeyboardEvent) => {
       if (event.key !== 'Tab') return
-      const nodes = Array.from(el.querySelectorAll<HTMLElement>(FOCUSABLE))
+      const nodes = Array.from(el.querySelectorAll<HTMLElement>(FOCUSABLE)).filter((n) => n.offsetParent !== null)
       const first = nodes[0]
       const last = nodes[nodes.length - 1]
       if (!first || !last) return
@@ -78,12 +76,14 @@ export function Dialog({ open, onClose, title, description, children }: DialogPr
     }
   }, [onClose])
 
+  const width = size === 'xl' ? 'sm:max-w-6xl' : 'sm:max-w-4xl'
+
   return (
     <dialog
       ref={ref}
       aria-labelledby={titleId}
       aria-describedby={description ? descId : undefined}
-      className="m-0 h-[100dvh] max-h-[100dvh] w-screen max-w-[100vw] bg-transparent p-0 text-ink sm:m-auto sm:h-auto sm:max-h-[calc(100dvh-2rem)] sm:w-[calc(100vw-2rem)] sm:max-w-6xl"
+      className={`m-0 h-[100dvh] max-h-[100dvh] w-screen max-w-[100vw] bg-transparent p-0 text-ink sm:m-auto sm:h-auto sm:max-h-[calc(100dvh-2rem)] sm:w-[calc(100vw-2rem)] ${width}`}
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose()
       }}
@@ -101,12 +101,14 @@ export function Dialog({ open, onClose, title, description, children }: DialogPr
                 </p>
               )}
             </div>
-            <Button variant="secondary" onClick={onClose} aria-label="Close" className="shrink-0 !px-3" data-autofocus>
+            <Button variant="secondary" size="sm" onClick={onClose} aria-label="Close" className="shrink-0" data-autofocus>
               <Close size={18} />
               <span className="hidden sm:inline">Close</span>
             </Button>
           </header>
-          <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
+          <div className="min-h-0 flex-1 overflow-y-auto" data-dialog-body>
+            {children}
+          </div>
         </div>
       )}
     </dialog>

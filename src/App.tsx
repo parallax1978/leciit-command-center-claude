@@ -1,9 +1,12 @@
 import { Header } from './components/sections/Header'
 import { Hero } from './components/sections/Hero'
-import { HowItWorks } from './components/sections/HowItWorks'
+import { ProductSection } from './components/sections/ProductSection'
+import { CustomerStory } from './components/sections/CustomerStory'
 import { Offer } from './components/sections/Offer'
 import { Faq } from './components/sections/Faq'
+import { FinalCta } from './components/sections/FinalCta'
 import { Footer } from './components/sections/Footer'
+import { PRODUCT_SECTIONS } from './config/copy'
 
 export default function App() {
   return (
@@ -17,9 +20,13 @@ export default function App() {
       <Header />
       <main id="main">
         <Hero />
-        <HowItWorks />
+        {PRODUCT_SECTIONS.map((section) => (
+          <ProductSection key={section.id} section={section} />
+        ))}
+        <CustomerStory />
         <Offer />
         <Faq />
+        <FinalCta />
       </main>
       <Footer />
     </div>

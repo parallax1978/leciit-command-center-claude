@@ -1,175 +1,142 @@
-# Legiit Command Center sales page, Version C (AI visibility)
+# Legiit Command Center landing page
 
-A focused, responsive sales-page mockup for business owners arriving from cold Meta ads. Built in Claude Code, so it is **Version C**: the page sells insight into what AI assistants say about a business, then points to Command Center as the place to act on it.
+A complete, responsive landing page for cold paid traffic from business owners who do not yet know Legiit. It explains what Command Center does, demonstrates the actual product, and starts a 7-day free trial at `https://dashboard.legiit.com/`.
 
-Headline: **See what AI says about your business.**
-Support: *Check your visibility in ChatGPT, Gemini, Claude, and Grok. Use what you learn to choose your next marketing task in Command Center.*
+Built with React 18, TypeScript (strict), Tailwind CSS 3, and Vite 5. No backend, scan, AI API, database, payment flow, tracker, or signup form.
 
-This design is a test hypothesis. Public ad destinations that use a similar shape (focused promise, early product demonstration) do not prove profitable performance.
-
-## Page structure
-
-Minimal header (logo + one CTA), four body sections, small footer:
-
-| # | Section | Component | Notes |
-|---|---------|-----------|-------|
-| 1 | Hero and one product demonstration | `src/components/sections/Hero.tsx`, `src/components/video/*` | Centered headline, subhead (23 words), primary CTA, "7-day free trial. Then $39/month.", one wide media region |
-| 2 | How it works, three steps | `src/components/sections/HowItWorks.tsx` | Add your business, investigate your AI visibility, prepare your next action |
-| 3 | One offer | `src/components/sections/Offer.tsx` | $39/month after the 7-day trial, one business, 50,000 monthly AI credits, extra-business price, separate freelance costs, CTA |
-| 4 | Five FAQs | `src/components/sections/Faq.tsx`, `src/config/faq.ts` | One disclosure per question; allowances live in the subscription answer |
-
-Conversion buttons: exactly three (header, hero, offer), all rendered by `src/components/cta/PrimaryCta.tsx` with the label "Start my free trial".
-
-Interactivity is limited to: the real video when supplied, the optional full-size screenshot preview, FAQ disclosures, and CTA links. There is no feature grid, capability strip, gallery, tabbed workflow, editable example, copy tool, calculator, website input, storyboard, testimonial section, setup block, closing hero, or sticky mobile CTA.
-
-Page text, including closed FAQ answers and excluding text baked into the screenshot: **410 words** (measured by `qa/check-page.mjs`; limit 550).
-
-## Setup
-
-Requirements: Node 20 or newer.
+## Run it
 
 ```bash
 npm install
 npm run dev        # http://localhost:5173
 npm run build      # tsc -b && vite build -> dist/
 npm run preview    # serves dist/ at http://localhost:4173
-npm test           # vitest: CTA URL builder + media source precedence
+npm test           # vitest: content and configuration invariants
 npm run check      # typecheck + tests + build
 ```
 
-Browser QA (developer tool, not shipped): with `npm run preview` running,
+Browser QA (developer tool): with `npm run preview` running, `node qa/check-page.mjs http://127.0.0.1:4173`. It drives a local Chromium through `playwright-core` (set `CHROMIUM_PATH` if auto-detection fails) and writes screenshots to `qa/screenshots/` (git-ignored). See "Verification" below for what it checks.
 
-```bash
-node qa/check-page.mjs http://127.0.0.1:4173
-```
+## Page sequence
 
-It uses `playwright-core` with a locally installed Chromium (set `CHROMIUM_PATH` if auto-detection fails) and writes screenshots to `qa/screenshots/` (git-ignored). It checks 360, 390, 768 and 1440 px for horizontal overflow, section count, media position, word count, CTA hrefs, 44 px targets, FAQ controls, dialog focus behaviour, asset fallbacks, campaign-parameter filtering and reduced motion.
+| # | Section | Component | Media |
+|---|---------|-----------|-------|
+| 1 | Focused header | `sections/Header.tsx` | Official logo, "Command Center" label, trial CTA |
+| 1 | Split hero | `sections/Hero.tsx` | Exact headline and support copy, primary CTA, "Then $39/month for one business.", quiet "Watch product overview" action, the actual product overview video |
+| 2 | Company credibility line | inside `Hero.tsx` | "From Legiit. Connecting businesses and freelancers since 2018." (Legiit history, not a Command Center claim) |
+| 3 | Understand your online position | `sections/ProductSection.tsx` (data in `config/copy.ts`) | `visibility.jpg` |
+| 3 | Know what deserves attention | same | `priorities.jpg` |
+| 3 | Get the marketing work done | same | `specialist-help.jpg`, `services.jpg` (CSS-framed to the relevant card) |
+| 3 | Keep work and progress connected | same | `performance.jpg` |
+| 4 | Customer story | `sections/CustomerStory.tsx` | Renders nothing until `config/story.ts` holds an approved story |
+| 5 | Offer | `sections/Offer.tsx` | 7-day free trial, then $39/month for one business, allowances disclosure |
+| 6 | FAQ and final trial action | `sections/Faq.tsx`, `sections/FinalCta.tsx`, `sections/Footer.tsx` | Six questions, closing CTA, minimal footer |
 
-Stack: React 18, TypeScript (strict), Tailwind CSS 3, Vite 5. No backend, scan, AI API, database, payment flow, analytics SDK, pixel, or email form.
+Four commercial CTAs (header, hero, offer, final), all rendered by `components/cta/PrimaryCta.tsx`, all linking to exactly `https://dashboard.legiit.com/`. The header shows the shorter "Start free trial" label below 640px because the full label does not fit beside the logo and product label.
 
-## Configuration
+## Reference mapping
 
-All editable content lives in `src/config/`:
+The references informed structure only. None of their copy, proof, figures, or images is used, and none is described as a proven winner.
 
-| File | What it controls |
-|------|------------------|
-| `cta.ts` | `CTA_BASE_URL` (`https://dashboard.legiit.com/`), `PAGE_VARIANT` (`'C'`), `PRIMARY_CTA_LABEL` |
-| `offer.ts` | Every price, inclusion, allowance label and note. The page reads only from here. |
-| `demoVideo.ts` | `DEMO_VIDEO = { src: '', embedUrl: '', poster: '', captions: '' }` and `resolveDemoSource` |
-| `assets.ts` | Logo and product screenshot imports, natural sizes, alt text, caption |
-| `faq.ts` | The five questions and answers |
-| `customerEvidence.ts` | `CUSTOMER_EVIDENCE`, `null` until approved material exists |
+| Reference | Emulated in this layout | Left out |
+|-----------|-------------------------|----------|
+| Semrush One landing page | Broad platform positioning in the hero; one dominant product visual; four spacious open image/text sections after the hero; proof positioned after the product explanation (the customer-story slot sits between the product sections and the offer); the trial offer repeated in hero, offer, and final section | Its branding, copy, customer figures, trial form, proprietary images |
+| GoHighLevel paid-ad page (and its observed variant) | Focused header with one CTA; split hero with the platform message beside a large product demonstration; the trial action and offer terms visible in the hero | Extensive inventories, tiers, borrowed proof, autonomous-AI promises, a 14-day trial |
+| Vendasta mid-market page | The narrative order of the four product sections: diagnosis (online position), priorities (Do This Next), tools, Lara and services (execution), and reporting (ongoing management) | Agency and reseller positioning; claims that AI fulfils work on its own |
+| Thryv | Business-owner language: each section opens with why an owner would care before naming modules; capability lists stay compact | Its software capabilities, statistics, done-for-you promises, appointment-booking funnel |
 
-### Offer (verified September 18, 2026)
+## Four-section capability coverage
 
-- $39/month after a 7-day free trial
-- One business, full dashboard access, and support
-- 50,000 monthly AI credits
-- Published allowances: 3 audits, 5 keywords, 25 Backlink Data (label kept exact; not delivered backlinks; no reset period is stated because only the AI credits have a verified monthly allowance)
-- $10/month for each additional business
-- 2% back in Legiit Bucks on purchases
-- Freelance services purchased separately
+| Section | Verified scope covered |
+|---------|------------------------|
+| Understand your online position | Website and SEO health with technical and on-page checks, keywords and backlinks, search and AI visibility, local presence and reviews, competitor research, connected performance data. Business context (details, offers, audiences, brand voice, competitors, focus keywords) is named in the note under the lead. |
+| Know what deserves attention | Business overview and Legiit Score, Do This Next, reasons and impact, strategy playbooks, prioritized tasks. The note connects the finding in the screenshot (an unconnected Google Business Profile) to its recommended action. |
+| Get the marketing work done | Three routes: the tools (research, marketing, SEO and visibility, content briefs, editor, social content), Lara assistance with owner review, and hiring a relevant Legiit freelancer, purchased separately. |
+| Keep work and progress connected | Tasks, orders, reports, connected analytics. The screenshot's N/A values are preserved and explained. |
 
-Deliberately absent because unconfirmed: card requirement, cancellation rules, refunds, annual pricing, trial restrictions. Do not add "no credit card required", "cancel anytime", guarantees, or setup-speed promises.
+Content research and writing appear only as one item within execution and as one walkthrough chapter (Brief Builder). They are never the hero or the central proposition.
 
 ## Assets
 
-| Asset | Source | Bundled at |
-|-------|--------|-----------|
-| Logo (light background) | `https://dashboard.legiit.com/frontend/images/project_image/logos/Legiit_Logo_LightBG.png` | `src/assets/legiit-logo.png` (2253 x 1024, rendered at natural ratio) |
-| AI Visibility screenshot | `https://legiit-command-center-growth.chrismwalker.chatgpt.site/product/ai-visibility.jpg` | `src/assets/ai-visibility.jpg` (1000 x 818) |
+All assets are bundled under `src/assets/` and imported through Vite, so the build is self-contained and the caption track loads same-origin. Nothing has been retouched.
 
-The screenshot is an actual interface capture and is presented only as interface evidence, captioned "Inside Command Center: AI Visibility". It is never a customer-results claim, and nothing is layered over it. If the logo fails to load, the header and footer render the word "Legiit". If the screenshot fails, the media region shows a text description, keeps the caption, and hides the full-size preview control.
+| Asset | Source URL | Where it is used |
+|-------|-----------|------------------|
+| Official logo | `https://dashboard.legiit.com/frontend/images/project_image/logos/Legiit_Logo_LightBG.png` | Header, footer. The 2253 x 1024 original is kept in `src/assets/`; the page imports a 282 x 128 resize of it (same ratio, 10 KB instead of 50 KB) because it never renders taller than 28 px. Text fallback if it fails. |
+| Product overview MP4 (42 s, silent, H.264) | `.../product/command-center-overview.mp4` | Hero video, primary source, native controls, no autoplay |
+| Product overview WebM (derived) | Transcoded locally from the supplied MP4 with ffmpeg (VP9, same frames and duration, no edits) | Second `<source>` for browsers without an H.264 decoder |
+| English captions (VTT) | `.../product/command-center-overview.vtt` | Attached as the default English caption track |
+| Poster | `.../product/command-center-overview-poster.jpg` | Video poster and the fallback image if playback cannot load |
+| `visibility.jpg` (872 x 797) | `.../product/visibility.jpg` | Section 1, walkthrough chapter 2 |
+| `ai-visibility.jpg` (1000 x 818) | `.../product/ai-visibility.jpg` | Walkthrough chapter 3 |
+| `priorities.jpg` (615 x 387) | `.../product/priorities.jpg` | Section 2, walkthrough chapter 4 |
+| `specialist-help.jpg` (824 x 220) | `.../product/specialist-help.jpg` | Section 3, walkthrough chapter 6 |
+| `services.jpg` (1043 x 283) | `.../product/services.jpg` | Section 3, CSS-framed to the left 42% where the service card sits; the enlarge dialog shows the full image |
+| `performance.jpg` (1043 x 211) | `.../product/performance.jpg` | Section 4, walkthrough chapter 1 (N/A values preserved) |
+| `brief-builder.jpg` (910 x 595) | `.../product/brief-builder.jpg` | Walkthrough chapter 5 only, as one tool |
 
-Note for production: the supplied capture's own text names a specific website. Confirm that capture is approved for public use, or supply a capture from an approved demonstration account.
+`.../product/` is `https://legiit-command-center-growth.chrismwalker.chatgpt.site/product/`.
 
-## The media region
+Every image reserves width and height, below-the-fold images lazy-load, and each product screen has descriptive alt text plus an "Enlarge" control that opens the uncropped capture in an accessible dialog. Screenshots are interface evidence, never customer-results claims. Note that the captures show a specific website's data (as supplied); confirm they are approved for public use before paid launch.
 
-One region, in the hero on every screen size, above How it works and pricing. `DEMO_VIDEO` decides what renders:
+## Product overview and captions
 
-| Precedence | Condition | Rendered by | Behaviour |
-|-----------|-----------|-------------|-----------|
-| 1 | `src` non-empty | `NativeVideo.tsx` | Native `<video controls playsInline preload="metadata">`, click-to-play, no autoplay. `poster` used when set, otherwise the product screenshot. `captions` rendered as a `<track kind="captions" srclang="en" default>` when set. Nothing is fabricated when it is empty. |
-| 2 | `embedUrl` non-empty | `EmbedVideo.tsx` | Poster with a "Play the product demo" control. The `<iframe loading="lazy">` is created only after that click, so nothing loads or plays on its own. If a single click should start playback, include the provider's own autoplay parameter in `embedUrl`; the page does not modify the URL. |
-| 3 | both empty (current) | `ScreenshotState.tsx` | The screenshot at a readable size, the caption, and the visible label "Demo video placeholder, Product screenshot shown." No play icon, duration, controls, loading state, or "Watch demo" button. Optional "View full-size screenshot" opens only that image in an accessible dialog. |
+Configured in `src/config/media.ts` under `PRODUCT_OVERVIEW`: `sources` (MP4 first, WebM second, each `{ src, type }`), `poster`, `width`, `height`, `captions` (an array of `{ src, srcLang, label, default }`), the visible caption, and the poster alt text. To replace the recording, swap the files in `src/assets/product/` or point these fields at new imports. If a new MP4 arrives, regenerate the WebM from it (for example `ffmpeg -i overview.mp4 -c:v libvpx-vp9 -b:v 0 -crf 41 -an overview.webm`) or remove the second source. Vite is configured not to inline the `.vtt` file so captions are always served as a same-origin file.
 
-Dialog behaviour (`src/components/ui/Dialog.tsx`): native `<dialog>` with `showModal()`, focus moved to the visible Close control on open, Tab looped inside, Escape closes, focus returns to the opening control, page scroll lock released, and children unmount on close so any media inside stops.
+Behaviour (`components/media/ProductOverviewVideo.tsx`): native `<video controls playsInline preload="metadata">` with the poster, no autoplay, the VTT attached as a default English captions track, and events only from real `play`, `timeupdate`, and `ended`. "Watch product overview" in the hero scrolls to the player, focuses it, and starts playback from that click. If the media fails to load, the poster stays visible with a plain message and the walkthrough becomes the fallback.
 
-**Playback verification is pending.** No recording exists, so the native and embed paths were verified by type-check, unit tests of the precedence rule, and code review only. When the recording arrives, verify: controls, caption track, no autoplay, responsive sizing at all four widths, and that the play/progress/complete events fire from real playback.
+The walkthrough (`components/media/Walkthrough.tsx`, chapters in `config/copy.ts`) is labelled "Explore Command Center" and has Open, Previous, and Next controls plus a chapter list. Seven chapters: business overview, online visibility, AI visibility, a useful priority, tools and Lara, access to specialists, ongoing work. The last chapter has no supplied capture and says so in text. There is no fake timeline and no "Watch" label.
 
-### Recording brief (production input)
+Dialogs (`components/ui/Dialog.tsx`) use the native `<dialog>`: focus moves to the Close control, Tab is contained, Escape closes, focus returns to the opener, page scroll is locked while open, and content unmounts on close.
 
-Target length 90 to 120 seconds, recorded in the real product with an approved demonstration business. Do not expose private account, billing, or customer data.
+## Editable content
 
-1. Open with the AI visibility question: what do ChatGPT, Gemini, Claude, and Grok say about this business? Run the checkup and show one real finding.
-2. Show Do This Next and the relevant recommended action in plain language. If reaching it means navigating between tools, show that navigation. Do not imply an automatic connection between tools that has not been verified.
-3. Choose Do it with Lara or open the content tools and show useful work being prepared (a brief or a draft). Include the owner reviewing it. No automatic publishing or website changes.
-4. Show the relevant freelance-service category the owner could explore, state that services are purchased separately, and close on the 7-day free trial and $39/month. No freelancer is selected, assigned, purchased, or shown completing the task.
+| File | Contents |
+|------|----------|
+| `src/config/site.ts` | `CTA_URL`, CTA labels, product name, company line |
+| `src/config/offer.ts` | Trial and price wording, what the subscription covers, separate services, additional businesses, allowance labels |
+| `src/config/copy.ts` | Hero, the four product sections, offer headings, final CTA, footer, walkthrough chapters |
+| `src/config/faq.ts` | The six questions and answers |
+| `src/config/media.ts` | Video, captions, poster, screens (with alt text and optional CSS framing) |
+| `src/config/story.ts` | The optional customer story (currently `null`) |
+| `src/lib/analytics.ts` | Optional no-op event hooks |
 
-Deliver as MP4 (H.264) plus a WebVTT caption file and a poster frame, then fill `DEMO_VIDEO`.
+## Offer facts used
 
-## Missing production inputs
+- 7-day free trial, then $39/month for one business
+- Freelancer services are purchased separately
+- Additional businesses are $10/month each
+- Allowances, in the disclosure only: 3 audits, 5 keywords, 25 Backlink Data, 50,000 AI credits per month. Labels are kept as published; only the AI credits have a confirmed monthly reset, so no other period is stated.
 
-1. The finished product recording (`src`, `poster`, `captions`) or an approved `embedUrl`.
-2. Approved customer evidence, if any: one brief quote or substantiated result with written publication permission and named attribution. Set `CUSTOMER_EVIDENCE` in `src/config/customerEvidence.ts`; it renders under the media region. Until then nothing renders, by design.
-3. Confirmation of new-user billing terms before paid launch: card requirement at trial start, cancellation, refunds, annual pricing.
-4. Confirmation that `https://dashboard.legiit.com/` presents the sign-in handoff and preserves the query string through account access and setup (see Measurement).
-5. Approval of the supplied screenshot for public use (see Assets).
+Not stated anywhere because unverified: card requirement, cancellation terms, refunds, annual pricing, onboarding or support times, integrations.
 
-## CTA attribution
+## Inputs still needed before paid launch
 
-`src/lib/ctaUrl.ts` builds every CTA href with `URL` and `URLSearchParams` from the fixed base `https://dashboard.legiit.com/`.
+1. **Customer story.** `src/config/story.ts` expects `businessName`, `personName`, `role`, `problem`, `used`, `result` (exactly as approved), and `permissionReference`. The section renders between the product sections and the offer once configured. No fabricated or platform-level testimonial may be used in its place.
+2. **Trial and billing terms for new users.** Card requirement at trial start, cancellation, refunds, and any annual option. The page currently omits all of them.
+3. **Approval of the supplied captures** for public use, given that they show a specific website's data.
+4. **Legal links.** The footer has none until their destinations are verified.
+5. **Dashboard handoff check.** Confirm `https://dashboard.legiit.com/` presents account access before business setup for signed-out visitors, as the copy states.
 
-- Forwarded only: inbound `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term` whose value matches `^[a-zA-Z0-9._~-]{1,128}$`. Malformed values are dropped, not sanitized.
-- Every other incoming parameter is discarded, including names, emails, phone numbers, business URLs, account identifiers, tokens, and click identifiers such as `fbclid`.
-- `cc_variant=C` is always set by the page. An incoming `cc_variant` is ignored.
-- Hostname and path never come from visitor input.
+## Measurement
 
-| Page URL query | CTA href |
-|----------------|----------|
-| (none) | `https://dashboard.legiit.com/?cc_variant=C` |
-| `?utm_source=meta&utm_campaign=cc-ai-2026.q3` | `https://dashboard.legiit.com/?utm_source=meta&utm_campaign=cc-ai-2026.q3&cc_variant=C` |
-| `?utm_content=bad%20value&email=x%40y.com&fbclid=abc&cc_variant=A` | `https://dashboard.legiit.com/?cc_variant=C` |
+`src/lib/analytics.ts` exposes typed hooks with a no-op default: `cta_click` (placement), `video_play`, `video_progress` (25, 50, 75, each once), `video_complete`, `walkthrough_open`, `walkthrough_step`, `image_enlarge`, `faq_toggle`, `allowances_toggle`. Register a handler with `setAnalyticsHandler` to activate them. No tracker is installed and no credentials exist.
 
-`URLSearchParams` serialises `~` as `%7E`; the dashboard receives the same value after decoding. Tests: `src/lib/ctaUrl.test.ts` (no UTMs, valid UTMs, unsupported parameters, malformed values, destination and variant override attempts). UTMs must carry campaign labels, never personal data.
+A CTA click is not a signup or an activated trial. Attributing registrations, business setup, activation, and paid subscriptions to this page requires a separate integration inside the Legiit dashboard; this mockup does not measure paid customer acquisition.
 
-## Events (no-op hooks)
+## Verification
 
-`src/lib/analytics.ts` exports typed hooks with a no-op default handler. Nothing is sent anywhere. A future integration registers a handler with `setAnalyticsHandler(fn)`; in development the events are logged to the console.
+Run on the production build with `npm run check` and `node qa/check-page.mjs` (113 checks, all passing) at 360, 390, 768, and 1440 px:
 
-| Event | Payload | Fired from |
-|-------|---------|-----------|
-| `cta_click` | `variant`, `placement` (`header`, `hero`, `offer`) | The three CTA links |
-| `faq_toggle` | `variant`, `placement` (`faq:<id>`), `expanded` | Each FAQ disclosure |
-| `video_play` | `variant`, `placement` (`hero`) | Real `play` event, once per mount |
-| `video_progress` | `variant`, `placement`, `milestone` (25, 50, 75) | Real `timeupdate` events, each milestone once per mount |
-| `video_complete` | `variant`, `placement` | Real `ended` event |
+- No horizontal overflow at any width; eight body sections in the required order; four CTAs, all `https://dashboard.legiit.com/`; no other external links.
+- Every image reserves width and height, decodes after scrolling (lazy loading works), and the logo, screenshot, and video fallbacks render when their files are blocked.
+- Video: controls on, no autoplay, poster set, metadata loads at 42.0 s, the MP4 is requested first and served as `video/mp4` (206), the VTT is served same-origin as `text/vtt`, one English caption track is attached in `showing` mode with 6 cues. "Watch product overview" scrolls the player into view and starts playback from the click; playback runs to `ended` at 1280 x 720 and the play, progress, and complete hooks fire from real media events.
+- Walkthrough: 7 chapters, focus moves in, Previous disables on chapter 1, Next disables on chapter 7, the last chapter is text-only, Escape closes and focus returns to "Explore Command Center".
+- Enlarge dialog: one image, Tab stays inside, Close restores focus and releases the scroll lock. Allowances disclosure and FAQ open and close by mouse and keyboard. Skip link is first in tab order and 48 px tall when focused. All visible targets are at least 44 px.
+- Reduced motion: smooth scrolling and the two icon transitions are disabled under `prefers-reduced-motion`.
 
-Playback is never inferred from a click or a timer. A provider embed exposes no trustworthy playback events, so nothing is emitted for it; integrating a provider's player API would be a separate task.
-
-## Measurement handoff (dashboard team)
-
-Button clicks and video plays are diagnostic. The comparison between pages A, B and C must follow accounts, setup, activation and paying customers by variant.
-
-1. **At dashboard entry** validate the same allow-list (`utm_*` matching the slug rule, `cc_variant` in `A|B|C`), then create an opaque first-party attribution record (random ID, stored server-side) and preserve it through sign-in, registration and business setup. Keep customer identifiers out of public URLs.
-2. **Authoritative downstream events**, each linked to the attribution record on the server, with deduplicated event IDs:
-
-| Event | Authoritative trigger | Purpose |
-|-------|----------------------|---------|
-| `register` | Account service confirms a completed registration, once per account | New accounts attributable to the page |
-| `business_add` | Dashboard confirms a saved business profile, once per business | Completion of business setup |
-| `first_task` | Server confirms the first agreed useful output or task is saved (for example a saved brief or a saved AI-visibility analysis), not a page view, tool open or click | Activation |
-| `paid` | Billing confirms the first successful subscription charge, with real value and currency, excluding trial starts and checkout clicks | Paying customers |
-
-3. Set the attribution window and first-touch/last-touch rule explicitly, and use one activation definition across A, B and C.
-
-## Verification performed
-
-- `npm run typecheck`, `npm test` (13 tests) and `npm run build` pass.
-- `qa/check-page.mjs` at 360, 390, 768 and 1440 px: no horizontal overflow, four body sections, media region above How it works, 410 words, three CTAs with identical hrefs, all visible targets at least 44 px, logo and screenshot loaded, FAQ open/close by mouse and keyboard, dialog focus in/loop/Escape/restore, scroll lock released, campaign parameters filtered as specified, skip link first in tab order, image fallbacks render.
-- Reduced motion: the only transitions are colour and the FAQ icon rotation, both disabled under `prefers-reduced-motion`.
-- Pending: real playback verification (no recording supplied).
+Environment note: the headless Chromium used for QA ships without an H.264 decoder (`canPlayType('video/mp4; codecs="avc1.42E01E"')` returns an empty string), so playback there ran through the WebM fallback source, which is a VP9 transcode of the same supplied MP4 (same frames, same 42 seconds). The MP4 path was verified at the transport level (requested first, served correctly) and by inspecting the file (H.264 High, 1280 x 720, 24 fps, 42.00 s, no audio). Confirm MP4 playback once in Chrome, Safari, Firefox, or Edge before launch. `node qa/probe-media.mjs` prints the codec support and media responses for any browser you point it at.
 
 ## Accessibility notes
 
-Semantic landmarks and heading order (h1, then h2 per section, h3 for steps, FAQ questions and the inclusions list), skip link, visible focus rings, native buttons with `aria-expanded`/`aria-controls` for FAQs, native `<dialog>` for the preview, 44 px minimum targets, `alt` text describing the screenshot, colour contrast of body text above 7:1 on white.
+Semantic landmarks, one h1, h2 per section, h3 for lists and questions; skip link; visible focus rings; native buttons with `aria-expanded` and `aria-controls` for the FAQ and allowances; native `<dialog>` for the walkthrough and enlarge views; 44px minimum targets; descriptive alt text; body text contrast above 7:1 on white; transitions limited to colour and icon rotation, disabled under `prefers-reduced-motion`, and smooth scrolling disabled there too.

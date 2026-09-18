@@ -54,7 +54,18 @@ export const Plus = (p: IconProps) => (
   </svg>
 )
 
-/** Used only when a real recording exists (embed click-to-play). Never shown in the placeholder state. */
+export const ChevronLeft = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="m15 6-6 6 6 6" />
+  </svg>
+)
+
+export const ChevronRight = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="m9 6 6 6-6 6" />
+  </svg>
+)
+
 export const Play = (p: IconProps) => (
   <svg {...base(p)} fill="currentColor" stroke="none">
     <path d="M8 5.5v13a1 1 0 0 0 1.53.85l10.2-6.5a1 1 0 0 0 0-1.7L9.53 4.65A1 1 0 0 0 8 5.5Z" />
