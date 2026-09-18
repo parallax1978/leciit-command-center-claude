@@ -60,7 +60,7 @@ describe('offer terms', () => {
   it('keeps the published allowance labels and the confirmed monthly reset only for AI credits', () => {
     expect(OFFER.allowancesText).toBe('3 audits · 5 keywords · 25 Backlink Data · 50,000 monthly AI credits · 2% back in Legiit Bucks on purchases.')
     expect(OFFER.heroTerms).toBe('7 days free. Then $39/month for one business.')
-    expect(OFFER.priceLabel).toBe('$39 / month after your trial')
+    expect(`${OFFER.priceAmount} ${OFFER.priceRest}`).toBe('$39 / month after your trial')
     expect(OFFER.additionalBusiness).toContain('$10/month')
     expect(OFFER.benefits).toHaveLength(4)
   })
@@ -73,6 +73,22 @@ describe('offer terms', () => {
 })
 
 describe('copy hygiene', () => {
+  it('keeps every paragraph to at most two sentences', () => {
+    const sentences = (text: string) => text.split(/(?<=[.!?])\s+(?=[A-Z“"])/).length
+    const paragraphs: string[] = [
+      HERO.subhead,
+      INTRO.body,
+      FINAL_CTA.body,
+      OFFER.body,
+      OFFER.accountNote,
+      ...PRODUCT_SECTIONS.flatMap((s) => s.paragraphs),
+      ...WALKTHROUGH.map((c) => c.body),
+      ...WALKTHROUGH.flatMap((c) => (c.noScreenNote ? [c.noScreenNote] : [])),
+      ...FAQ_ITEMS.flatMap((f) => f.answer),
+    ]
+    for (const p of paragraphs) expect(sentences(p), p).toBeLessThanOrEqual(2)
+  })
+
   it('has no em dashes or emoji', () => {
     expect(allCopy).not.toMatch(/—/)
     expect(allCopy).not.toMatch(/[\u{1F300}-\u{1FAFF}]/u)

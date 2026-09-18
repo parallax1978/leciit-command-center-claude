@@ -4,7 +4,7 @@
  *
  * Video events fire only from real media events (play, timeupdate, ended).
  * A CTA click is a click, not a signup or an activated trial. Downstream
- * attribution inside the dashboard is a separate integration (see README).
+ * attribution on the Legiit side is a separate integration (see README).
  */
 export type Milestone = 25 | 50 | 75
 

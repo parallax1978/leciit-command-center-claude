@@ -15,9 +15,9 @@ export const OFFER = {
     'Tasks, orders, reports and connected analytics',
   ],
   trialBadge: 'Try it free for 7 days',
+  /** Rendered as two spans with a real space between them so the DOM text reads exactly "$39 / month after your trial". */
   priceAmount: '$39',
   priceRest: '/ month after your trial',
-  priceLabel: '$39 / month after your trial',
   supportingLine: 'One business included',
   accountNote: 'Continue to Legiit to create an account or sign in, then set up your business and review the trial terms.',
   additionalBusiness: 'Additional businesses: $10/month each.',

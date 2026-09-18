@@ -117,7 +117,7 @@ export const SCREENS: Record<ScreenId, ProductScreen> = {
     width: 1043,
     height: 283,
     name: 'Recommended services',
-    alt: 'Recommended For You panel subtitled "Opportunities Lara spotted in your data", with a Browse All link. One service card is shown: a title about having no analytics, a short description of an SEO professional setting up tracking, and a Set Up My Analytics button.',
+    alt: 'Recommended For You panel subtitled "Opportunities Lara spotted in your data". One service card is shown: a title about having no analytics, a short description of an SEO professional setting up tracking, and a Set Up My Analytics button.',
     frame: { widthFraction: 0.42, position: 'left' },
   },
   performance: {

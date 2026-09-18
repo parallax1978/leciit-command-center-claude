@@ -14,7 +14,7 @@ const baseClass =
 
 const variantClass: Record<Variant, string> = {
   primary: 'border-brand-purple bg-brand-purple text-white hover:border-[#5a0fb3] hover:bg-[#5a0fb3]',
-  inverse: 'border-white bg-white text-brand-purple hover:bg-[#F3EBFC]',
+  inverse: 'border-white bg-white text-brand-purple hover:bg-[#F3EBFC] focus-visible:!outline-white',
   secondary: 'border-line-strong bg-canvas text-ink hover:bg-canvas-sunken',
   ghost: 'border-transparent text-ink hover:bg-canvas-sunken',
 }
@@ -30,8 +30,8 @@ const sizeClass: Record<Size, string> = {
 /** Icon size that matches each button size; the hero icon is 19px scaled by 25%. */
 export const iconSize: Record<Size, number> = { sm: 16, md: 18, lg: 19, hero: 23.75 }
 
-/** The hero icon is hidden on narrow phones so the label stays on one line without overflowing. */
-export const iconClass: Record<Size, string> = { sm: '', md: '', lg: '', hero: 'max-[419px]:hidden' }
+/** Large-button icons are hidden on narrow phones so labels stay on one line without overflowing. */
+export const iconClass: Record<Size, string> = { sm: '', md: '', lg: 'max-[419px]:hidden', hero: 'max-[419px]:hidden' }
 
 export function buttonClass(variant: Variant = 'primary', size: Size = 'md', className = '') {
   return `${baseClass} ${variantClass[variant]} ${sizeClass[size]} ${className}`

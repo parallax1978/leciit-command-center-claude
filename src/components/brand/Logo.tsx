@@ -19,5 +19,5 @@ export function Logo({ height = 32, className = '' }: LogoProps) {
     )
   }
 
-  return <img src={LOGO.src} alt={LOGO.alt} width={width} height={height} style={{ height, width }} className={`block shrink-0 self-start ${className}`} decoding="async" onError={() => setFailed(true)} />
+  return <img src={LOGO.src} alt={LOGO.alt} width={width} height={height} style={{ height, width: 'auto', aspectRatio: `${LOGO.width} / ${LOGO.height}` }} className={`block shrink-0 self-start ${className}`} decoding="async" onError={() => setFailed(true)} />
 }

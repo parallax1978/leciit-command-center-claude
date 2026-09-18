@@ -1,4 +1,4 @@
-import { forwardRef, useRef, useState, type SyntheticEvent } from 'react'
+import { useRef, useState, type SyntheticEvent } from 'react'
 import { PRODUCT_OVERVIEW } from '../../config/media'
 import { HERO } from '../../config/copy'
 import { track, type Milestone } from '../../lib/analytics'
@@ -7,12 +7,13 @@ import { Walkthrough } from './Walkthrough'
 const MILESTONES: Milestone[] = [25, 50, 75]
 
 /**
- * The hero's product demonstration: the actual 42-second silent overview with
- * native controls, poster, and the supplied English caption track served
- * same-origin. Never autoplays. If the media fails to load, the poster stays
- * visible with an honest message and the walkthrough as the fallback.
+ * The playable product demo under the hero offer line: the actual 42-second
+ * silent overview with native controls, poster, and the supplied English
+ * caption track served same-origin. Started only from its own controls; never
+ * autoplays. If the media fails to load, the poster stays visible with an
+ * honest message and the walkthrough becomes the fallback.
  */
-export const ProductOverviewVideo = forwardRef<HTMLVideoElement, { className?: string }>(function ProductOverviewVideo({ className = '' }, ref) {
+export function ProductOverviewVideo({ className = '' }: { className?: string }) {
   const [failed, setFailed] = useState(false)
   const played = useRef(false)
   const reached = useRef<Set<Milestone>>(new Set())
@@ -37,7 +38,7 @@ export const ProductOverviewVideo = forwardRef<HTMLVideoElement, { className?: s
 
   return (
     <figure className={className} id="product-overview">
-      <div className="overflow-hidden rounded-2xl border border-line bg-ink shadow-frame">
+      <div className="overflow-hidden rounded-2xl border border-line bg-ink shadow-frame focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand-purple">
         {failed ? (
           <div className="relative" style={{ aspectRatio: `${PRODUCT_OVERVIEW.width} / ${PRODUCT_OVERVIEW.height}` }}>
             <img src={PRODUCT_OVERVIEW.poster} alt={PRODUCT_OVERVIEW.posterAlt} width={PRODUCT_OVERVIEW.width} height={PRODUCT_OVERVIEW.height} className="absolute inset-0 h-full w-full object-cover" />
@@ -45,8 +46,7 @@ export const ProductOverviewVideo = forwardRef<HTMLVideoElement, { className?: s
           </div>
         ) : (
           <video
-            ref={ref}
-            className="block aspect-video w-full bg-ink"
+            className="block aspect-video w-full bg-ink focus-visible:outline-none"
             controls
             playsInline
             preload="metadata"
@@ -80,4 +80,4 @@ export const ProductOverviewVideo = forwardRef<HTMLVideoElement, { className?: s
       </figcaption>
     </figure>
   )
-})
+}

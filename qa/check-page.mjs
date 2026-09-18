@@ -96,7 +96,8 @@ for (const width of [360, 390, 768, 1440]) {
         const parent = a.parentElement.getBoundingClientRect()
         return { font: cs.fontSize, weight: cs.fontWeight, lh: cs.lineHeight, pt: cs.paddingTop, pl: cs.paddingLeft, gap: cs.gap, border: cs.borderTopWidth, radius: cs.borderTopLeftRadius, bg: cs.backgroundColor, color: cs.color, h: Math.round(r.height), w: Math.round(r.width), centered: Math.abs(r.left + r.width / 2 - (parent.left + parent.width / 2)) < 2, overflow: r.right > window.innerWidth || r.left < 0, declaredBorder: (() => { for (const sheet of document.styleSheets) { try { for (const rule of sheet.cssRules) { if (rule.selectorText && rule.selectorText.includes('border-\\[1\\.25px\\]')) return rule.style.borderWidth } } catch { /* cross-origin */ } } return null })(), icon: a.querySelector('svg')?.getAttribute('width'), iconHidden: a.querySelector('svg') ? getComputedStyle(a.querySelector('svg')).display === 'none' : true }
       })(),
-      otherButtons: ['header', 'offer', 'final'].map((p) => { const a = document.querySelector(`a[data-cta-placement="${p}"]`); const cs = getComputedStyle(a); return { p, font: cs.fontSize, h: Math.round(a.getBoundingClientRect().height), bg: cs.backgroundColor, color: cs.color, text: a.textContent.trim() } }),
+      otherButtons: ['header', 'offer', 'final'].map((p) => { const a = document.querySelector(`a[data-cta-placement="${p}"]`); const cs = getComputedStyle(a); const r = a.getBoundingClientRect(); return { p, font: cs.fontSize, h: Math.round(r.height), w: Math.round(r.width), bg: cs.backgroundColor, color: cs.color, text: a.textContent.trim(), overflow: r.right > window.innerWidth + 1 || r.left < -1 } }),
+      priceText: document.querySelector('#offer p.flex.flex-wrap')?.textContent,
       h1Lines: Array.from(document.querySelectorAll('#hero-heading span')).map((sp) => ({ text: sp.textContent, gradient: getComputedStyle(sp).backgroundImage.includes('linear-gradient'), transparent: getComputedStyle(sp).color === 'rgba(0, 0, 0, 0)', lines: Math.round(sp.getBoundingClientRect().height / parseFloat(getComputedStyle(sp).lineHeight)) })),
       subheadWords: document.querySelector('#hero-heading + p')?.textContent.trim().split(/\s+/).length,
       heroActions: document.querySelector('#hero-heading').closest('div').querySelectorAll('a, button').length,
@@ -148,6 +149,8 @@ for (const width of [360, 390, 768, 1440]) {
     sizeOk && colorOk && hb.centered && !hb.overflow ? pass(`${width}: hero button ${hb.w}x${hb.h}, ${hb.font}/${hb.weight}, purple on white, centered`) : fail(`${width}: hero button ${JSON.stringify(hb)}`)
     const others = m.otherButtons
     others.every((b) => b.font === '16px' || b.font === '15px') && others.every((b) => b.h < 67) ? pass(`${width}: header, offer, and closing buttons keep standard sizes`) : fail(`${width}: other buttons ${JSON.stringify(others)}`)
+    others.every((b) => b.h <= 56 && !b.overflow) ? pass(`${width}: header, offer, and closing labels stay on one line without overflow`) : fail(`${width}: wrapped or overflowing buttons ${JSON.stringify(others)}`)
+    m.priceText === '$39 / month after your trial' ? pass(`${width}: price text reads "$39 / month after your trial"`) : fail(`${width}: price text ${JSON.stringify(m.priceText)}`)
     const offerBtn = others.find((b) => b.p === 'offer')
     offerBtn.bg === 'rgb(255, 255, 255)' && offerBtn.color === 'rgb(106, 19, 207)' ? pass(`${width}: pricing button is white with purple text`) : fail(`${width}: pricing button ${JSON.stringify(offerBtn)}`)
     m.h1Lines.length === 2 && !m.h1Lines[0].gradient && m.h1Lines[1].gradient && m.h1Lines[1].transparent ? pass(`${width}: H1 line 1 dark, line 2 gradient`) : fail(`${width}: h1 ${JSON.stringify(m.h1Lines)}`)
@@ -331,6 +334,18 @@ for (const width of [360, 390, 768, 1440]) {
     return r.height
   })
   skip >= 44 ? pass(`skip link: ${Math.round(skip)}px tall when focused`) : fail(`skip link: ${skip}px`)
+  const rings = await page.evaluate(() => {
+    const offer = document.querySelector('a[data-cta-placement="offer"]')
+    offer.focus()
+    const offerRing = getComputedStyle(offer).outlineColor
+    const video = document.querySelector('video')
+    video.focus()
+    const wrapper = video.parentElement
+    const wrap = getComputedStyle(wrapper)
+    return { offerRing, videoOwnOutline: getComputedStyle(video).outlineColor, wrapperOutline: wrap.outlineStyle, wrapperColor: wrap.outlineColor, wrapperOverflow: wrap.overflow }
+  })
+  rings.offerRing === 'rgb(255, 255, 255)' ? pass('focus: pricing button shows a white ring on the gradient') : fail(`focus: pricing ring ${JSON.stringify(rings)}`)
+  rings.videoOwnOutline === 'rgba(0, 0, 0, 0)' && rings.wrapperOutline === 'solid' && rings.wrapperColor === 'rgb(106, 19, 207)' ? pass('focus: video focus ring is drawn on the frame, outside the clipped area') : fail(`focus: video ring ${JSON.stringify(rings)}`)
   await context.close()
 }
 

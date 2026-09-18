@@ -35,7 +35,7 @@ export function Offer() {
           <div className="lg:border-l lg:border-white/[0.26] lg:pl-14">
             <p className="inline-flex items-center rounded-full border border-white/[0.45] px-3.5 py-1.5 text-sm font-medium text-white">{OFFER.trialBadge}</p>
             <p className="mt-5 flex flex-wrap items-baseline gap-x-2">
-              <span className="text-5xl font-semibold tracking-[-0.03em] text-white">{OFFER.priceAmount}</span>
+              <span className="text-5xl font-semibold tracking-[-0.03em] text-white">{OFFER.priceAmount}</span>{' '}
               <span className="text-lg text-white/95">{OFFER.priceRest}</span>
             </p>
             <p className="mt-1 text-[15px] text-white/95">{OFFER.supportingLine}</p>

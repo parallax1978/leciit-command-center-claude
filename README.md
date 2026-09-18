@@ -37,7 +37,7 @@ Four trial buttons (header, hero, offer, closing), all rendered by `components/c
 
 ### Hero button size
 
-Standard `lg` buttons are 16px/600 text, 54px minimum height, 15px by 24px padding, 19px icon. The hero size is that scaled by 25%: 20px/700 text with 1.4 line height, 67.5px minimum height, 18.75px by 30px padding, 25px text-to-icon gap, 23.75px icon, 1.25px border, 8.75px radius, solid `#6A13CF` on white, max-width 100%. At 900px and below the text is 18.75px. Below 420px the arrow icon is hidden and below 380px the horizontal padding drops to 20px so the label stays on one line without overflowing. Each CSS property is set by exactly one class per size so nothing overrides these values.
+Standard `lg` buttons are 16px/600 text, 54px minimum height, 15px by 24px padding, 19px icon. The hero size is that scaled by 25%: 20px/700 text with 1.4 line height, 67.5px minimum height, 18.75px by 30px padding, 25px text-to-icon gap, 23.75px icon, 1.25px border, 8.75px radius, solid `#6A13CF` on white, max-width 100%. At 900px and below the text is 18.75px. Below 420px the arrow icon is hidden on the hero and `lg` buttons, and below 380px the hero's horizontal padding drops to 20px, so labels stay on one line without overflowing. The header button never wraps or shrinks and shows its arrow from 640px up. Each CSS property is set by exactly one class per size so nothing overrides these values. To change the enlargement, edit the `hero` entry in `src/components/ui/Button.tsx`.
 
 ### Brand gradient use
 
@@ -45,14 +45,14 @@ Line 2 of the H1: `linear-gradient(95deg, #6A13CF 12%, #C71E92 98%)` as clipped 
 
 ## Reference mapping
 
-The references informed structure only. None of their copy, proof, figures, or images is used, and none is described as a proven winner.
+The structural references informed the layout only. None of their copy, proof, figures, or images is used, and none is described as a proven winner.
 
 | Reference | Emulated in this layout | Left out |
 |-----------|-------------------------|----------|
-| Semrush One landing page | Broad platform positioning in the hero; one dominant product visual; four spacious open image/text sections after the hero; proof positioned after the product explanation (the customer-story slot sits between the product sections and the offer); the trial offer repeated in hero, offer, and final section | Its branding, copy, customer figures, trial form, proprietary images |
-| GoHighLevel paid-ad page (and its observed variant) | Focused header with one CTA; split hero with the platform message beside a large product demonstration; the trial action and offer terms visible in the hero | Extensive inventories, tiers, borrowed proof, autonomous-AI promises, a 14-day trial |
-| Vendasta mid-market page | The narrative order of the four product sections: diagnosis (online position), priorities (Do This Next), tools, Lara and services (execution), and reporting (ongoing management) | Agency and reseller positioning; claims that AI fulfils work on its own |
-| Thryv | Business-owner language: each section opens with why an owner would care before naming modules; capability lists stay compact | Its software capabilities, statistics, done-for-you promises, appointment-booking funnel |
+| Semrush One landing page | Broad platform positioning; one dominant product visual (the demo directly under the hero offer line); four spacious open image/text sections after a short introduction; the trial offer repeated in the hero, the offer box, and the closing section | Its branding, copy, customer figures, trial form, proprietary images |
+| GoHighLevel paid-ad page | Simple header with one trial button; the trial action and offer terms visible in the hero; a single prominent offer box | Extensive inventories, tiers, borrowed proof, autonomous-AI promises, a 14-day trial |
+| Vendasta mid-market page | The four-section narrative order: put AI to work on your business context, grow your visibility, create what you need, bring in expert help with tasks and orders connected | Agency and reseller positioning; claims that AI fulfils work on its own |
+| Thryv | Business-owner language: each section leads with what the owner can accomplish before naming tools; capability lists stay compact | Its software capabilities, statistics, done-for-you promises, appointment-booking funnel |
 
 ## Four-section coverage
 
@@ -102,13 +102,15 @@ Dialogs (`components/ui/Dialog.tsx`) use the native `<dialog>`: focus moves to t
 
 | File | Contents |
 |------|----------|
-| `src/config/site.ts` | `CTA_URL`, the two button labels, product name, company line |
+| `src/config/site.ts` | `CTA_URL` (every trial button), the two button labels, product name, company line |
 | `src/config/offer.ts` | Offer box copy, trial badge, price, account note, additional businesses, separate services, allowances text, hero offer line |
 | `src/config/copy.ts` | Hero, intro, the four product sections, closing section, footer, walkthrough chapters |
 | `src/config/faq.ts` | FAQ eyebrow, heading, and the seven questions and answers |
 | `src/config/media.ts` | Video, captions, poster, screens (with alt text and optional CSS framing) |
 | `src/config/story.ts` | The optional customer story (currently `null`) |
 | `src/lib/analytics.ts` | Optional no-op event hooks |
+| `src/components/ui/Button.tsx` | Button sizes and variants, including the `hero` size (the 25% enlargement) and the white `inverse` variant used in the offer box |
+| `src/components/sections/Footer.tsx` | Footer line and the Privacy and Terms links |
 
 ## Offer facts used
 
@@ -136,7 +138,7 @@ A CTA click is not a signup or an activated trial. Attributing registrations, bu
 
 ## Verification
 
-Run on the production build with `npm run check` (typecheck, 11 content tests, build) and `node qa/check-page.mjs` (156 checks, all passing) at 360, 390, 768, and 1440 px:
+Run on the production build with `npm run check` (typecheck, 12 content tests, build) and `node qa/check-page.mjs` (166 checks, all passing) at 360, 390, 768, and 1440 px:
 
 - No horizontal overflow at any width; nine body sections in the required order (hero, intro, four product sections, offer, FAQ, closing); four trial buttons, all `https://legiit.com/command-center/start`; the only other outbound links are Privacy and Terms.
 - Hero button: 20px/700 text at 1440 and 18.75px at 900 and below, 1.4 line height, 67.5px minimum height, 18.75px by 30px padding, 25px gap, 1.25px declared border, 8.75px radius, solid `#6A13CF` on white, centered, never overflowing, icon 23.75px where shown. Header, pricing, and closing buttons keep standard sizes; the pricing button is white with `#6A13CF` text.
@@ -144,7 +146,8 @@ Run on the production build with `npm run check` (typecheck, 11 content tests, b
 - Every image reserves width and height, decodes after scrolling (lazy loading works), and the logo, screenshot, and video fallbacks render when their files are blocked.
 - Video: controls on, no autoplay, poster set, metadata loads at 42.0 s, MP4 requested first and served as `video/mp4` (206), WebM served as `video/webm`, VTT served same-origin as `text/vtt`, one English caption track in `showing` mode with 6 cues; playback starts from the player's own control and runs to `ended` at 1280 x 720 with the play, progress, and complete hooks firing from real media events.
 - Walkthrough: 7 chapters, focus moves in, Previous disables on chapter 1, Next disables on chapter 7, the last chapter is text-only, the chapter image renders with no horizontal overflow, Escape closes and focus returns to "Explore Command Center".
-- Enlarge dialog: one image, Tab stays inside, Close restores focus and releases the scroll lock. "See Plan Allowances And Benefits" and the FAQ open and close by mouse and keyboard. Skip link is first in tab order and 48 px tall when focused. All visible targets are at least 44 px.
+- Enlarge dialog: one image, Tab stays inside, Close restores focus and releases the scroll lock. "See Plan Allowances And Benefits" and the FAQ open and close by mouse and keyboard. Skip link is first in tab order and 48 px tall when focused. All visible targets are at least 44 px. Header, pricing, and closing labels stay on one line at every width; the price text reads exactly "$39 / month after your trial"; the white pricing button shows a white focus ring on the gradient and the video's focus ring is drawn on its frame rather than clipped.
+- An independent six-lens review of the build against the specification (copy exactness, design rules, positioning and claims, destinations and metadata, accessibility and behaviour, code and docs) with three adversarial verifiers per finding confirmed nine items, all fixed in this build; eleven others were rejected as misreadings or intentional decisions.
 - Reduced motion: smooth scrolling and the two icon transitions are disabled under `prefers-reduced-motion`.
 
 Environment note: the headless Chromium used for QA ships without an H.264 decoder, so playback there ran through the WebM fallback source, which is a VP9 transcode of the same supplied MP4 (same frames, same 42 seconds). The MP4 path was verified at the transport level and by inspecting the file (H.264 High, 1280 x 720, 24 fps, 42.00 s, no audio). Confirm MP4 playback once in Chrome, Safari, Firefox, or Edge before launch. `node qa/probe-media.mjs` prints codec support and media responses for any browser you point it at.

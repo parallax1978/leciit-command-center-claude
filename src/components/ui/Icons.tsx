@@ -66,8 +66,3 @@ export const ChevronRight = (p: IconProps) => (
   </svg>
 )
 
-export const Play = (p: IconProps) => (
-  <svg {...base(p)} fill="currentColor" stroke="none">
-    <path d="M8 5.5v13a1 1 0 0 0 1.53.85l10.2-6.5a1 1 0 0 0 0-1.7L9.53 4.65A1 1 0 0 0 8 5.5Z" />
-  </svg>
-)

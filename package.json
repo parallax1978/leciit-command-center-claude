@@ -1,8 +1,8 @@
 {
-  "name": "legiit-command-center-ai-visibility",
+  "name": "legiit-command-center-landing-page",
   "private": true,
   "version": "0.1.0",
-  "description": "Legiit Command Center sales-page mockup, Version C (AI visibility discovery).",
+  "description": "Legiit Command Center landing page: AI powered business command center for business owners.",
   "type": "module",
   "scripts": {
     "dev": "vite",

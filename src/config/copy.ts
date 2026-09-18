@@ -161,7 +161,7 @@ export const WALKTHROUGH: WalkthroughChapter[] = [
   {
     id: 'ongoing',
     title: 'Tasks And Orders',
-    body: 'Tasks hold the actions you decided to take. Orders track freelancer work you purchased and its status. Reports keep a record of progress, and connected analytics show performance once your accounts are linked.',
+    body: 'Tasks hold the actions you decided to take, and orders track the freelancer work you purchased and its status. Reports keep a record of progress, and connected analytics show performance once your accounts are linked.',
     screen: null,
     noScreenNote: 'No capture of the tasks, orders, or reports screens was supplied for this page, so this chapter is described in text.',
   },

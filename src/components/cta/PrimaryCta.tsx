@@ -9,10 +9,10 @@ interface PrimaryCtaProps {
 }
 
 const config = {
-  header: { label: HEADER_CTA_LABEL, size: 'md', variant: 'primary' },
-  hero: { label: PRIMARY_CTA_LABEL, size: 'hero', variant: 'primary' },
-  offer: { label: PRIMARY_CTA_LABEL, size: 'lg', variant: 'inverse' },
-  final: { label: PRIMARY_CTA_LABEL, size: 'lg', variant: 'primary' },
+  header: { label: HEADER_CTA_LABEL, size: 'md', variant: 'primary', icon: 'hidden sm:block' },
+  hero: { label: PRIMARY_CTA_LABEL, size: 'hero', variant: 'primary', icon: '' },
+  offer: { label: PRIMARY_CTA_LABEL, size: 'lg', variant: 'inverse', icon: '' },
+  final: { label: PRIMARY_CTA_LABEL, size: 'lg', variant: 'primary', icon: '' },
 } as const
 
 /**
@@ -20,11 +20,18 @@ const config = {
  * Only the hero placement carries the 25% size increase.
  */
 export function PrimaryCta({ placement, className = '' }: PrimaryCtaProps) {
-  const { label, size, variant } = config[placement]
+  const { label, size, variant, icon } = config[placement]
   return (
-    <LinkButton href={CTA_URL} size={size} variant={variant} className={className} data-cta-placement={placement} onClick={() => track('cta_click', { placement })}>
+    <LinkButton
+      href={CTA_URL}
+      size={size}
+      variant={variant}
+      className={`whitespace-nowrap ${placement === 'header' ? 'shrink-0' : ''} ${className}`}
+      data-cta-placement={placement}
+      onClick={() => track('cta_click', { placement })}
+    >
       {label}
-      <ArrowRight size={iconSize[size]} className={iconClass[size]} />
+      <ArrowRight size={iconSize[size]} className={`shrink-0 ${icon || iconClass[size]}`} />
     </LinkButton>
   )
 }
