@@ -47,7 +47,7 @@ export function PlanCard({ copy, billing, highlighted = false }: PlanCardProps) 
         </div>
         <p className="mt-1 text-sm font-medium text-ink-soft">{copy.persona}</p>
 
-        <div className="mt-4 sm:mt-5">
+        <div className="mt-3 sm:mt-5">
           <p className="flex flex-wrap items-baseline gap-x-1.5">
             <span className="text-5xl font-semibold tracking-[-0.03em] text-ink">{formatUsd(monthlyEquivalent(plan, billing))}</span>{' '}
             <span className="text-lg text-ink-soft">/month</span>
@@ -61,7 +61,7 @@ export function PlanCard({ copy, billing, highlighted = false }: PlanCardProps) 
         </div>
       </div>
 
-      <div className="mt-5">
+      <div className="mt-4 sm:mt-5">
         <LinkButton
           href={routeHref(primaryRoute)}
           variant={highlighted ? 'primary' : 'outline'}

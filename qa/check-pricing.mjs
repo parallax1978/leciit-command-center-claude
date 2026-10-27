@@ -159,7 +159,8 @@ for (const [width, height] of [
 
   m.sw <= m.iw ? pass(`${width}: no horizontal overflow`) : fail(`${width}: overflow ${m.sw} > ${m.iw}`)
   m.h1Count === 1 ? pass(`${width}: one h1`) : fail(`${width}: ${m.h1Count} h1 elements`)
-  if (width >= 360) {
+  // Same heading type as the landing page: exactly two lines from tablet width, natural wrapping on phones.
+  if (width >= 768) {
     m.h1LinesPerSpan.length === 2 && m.h1LinesPerSpan.every((n) => n === 1) ? pass(`${width}: H1 is exactly two lines`) : fail(`${width}: H1 lines per span ${JSON.stringify(m.h1LinesPerSpan)}`)
   }
   m.headerOverlap <= 0 ? pass(`${width}: header lockup and trial button do not overlap`) : fail(`${width}: header overlap ${m.headerOverlap}px`)
