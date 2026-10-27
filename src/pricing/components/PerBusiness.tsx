@@ -23,18 +23,18 @@ export function PerBusiness({ billing }: { billing: BillingPeriod }) {
               {PER_BUSINESS.title}
             </h2>
             <p className="lead mt-4 text-pretty">{PER_BUSINESS.lead}</p>
-            <div className="mt-8">
+            <div className="btn-xl-fit-agency mt-8">
               <LinkButton
                 href={subscribeUrl('agency_dashboard', billing)}
                 variant="primary"
-                size="lg"
+                size="xl"
                 className="w-full whitespace-nowrap sm:w-auto"
                 data-plan-cta="agency_dashboard"
                 data-cta-route="subscribe"
                 onClick={() => track('plan_cta_click', { plan: 'agency_dashboard', billing, placement: 'per-business' })}
               >
                 {PER_BUSINESS.ctaLabel}
-                <ArrowRight size={iconSize.lg} className={`shrink-0 ${iconClass.lg}`} />
+                <ArrowRight size={iconSize.xl} className={`shrink-0 ${iconClass.xl}`} />
               </LinkButton>
               <p className="mt-3 text-sm text-ink-muted">{PER_BUSINESS.ctaNote}</p>
               <p className="mt-1 text-sm leading-relaxed text-ink-soft">

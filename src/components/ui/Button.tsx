@@ -2,7 +2,8 @@ import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'reac
 
 type Variant = 'primary' | 'inverse' | 'outline' | 'outlineInverse' | 'secondary' | 'ghost'
 /** `hero` is the standard `lg` size scaled by 25% (font, padding, gap, icon, border, radius). */
-type Size = 'sm' | 'md' | 'lg' | 'hero'
+/** `xl` is `lg` doubled (see .btn-xl in index.css). */
+type Size = 'sm' | 'md' | 'lg' | 'hero' | 'xl'
 
 /*
  * Each CSS property is set by exactly one class per size or variant, so the
@@ -27,13 +28,14 @@ const sizeClass: Record<Size, string> = {
   lg: 'min-h-[54px] gap-5 rounded-lg border px-6 py-[15px] text-base font-semibold leading-none',
   hero:
     'min-h-[67.5px] max-w-full gap-[25px] rounded-[8.75px] border-[1.25px] px-[30px] py-[18.75px] text-[20px] font-bold leading-[1.4] max-[900px]:text-[18.75px] max-[379px]:px-5',
+  xl: 'btn-xl max-w-full font-semibold',
 }
 
 /** Icon size that matches each button size; the hero icon is 19px scaled by 25%. */
-export const iconSize: Record<Size, number> = { sm: 16, md: 18, lg: 19, hero: 23.75 }
+export const iconSize: Record<Size, number> = { sm: 16, md: 18, lg: 19, hero: 23.75, xl: 38 }
 
 /** Large-button icons are hidden on narrow phones so labels stay on one line without overflowing. */
-export const iconClass: Record<Size, string> = { sm: '', md: '', lg: 'max-[419px]:hidden', hero: 'max-[419px]:hidden' }
+export const iconClass: Record<Size, string> = { sm: '', md: '', lg: 'max-[419px]:hidden', hero: 'max-[419px]:hidden', xl: 'max-[419px]:hidden' }
 
 export function buttonClass(variant: Variant = 'primary', size: Size = 'md', className = '') {
   return `${baseClass} ${variantClass[variant]} ${sizeClass[size]} ${className}`

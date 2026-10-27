@@ -53,6 +53,42 @@
   .btn-brand:hover {
     filter: brightness(0.95);
   }
+  /*
+   * Extra-large buttons: twice the `lg` size (108px tall, 32px label, 2px border, 16px radius, gap
+   * and arrow scaled with the label). Inside a .btn-xl-fit container the label shrinks to the
+   * largest size that still fits on one line, and the height stays doubled. --btn-em is the widest
+   * label's width in ems plus its gap, arrow, and side padding ("Start My 7-Day Free Trial" for
+   * .btn-xl-fit, "Choose Agency" for .btn-xl-fit-agency). Arrows are hidden below 420px.
+   */
+  .btn-xl-fit {
+    container-type: inline-size;
+    --btn-em: 15.96;
+  }
+  .btn-xl-fit-agency {
+    container-type: inline-size;
+    --btn-em: 11.6;
+  }
+  @media (max-width: 419px) {
+    .btn-xl-fit {
+      --btn-em: 13.52;
+    }
+    .btn-xl-fit-agency {
+      --btn-em: 9.16;
+    }
+  }
+  .btn-xl {
+    font-size: min(32px, 100cqi / var(--btn-em, 15.96));
+    min-height: 108px;
+    padding-inline: 0.75em;
+    gap: 1.25em;
+    border-width: 2px;
+    border-radius: 16px;
+    line-height: 1.15;
+  }
+  .btn-xl > svg {
+    width: 1.1875em;
+    height: 1.1875em;
+  }
   .h2 {
     @apply text-[1.875rem] font-semibold leading-[1.1] tracking-[-0.02em] text-ink sm:text-[2.25rem] lg:text-[2.5rem];
   }

@@ -18,24 +18,24 @@ export function PricingFinal({ billing }: { billing: BillingPeriod }) {
             {PRICING_FINAL.title}
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-balance text-[17px] leading-relaxed text-white/95 sm:text-lg">{PRICING_FINAL.body}</p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="btn-xl-fit mt-8 flex flex-col items-center justify-center gap-3 lg:flex-row">
             <LinkButton
               href={ROUTES.trialStart}
               variant="inverse"
-              size="lg"
-              className="w-full whitespace-nowrap sm:w-auto"
+              size="xl"
+              className="w-full whitespace-nowrap lg:w-auto"
               data-plan-cta="business_dashboard"
               data-cta-route="trial"
               onClick={() => track('plan_cta_click', { plan: 'business_dashboard', billing, placement: 'final' })}
             >
               {BUSINESS_CARD.ctaLabel}
-              <ArrowRight size={iconSize.lg} className={`shrink-0 ${iconClass.lg}`} />
+              <ArrowRight size={iconSize.xl} className={`shrink-0 ${iconClass.xl}`} />
             </LinkButton>
             <LinkButton
               href={subscribeUrl('agency_dashboard', billing)}
               variant="outlineInverse"
-              size="lg"
-              className="w-full whitespace-nowrap sm:w-auto"
+              size="xl"
+              className="w-full whitespace-nowrap lg:w-auto"
               data-plan-cta="agency_dashboard"
               data-cta-route="subscribe"
               onClick={() => track('plan_cta_click', { plan: 'agency_dashboard', billing, placement: 'final' })}

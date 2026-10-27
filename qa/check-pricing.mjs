@@ -146,8 +146,14 @@ for (const [width, height] of [
       setupRows,
       anchors: ['business', 'agency', 'per-business', 'compare'].filter((id) => !document.getElementById(id)),
       cardRows: ['a[data-plan-cta]', 'ul'].map((sel) => ['business_dashboard', 'agency_dashboard'].map((id) => Math.round(rect(document.querySelector(`article[aria-labelledby="plan-${id}"] ${sel}`)).top))),
-      businessCtaBottom: bottom('article[aria-labelledby="plan-business_dashboard"] a[data-plan-cta]'),
-      agencyCtaBottom: bottom('article[aria-labelledby="plan-agency_dashboard"] a[data-plan-cta]'),
+      businessCtaTop: Math.round(rect(document.querySelector('article[aria-labelledby="plan-business_dashboard"] a[data-plan-cta]')).top),
+      agencyCtaTop: Math.round(rect(document.querySelector('article[aria-labelledby="plan-agency_dashboard"] a[data-plan-cta]')).top),
+      bigButtons: Array.from(document.querySelectorAll('a.btn-xl')).map((a) => ({
+        label: a.textContent.trim(),
+        fits: a.scrollWidth <= a.clientWidth + 1,
+        height: Math.round(rect(a).height),
+        font: getComputedStyle(a).fontSize,
+      })),
       headerCta: document.querySelector('a[data-cta-placement="header"]')?.href,
       headerOverlap: (() => {
         const visible = Array.from(document.querySelectorAll('header a[href="#top"] > *')).filter((el) => getComputedStyle(el).display !== 'none')
@@ -182,16 +188,21 @@ for (const [width, height] of [
   m.anchors.length === 0 ? pass(`${width}: anchors #business, #agency, #per-business, #compare exist`) : fail(`${width}: missing anchors ${m.anchors}`)
   m.headerCta === TRIAL ? pass(`${width}: header button goes to the trial start`) : fail(`${width}: header button ${m.headerCta}`)
   // 320px is the WCAG reflow width (400% zoom); there the header's trial button is the first-screen action.
+  // The plan buttons are 108px tall, so "in the first screen" means at least 44px of the button shows.
   if (width >= 360) {
-    m.businessCtaBottom !== null && m.businessCtaBottom <= m.ih
-      ? pass(`${width}x${height}: Business trial button is in the first screen (bottom ${m.businessCtaBottom})`)
-      : fail(`${width}x${height}: Business trial button below the fold (bottom ${m.businessCtaBottom})`)
+    m.businessCtaTop + 44 <= m.ih
+      ? pass(`${width}x${height}: Business trial button shows in the first screen (top ${m.businessCtaTop})`)
+      : fail(`${width}x${height}: Business trial button below the fold (top ${m.businessCtaTop})`)
   }
+  const badButtons = m.bigButtons.filter((b) => !b.fits || b.height < 108)
+  m.bigButtons.length === 7 && badButtons.length === 0
+    ? pass(`${width}: all 7 double-size buttons are 108px tall with labels on one line (${[...new Set(m.bigButtons.map((b) => b.font))].join(', ')})`)
+    : fail(`${width}: double-size buttons ${JSON.stringify(badButtons.length ? badButtons : m.bigButtons.length)}`)
   if (width >= 768) {
     m.cardRows.every(([b, a]) => Math.abs(b - a) <= 2) ? pass(`${width}: both cards' buttons and lists line up`) : fail(`${width}: card rows out of line ${JSON.stringify(m.cardRows)}`)
-    m.agencyCtaBottom !== null && m.agencyCtaBottom <= m.ih
-      ? pass(`${width}x${height}: Agency button is in the first screen (bottom ${m.agencyCtaBottom})`)
-      : fail(`${width}x${height}: Agency button below the fold (bottom ${m.agencyCtaBottom})`)
+    m.agencyCtaTop + 44 <= m.ih
+      ? pass(`${width}x${height}: Agency button shows in the first screen (top ${m.agencyCtaTop})`)
+      : fail(`${width}x${height}: Agency button below the fold (top ${m.agencyCtaTop})`)
   }
   errors.length === 0 ? pass(`${width}: no console errors`) : fail(`${width}: console errors ${errors.join(' | ')}`)
 

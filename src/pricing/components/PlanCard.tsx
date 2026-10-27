@@ -61,18 +61,18 @@ export function PlanCard({ copy, billing, highlighted = false }: PlanCardProps) 
         </div>
       </div>
 
-      <div className="mt-4 sm:mt-5">
+      <div className="btn-xl-fit mt-4 sm:mt-5">
         <LinkButton
           href={routeHref(primaryRoute)}
           variant={highlighted ? 'primary' : 'outline'}
-          size="lg"
+          size="xl"
           className="w-full whitespace-nowrap"
           data-plan-cta={plan.id}
           data-cta-route={primaryRoute}
           onClick={() => track('plan_cta_click', { plan: plan.id, billing, placement: 'plan-card' })}
         >
           {copy.ctaLabel}
-          <ArrowRight size={iconSize.lg} className={`shrink-0 ${iconClass.lg}`} />
+          <ArrowRight size={iconSize.xl} className={`shrink-0 ${iconClass.xl}`} />
         </LinkButton>
         <p className="mt-3 text-balance text-center text-sm text-ink-muted">{copy.ctaNote}</p>
         <p className="mt-1 text-balance text-center text-sm leading-relaxed text-ink-soft">

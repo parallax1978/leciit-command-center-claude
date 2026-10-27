@@ -82,11 +82,11 @@ export function CompareTable({ billing }: { billing: BillingPeriod }) {
             ))}
           </table>
         </div>
-        <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:justify-end">
+        <div className="btn-xl-fit mt-10 flex flex-col gap-3 lg:flex-row lg:justify-end">
           <LinkButton
             href={ROUTES.trialStart}
             variant="primary"
-            size="md"
+            size="xl"
             className="whitespace-nowrap"
             data-plan-cta="business_dashboard"
             data-cta-route="trial"
@@ -97,7 +97,7 @@ export function CompareTable({ billing }: { billing: BillingPeriod }) {
           <LinkButton
             href={subscribeUrl('agency_dashboard', billing)}
             variant="outline"
-            size="md"
+            size="xl"
             className="whitespace-nowrap"
             data-plan-cta="agency_dashboard"
             data-cta-route="subscribe"
@@ -106,7 +106,7 @@ export function CompareTable({ billing }: { billing: BillingPeriod }) {
             {AGENCY_CARD.ctaLabel}
           </LinkButton>
         </div>
-        <AgencyNote billing={billing} placement="compare" className="mt-3 sm:text-right" />
+        <AgencyNote billing={billing} placement="compare" className="mt-3 lg:text-right" />
       </Container>
     </section>
   )
