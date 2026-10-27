@@ -8,16 +8,22 @@ const LEGAL_LINKS = [
   { label: 'Terms', href: 'https://legiit.com/terms' },
 ] as const
 
-export function Footer() {
+interface FooterLink {
+  label: string
+  href: string
+}
+
+/** Defaults to the landing page's legal links; the pricing page adds support and log-in links. */
+export function Footer({ links = LEGAL_LINKS }: { links?: readonly FooterLink[] } = {}) {
   return (
     <footer className="border-t border-line py-8">
       <Container className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <Logo height={22} />
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-ink-muted">
           <p>{FOOTER.line}</p>
-          <nav aria-label="Legal">
-            <ul className="flex items-center gap-x-5">
-              {LEGAL_LINKS.map((link) => (
+          <nav aria-label="Footer">
+            <ul className="flex flex-wrap items-center gap-x-5">
+              {links.map((link) => (
                 <li key={link.href}>
                   <a href={link.href} className="-mx-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md px-2 text-ink-soft underline-offset-4 hover:underline btn-focus">
                     {link.label}

@@ -1,5 +1,5 @@
-import { AGENCY_PLAN, BUSINESS_PLAN, MARKETPLACE_PLAN, type PaidPlan } from './plans'
-import { annualSavings, formatCount, formatUsd, perIncludedBusiness, yearlyCost } from './price'
+import { AGENCY_PLAN, BUSINESS_PLAN, LEGIIT_BUCKS_PERCENT, MARKETPLACE_PLAN, type PaidPlan } from './plans'
+import { annualDiscountPercent, annualSavings, formatCount, formatUsd, monthlyEquivalent, perIncludedBusiness, yearlyCost } from './price'
 import type { FaqItem } from '../config/faq'
 
 /**
@@ -10,58 +10,103 @@ import type { FaqItem } from '../config/faq'
  */
 export const PRICING_HERO = {
   eyebrow: 'Command Center pricing',
-  h1Line1: 'One Business Or Twenty.',
-  h1Line2: 'One Command Center.',
-  subhead: 'Try the Business plan free for 7 days, or manage up to 20 businesses on Agency. Both plans include the full Command Center.',
+  h1Line1: 'Try Command Center',
+  h1Line2: `Free For ${BUSINESS_PLAN.trialDays} Days`,
+  /** Rendered as one sentence; the link text jumps to the Agency card. */
+  subheadBefore: 'Start free on the Business plan, or ',
+  subheadLink: 'choose Agency',
+  subheadAfter: ` to manage up to ${AGENCY_PLAN.businessesIncluded} businesses.`,
 } as const
+
+/** Where a plan link goes: the trial start, the sign-in checkout for a plan, or marketplace registration. */
+export type CtaRoute = 'trial' | 'subscribe' | 'register'
 
 export interface PlanCardCopy {
   plan: PaidPlan
+  /** Anchor id, so old links such as /pricing/agency-plan can redirect to /pricing#agency. */
+  anchorId: string
   persona: string
-  summary: string
-  badge?: string
-  /** Up to five short points; the full list lives in the comparison table. */
+  /** The same rows in the same order on both cards, so they compare line by line. */
   points: string[]
   ctaLabel: string
   /** One short line under the button. */
   ctaNote: string
+  /** A quieter second route under the button, written as a sentence with one link. */
+  altRoute: { before: string; linkLabel: string; after: string; route: CtaRoute }
 }
+
+const allowanceLine = (plan: PaidPlan) => `${plan.allowances.audits} Audits, ${plan.allowances.keywords} Keywords, ${plan.allowances.backlinkData} Backlink Data`
 
 export const BUSINESS_CARD: PlanCardCopy = {
   plan: BUSINESS_PLAN,
+  anchorId: 'business',
   persona: 'For owners running one business',
-  summary: 'Everything in Command Center for your business, with a free trial to start.',
-  badge: 'Popular',
   points: [
     '1 business included',
-    'Full Command Center access with Lara AI',
+    'Full business dashboard access',
     `${formatCount(BUSINESS_PLAN.aiCreditsMonthly)} AI credits each month`,
-    '3 Audits, 5 Keywords, 25 Backlink Data',
+    allowanceLine(BUSINESS_PLAN),
+    `Additional businesses ${formatUsd(BUSINESS_PLAN.additionalBusinessMonthly)}/month each`,
     'Support included',
   ],
   ctaLabel: 'Start My 7-Day Free Trial',
-  ctaNote: 'Add your website and email to begin.',
+  ctaNote: 'Begin with your website and email.',
+  altRoute: { before: 'Already used your trial? ', linkLabel: 'Subscribe to Business', after: '.', route: 'subscribe' },
 }
 
 export const AGENCY_CARD: PlanCardCopy = {
   plan: AGENCY_PLAN,
-  persona: 'For agencies and multi-business owners',
-  summary: 'Run up to 20 businesses from one login, with higher allowances.',
+  anchorId: 'agency',
+  persona: 'For agencies and owners running several businesses',
   points: [
-    'Up to 20 businesses included',
-    'Full Command Center access with Lara AI',
+    `Up to ${AGENCY_PLAN.businessesIncluded} businesses included`,
+    'Full business dashboard access',
     `${formatCount(AGENCY_PLAN.aiCreditsMonthly)} AI credits each month`,
-    '25 Audits, 50 Keywords, 500 Backlink Data',
+    allowanceLine(AGENCY_PLAN),
+    `Additional businesses ${formatUsd(AGENCY_PLAN.additionalBusinessMonthly)}/month each`,
     'Support included',
   ],
-  ctaLabel: 'Get The Agency Plan',
-  ctaNote: 'Sign in or create an account to check out.',
+  ctaLabel: 'Choose Agency',
+  ctaNote: 'Log in to your Legiit account to check out.',
+  altRoute: { before: 'New to Legiit? ', linkLabel: 'Try Business free for 7 days', after: ', then upgrade to Agency.', route: 'trial' },
 }
 
 export const MARKETPLACE_STRIP = {
   title: 'Only buying or selling services?',
-  body: `A Legiit marketplace account is free, with no subscription and no dashboard access. Sellers pay a ${MARKETPLACE_PLAN.saleFeePercent}% fee per sale.`,
+  body: `A Legiit marketplace account is free to join, with no subscription and no dashboard access. Sellers pay a ${MARKETPLACE_PLAN.saleFeePercent}% fee per sale.`,
   ctaLabel: 'Create A Free Account',
+} as const
+
+/** Representative setups priced from the published monthly rates (NN/g: show common cases and their prices). */
+export interface SetupRow {
+  businesses: string
+  plan: string
+  price: string
+}
+
+const extra = BUSINESS_PLAN.additionalBusinessMonthly
+
+export const PER_BUSINESS = {
+  eyebrow: 'Managing more than one business?',
+  title: `One plan for up to ${AGENCY_PLAN.businessesIncluded} businesses.`,
+  lead: `Agency includes up to ${AGENCY_PLAN.businessesIncluded} businesses for ${formatUsd(AGENCY_PLAN.monthlyPrice)}/month, which is ${formatUsd(perIncludedBusiness(AGENCY_PLAN, 'monthly'))} per business with all ${AGENCY_PLAN.businessesIncluded} in use. Each additional business is ${formatUsd(extra)}/month on either plan.`,
+  tableCaption: 'Common setups on monthly billing',
+  rows: [
+    { businesses: '1', plan: 'Business', price: `${formatUsd(BUSINESS_PLAN.monthlyPrice)}/month` },
+    { businesses: '2', plan: 'Business plus 1 additional business', price: `${formatUsd(BUSINESS_PLAN.monthlyPrice + extra)}/month` },
+    { businesses: `Up to ${AGENCY_PLAN.businessesIncluded}`, plan: 'Agency', price: `${formatUsd(AGENCY_PLAN.monthlyPrice)}/month` },
+    {
+      businesses: `${AGENCY_PLAN.businessesIncluded + 1} or more`,
+      plan: 'Agency plus additional businesses',
+      price: `${formatUsd(AGENCY_PLAN.monthlyPrice)}/month plus ${formatUsd(AGENCY_PLAN.additionalBusinessMonthly)}/month for each business over ${AGENCY_PLAN.businessesIncluded}`,
+    },
+  ] satisfies SetupRow[],
+  tableNote: `Annual billing takes ${annualDiscountPercent(AGENCY_PLAN)}% off the plan price: ${formatUsd(monthlyEquivalent(AGENCY_PLAN, 'yearly'))}/month for Agency, billed at ${formatUsd(yearlyCost(AGENCY_PLAN, 'yearly'))} a year.`,
+  ctaLabel: AGENCY_CARD.ctaLabel,
+  ctaNote: AGENCY_CARD.ctaNote,
+  fallbackBefore: 'Not ready to commit? ',
+  fallbackLink: 'Start with the 7-day Business trial',
+  fallbackAfter: ' and upgrade as you add businesses.',
 } as const
 
 /** What both plans include, from the product facts the landing page uses. */
@@ -99,7 +144,11 @@ export interface CompareGroup {
   rows: CompareRow[]
 }
 
-const billedYearly = (plan: PaidPlan) => ({ main: `${formatUsd(yearlyCost(plan, 'yearly'))}/year`, sub: `${formatUsd(yearlyCost(plan, 'yearly') / 12)}/month` })
+const billedYearly = (plan: PaidPlan) => ({ main: `${formatUsd(yearlyCost(plan, 'yearly'))}/year`, sub: `${formatUsd(monthlyEquivalent(plan, 'yearly'))}/month` })
+const perBusiness = (plan: PaidPlan) => ({
+  main: `${formatUsd(perIncludedBusiness(plan, 'monthly'))}/month`,
+  sub: `${formatUsd(perIncludedBusiness(plan, 'yearly'))} billed annually`,
+})
 
 export const COMPARE_GROUPS: CompareGroup[] = [
   {
@@ -108,40 +157,38 @@ export const COMPARE_GROUPS: CompareGroup[] = [
       { label: 'Billed monthly', business: `${formatUsd(BUSINESS_PLAN.monthlyPrice)}/month`, agency: `${formatUsd(AGENCY_PLAN.monthlyPrice)}/month` },
       { label: 'Billed annually', business: billedYearly(BUSINESS_PLAN), agency: billedYearly(AGENCY_PLAN) },
       { label: 'Annual saving', business: `${formatUsd(annualSavings(BUSINESS_PLAN))}/year`, agency: `${formatUsd(annualSavings(AGENCY_PLAN))}/year` },
-      { label: 'Free trial', business: '7 days', agency: false },
+      { label: 'Free trial', business: `${BUSINESS_PLAN.trialDays} days`, agency: 'Not offered' },
     ],
   },
   {
     title: 'Businesses',
     rows: [
-      { label: 'Businesses included', business: '1', agency: 'Up to 20' },
-      { label: 'Additional businesses', business: '$10/month each', agency: '$10/month each' },
-      {
-        label: 'Cost per included business',
-        business: `${formatUsd(BUSINESS_PLAN.monthlyPrice)}/month`,
-        agency: `${formatUsd(perIncludedBusiness(AGENCY_PLAN, 'monthly'))}/month`,
-        note: 'Billed monthly, with every included business in use.',
-      },
+      { label: 'Businesses included', business: String(BUSINESS_PLAN.businessesIncluded), agency: `Up to ${AGENCY_PLAN.businessesIncluded}` },
+      { label: 'Additional businesses', business: `${formatUsd(BUSINESS_PLAN.additionalBusinessMonthly)}/month each`, agency: `${formatUsd(AGENCY_PLAN.additionalBusinessMonthly)}/month each` },
+      { label: 'Price per included business', business: perBusiness(BUSINESS_PLAN), agency: perBusiness(AGENCY_PLAN), note: 'With every included business in use.' },
     ],
   },
   {
-    title: 'Command Center',
+    title: 'Allowances',
     rows: [
-      { label: 'Full business dashboard access', business: true, agency: true },
       { label: 'AI credits', business: `${formatCount(BUSINESS_PLAN.aiCreditsMonthly)} each month`, agency: `${formatCount(AGENCY_PLAN.aiCreditsMonthly)} each month` },
       { label: 'Audits', business: String(BUSINESS_PLAN.allowances.audits), agency: String(AGENCY_PLAN.allowances.audits) },
       { label: 'Keywords', business: String(BUSINESS_PLAN.allowances.keywords), agency: String(AGENCY_PLAN.allowances.keywords) },
       { label: 'Backlink Data', business: String(BUSINESS_PLAN.allowances.backlinkData), agency: String(AGENCY_PLAN.allowances.backlinkData) },
-      { label: 'Support', business: 'Included', agency: 'Included' },
     ],
   },
   {
-    title: 'Marketplace and plan changes',
+    title: 'Included in both',
     rows: [
-      { label: 'Legiit Bucks back on purchases', business: '2%', agency: '2%' },
+      { label: 'Full business dashboard access', business: true, agency: true },
+      { label: 'Support', business: 'Included', agency: 'Included' },
+      { label: 'Legiit Bucks on purchases', business: `${LEGIIT_BUCKS_PERCENT}% back`, agency: `${LEGIIT_BUCKS_PERCENT}% back` },
       { label: 'Freelance services', business: 'Purchased separately', agency: 'Purchased separately' },
-      { label: 'Change plans', business: 'Can upgrade to Agency', agency: 'Can downgrade to Business' },
     ],
+  },
+  {
+    title: 'Plan changes',
+    rows: [{ label: 'Switch plans', business: 'Can upgrade to Agency', agency: 'Can downgrade to Business' }],
   },
 ]
 
@@ -150,30 +197,38 @@ export const PRICING_FAQ_COPY = {
   title: 'Pricing questions, answered.',
 } as const
 
+/** Every answer restates published plan data or the live trial flow. Questions are buttons, so they use Initial Caps. */
 export const PRICING_FAQ: FaqItem[] = [
   {
-    id: 'trial',
-    question: 'How Does The 7-Day Free Trial Work?',
+    id: 'trial-start',
+    question: 'What Do I Need To Start The Free Trial?',
+    answer: ['Your website and email address. Then you create your account and add your business details.'],
+  },
+  {
+    id: 'trial-end',
+    question: 'What Happens When My 7 Days End?',
     answer: [
-      'Start with your website and email, then create your account and add your business details. When the 7 days end, upgrade to keep access to your dashboard data and insights.',
+      `Your free trial of the Business Dashboard ends, and you are asked to upgrade to keep accessing your data and insights. Business is ${formatUsd(BUSINESS_PLAN.monthlyPrice)}/month billed monthly, or ${formatUsd(BUSINESS_PLAN.yearlyPrice)}/year billed annually.`,
     ],
   },
   {
     id: 'agency-trial',
-    question: 'Is There A Free Trial For The Agency Plan?',
-    answer: ['The free trial is for the Business plan. Business can upgrade to Agency when you are ready to manage more businesses.'],
+    question: 'Is There A Free Trial For Agency?',
+    answer: ['No, the 7-day free trial is for the Business plan. Business can upgrade to Agency when you need more businesses.'],
   },
   {
     id: 'annual',
-    question: 'How Much Do I Save With Annual Billing?',
+    question: 'How Does Annual Billing Work?',
     answer: [
-      `Annual billing costs 20% less. Business is ${formatUsd(BUSINESS_PLAN.yearlyPrice)} a year instead of ${formatUsd(yearlyCost(BUSINESS_PLAN, 'monthly'))}, and Agency is ${formatUsd(AGENCY_PLAN.yearlyPrice)} a year instead of ${formatUsd(yearlyCost(AGENCY_PLAN, 'monthly'))}.`,
+      `Annual billing costs ${annualDiscountPercent(BUSINESS_PLAN)}% less than paying monthly. Business is ${formatUsd(BUSINESS_PLAN.yearlyPrice)}/year (${formatUsd(monthlyEquivalent(BUSINESS_PLAN, 'yearly'))}/month), and Agency is ${formatUsd(AGENCY_PLAN.yearlyPrice)}/year (${formatUsd(monthlyEquivalent(AGENCY_PLAN, 'yearly'))}/month).`,
     ],
   },
   {
     id: 'more-businesses',
     question: 'Can I Add More Businesses?',
-    answer: ['Yes. Business includes one business and Agency includes up to 20, and each additional business is $10/month on either plan.'],
+    answer: [
+      `Yes, each additional business is ${formatUsd(BUSINESS_PLAN.additionalBusinessMonthly)}/month on either plan. Business includes 1 business, and Agency includes up to ${AGENCY_PLAN.businessesIncluded}.`,
+    ],
   },
   {
     id: 'switch',
@@ -183,21 +238,30 @@ export const PRICING_FAQ: FaqItem[] = [
   {
     id: 'freelance',
     question: 'Are Freelance Services Included?',
-    answer: ['No. Freelance services on the Legiit marketplace are purchased separately, and both plans give you 2% back in Legiit Bucks on purchases.'],
+    answer: [`No, freelance services on Legiit are purchased separately. Both plans give you ${LEGIIT_BUCKS_PERCENT}% back in Legiit Bucks on purchases.`],
   },
   {
     id: 'marketplace',
     question: 'What If I Only Need The Marketplace?',
-    answer: [`A marketplace account is free, with no subscription and no dashboard access. Sellers pay a ${MARKETPLACE_PLAN.saleFeePercent}% fee per sale.`],
+    answer: [MARKETPLACE_STRIP.body],
   },
   {
     id: 'questions',
-    question: 'Who Can I Ask About Billing?',
-    answer: ['Contact Legiit support before you buy. You can reach the team at help@legiit.com or through the support center.'],
+    question: 'Who Can I Ask Before I Buy?',
+    answer: ['Email help@legiit.com or visit the Legiit support center.'],
   },
 ]
 
 export const PRICING_FINAL = {
   title: 'Start with one business. Grow to twenty.',
-  body: 'Try Business free for 7 days, or bring every client into Command Center with Agency.',
+  body: `Try Business free for ${BUSINESS_PLAN.trialDays} days, or choose Agency to manage up to ${AGENCY_PLAN.businessesIncluded} businesses.`,
 } as const
+
+/** Footer links on the pricing page. Every destination was checked on the live site. */
+export const PRICING_FOOTER_LINKS = [
+  { label: 'Privacy', href: 'https://legiit.com/privacy' },
+  { label: 'Terms', href: 'https://legiit.com/terms' },
+  { label: 'Support', href: 'https://legiit.freshdesk.com/support/home' },
+  { label: 'Contact', href: 'mailto:help@legiit.com' },
+  { label: 'Log In', href: 'https://legiit.com/sign-in' },
+] as const

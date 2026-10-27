@@ -9,10 +9,10 @@ export function IncludedSection() {
       <Container>
         <div className="max-w-2xl">
           <p className="eyebrow">Included in both plans</p>
-          <h2 id="included-heading" className="h2 mt-3">
-            The full Command Center, on every plan.
+          <h2 id="included-heading" className="h2 mt-3 text-balance">
+            The full Command Center, on either plan.
           </h2>
-          <p className="lead mt-4">Plans differ by how many businesses you run and your monthly allowances. The tools are the same.</p>
+          <p className="lead mt-4 text-pretty">Plans differ by businesses included, allowances, and the free trial. Both include full business dashboard access.</p>
         </div>
         <div className="mt-10 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
           {INCLUDED_GROUPS.map((group) => (

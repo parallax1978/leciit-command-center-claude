@@ -3,12 +3,14 @@
  *
  * Usage: node qa/check-pricing.mjs [baseUrl]   (default http://127.0.0.1:4173)
  *
- * Checks at 360, 390, 768, and 1440 px: no horizontal overflow, heading order,
+ * Checks at 360x740, 390x844, 768x1024, and 1440x900: no horizontal overflow,
+ * heading order, a two-line H1 on phones, plan buttons in the first screen,
  * exact prices and billing disclosures in both billing states (from the
- * verified Legiit plan data), plan button destinations including the billing
- * parameter, keyboard operation of the billing switch, the FAQ accordion,
- * comparison table semantics, Initial Caps on every button label, no em
- * dashes, 44px targets, and page metadata. Screenshots go to qa/screenshots.
+ * verified Legiit plan data), every plan link's destination including the
+ * billing parameter, keyboard operation of the billing switch, the FAQ
+ * accordion, table semantics, Initial Caps on every button label, no em
+ * dashes, no "Popular" label, no rounded $39, 44px targets, and page
+ * metadata. Screenshots go to qa/screenshots.
  */
 import { chromium } from 'playwright-core'
 import { mkdirSync, existsSync } from 'node:fs'
@@ -28,9 +30,24 @@ const TRIAL = 'https://legiit.com/command-center/start'
 const REGISTER = 'https://legiit.com/register'
 const subscribe = (plan, billing) => `https://legiit.com/sign-in?redirect=${encodeURIComponent(`/subscription-purchase?plan=${plan}&billing=${billing}`)}`
 const EXPECT = {
-  monthly: { business: '$49', agency: '$169', businessLine: 'Billed monthly. Pay annually and save $117.60 a year.', agencyLine: 'Billed monthly. Pay annually and save $405.60 a year.', perBusiness: '$8.45 per business' },
-  yearly: { business: '$39.20', agency: '$135.20', businessLine: 'Billed annually at $470.40. $49/month if billed monthly.', agencyLine: 'Billed annually at $1,622.40. $169/month if billed monthly.', perBusiness: '$6.76 per business' },
+  monthly: {
+    business: '$49',
+    agency: '$169',
+    businessLine: 'Billed monthly. Save $117.60 a year with annual billing.',
+    agencyLine: 'Billed monthly. Save $405.60 a year with annual billing.',
+    perBusiness: '$8.45 per business per month with all 20 in use',
+  },
+  yearly: {
+    business: '$39.20',
+    agency: '$135.20',
+    businessLine: 'Billed annually at $470.40. Save $117.60 a year.',
+    agencyLine: 'Billed annually at $1,622.40. Save $405.60 a year.',
+    perBusiness: '$6.76 per business per month with all 20 in use',
+  },
 }
+const SETUPS = ['1 Business $49/month', '2 Business plus 1 additional business $59/month', 'Up to 20 Agency $169/month', '21 or more Agency plus additional businesses $169/month plus $10/month for each business over 20']
+// Every plan link on the page: 4 in the cards, 1 marketplace, 2 per-business, 2 compare, 2 final.
+const EXPECTED_ROUTED_LINKS = 11
 
 const readCards = (page) =>
   page.evaluate(() => {
@@ -42,54 +59,96 @@ const readCards = (page) =>
     return { business: card('business_dashboard'), agency: card('agency_dashboard') }
   })
 
-for (const width of [360, 390, 768, 1440]) {
-  const context = await browser.newContext({ viewport: { width, height: 900 } })
+for (const [width, height] of [
+  [360, 740],
+  [390, 844],
+  [768, 1024],
+  [1440, 900],
+]) {
+  const context = await browser.newContext({ viewport: { width, height } })
   const page = await context.newPage()
   const errors = []
   page.on('pageerror', (e) => errors.push(e.message))
-  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()) })
+  page.on('console', (m) => {
+    if (m.type() === 'error') errors.push(m.text())
+  })
   await page.goto(url, { waitUntil: 'networkidle' })
 
   const m = await page.evaluate(() => {
     const rect = (el) => el.getBoundingClientRect()
     const headings = Array.from(document.querySelectorAll('h1,h2,h3')).map((h) => ({ level: Number(h.tagName[1]), text: h.textContent.trim() }))
     const buttonLabels = Array.from(document.querySelectorAll('button, a[data-plan-cta], a[data-cta-placement], label[for]'))
-      .filter((el) => el.offsetParent !== null || el.closest('details'))
+      .filter((el) => el.offsetParent !== null)
       .map((el) => (el.innerText || el.textContent || '').trim().replace(/\s+/g, ' '))
       .filter(Boolean)
-    const notCaps = buttonLabels.filter((t) => t.split(' ').filter((w) => /[A-Za-z]/.test(w)).some((w) => !/^[^A-Za-z]*[A-Z0-9]/.test(w)))
+    const notCaps = buttonLabels.filter((t) =>
+      t
+        .split(' ')
+        .filter((w) => /[A-Za-z]/.test(w))
+        .some((w) => !/^[^A-Za-z]*[A-Z0-9]/.test(w)),
+    )
     const small = Array.from(document.querySelectorAll('a[href], button, label[for]'))
       .filter((el) => el.offsetParent !== null && !el.classList.contains('sr-only'))
       .map((el) => ({ t: (el.getAttribute('aria-label') || el.textContent || '').trim().slice(0, 40), h: Math.round(rect(el).height), w: Math.round(rect(el).width), inline: getComputedStyle(el).display === 'inline' }))
       .filter((x) => !x.inline && (x.h < 44 || x.w < 44))
-    const table = document.querySelector('table')
+    const table = document.querySelector('#compare table')
+    const setupRows = Array.from(document.querySelectorAll('#per-business tbody tr')).map((tr) => tr.innerText.replace(/\s+/g, ' ').trim())
+    const h1Spans = Array.from(document.querySelectorAll('h1 > span'))
+    const bottom = (sel) => {
+      const el = document.querySelector(sel)
+      return el ? Math.round(rect(el).bottom) : null
+    }
+    const text = document.body.innerText
     return {
       sw: document.documentElement.scrollWidth,
       iw: window.innerWidth,
+      ih: window.innerHeight,
       title: document.title,
       desc: document.querySelector('meta[name="description"]')?.content,
       headings,
       h1Count: headings.filter((h) => h.level === 1).length,
-      emDash: /—/.test(document.body.innerText),
+      h1LinesPerSpan: h1Spans.map((s) => s.getClientRects().length),
+      emDash: /—/.test(text),
+      popular: /popular/i.test(text),
+      rounded39: /\$39(?!\.20)/.test(text),
       notCaps,
       small,
       tableOk: !!table && table.querySelectorAll('th[scope="col"]').length === 2 && table.querySelectorAll('th[scope="row"]').length >= 10 && !!table.querySelector('caption'),
-      planCtas: Array.from(document.querySelectorAll('a[data-plan-cta]')).map((a) => ({ plan: a.dataset.planCta, href: a.href, text: a.innerText.trim() })),
-      radios: Array.from(document.querySelectorAll('input[type="radio"]')).map((r) => ({ value: r.value, checked: r.checked })),
+      setupRows,
+      anchors: ['business', 'agency', 'per-business', 'compare'].filter((id) => !document.getElementById(id)),
+      cardRows: ['a[data-plan-cta]', 'ul'].map((sel) => ['business_dashboard', 'agency_dashboard'].map((id) => Math.round(rect(document.querySelector(`article[aria-labelledby="plan-${id}"] ${sel}`)).top))),
+      businessCtaBottom: bottom('article[aria-labelledby="plan-business_dashboard"] a[data-plan-cta]'),
+      agencyCtaBottom: bottom('article[aria-labelledby="plan-agency_dashboard"] a[data-plan-cta]'),
+      headerCta: document.querySelector('a[data-cta-placement="header"]')?.href,
     }
   })
 
   m.sw <= m.iw ? pass(`${width}: no horizontal overflow`) : fail(`${width}: overflow ${m.sw} > ${m.iw}`)
   m.h1Count === 1 ? pass(`${width}: one h1`) : fail(`${width}: ${m.h1Count} h1 elements`)
+  m.h1LinesPerSpan.length === 2 && m.h1LinesPerSpan.every((n) => n === 1) ? pass(`${width}: H1 is exactly two lines`) : fail(`${width}: H1 lines per span ${JSON.stringify(m.h1LinesPerSpan)}`)
   const skips = m.headings.filter((h, i) => i > 0 && h.level > m.headings[i - 1].level + 1)
   skips.length === 0 ? pass(`${width}: heading levels never skip`) : fail(`${width}: heading skips ${JSON.stringify(skips)}`)
   !m.emDash ? pass(`${width}: no em dashes`) : fail(`${width}: em dash in page text`)
+  !m.popular ? pass(`${width}: no "Popular" label`) : fail(`${width}: "popular" appears in page text`)
+  !m.rounded39 ? pass(`${width}: no rounded $39 price`) : fail(`${width}: "$39" without ".20" appears`)
   m.notCaps.length === 0 ? pass(`${width}: every button label is Initial Caps`) : fail(`${width}: labels not Initial Caps ${JSON.stringify(m.notCaps)}`)
   m.small.length === 0 ? pass(`${width}: all targets at least 44px`) : fail(`${width}: small targets ${JSON.stringify(m.small)}`)
   m.tableOk ? pass(`${width}: comparison table has caption, column and row headers`) : fail(`${width}: comparison table semantics`)
+  JSON.stringify(m.setupRows) === JSON.stringify(SETUPS) ? pass(`${width}: common-setups table prices are exact`) : fail(`${width}: setups ${JSON.stringify(m.setupRows)}`)
+  m.anchors.length === 0 ? pass(`${width}: anchors #business, #agency, #per-business, #compare exist`) : fail(`${width}: missing anchors ${m.anchors}`)
+  m.headerCta === TRIAL ? pass(`${width}: header button goes to the trial start`) : fail(`${width}: header button ${m.headerCta}`)
+  m.businessCtaBottom !== null && m.businessCtaBottom <= m.ih
+    ? pass(`${width}x${height}: Business trial button is in the first screen (bottom ${m.businessCtaBottom})`)
+    : fail(`${width}x${height}: Business trial button below the fold (bottom ${m.businessCtaBottom})`)
+  if (width >= 768) {
+    m.cardRows.every(([b, a]) => Math.abs(b - a) <= 2) ? pass(`${width}: both cards' buttons and lists line up`) : fail(`${width}: card rows out of line ${JSON.stringify(m.cardRows)}`)
+    m.agencyCtaBottom !== null && m.agencyCtaBottom <= m.ih
+      ? pass(`${width}x${height}: Agency button is in the first screen (bottom ${m.agencyCtaBottom})`)
+      : fail(`${width}x${height}: Agency button below the fold (bottom ${m.agencyCtaBottom})`)
+  }
   errors.length === 0 ? pass(`${width}: no console errors`) : fail(`${width}: console errors ${errors.join(' | ')}`)
 
-  // Billing states: check prices, disclosures, and destinations for each.
+  // Billing states: prices, disclosures, and every routed link's destination.
   for (const billing of ['monthly', 'yearly']) {
     const label = billing === 'monthly' ? 'Monthly' : 'Annual'
     await page.locator('label').filter({ hasText: new RegExp(`^${label}`) }).first().click()
@@ -99,14 +158,19 @@ for (const width of [360, 390, 768, 1440]) {
     const bOk = cards.business && cards.business.text.includes(`${e.business} /month`) && cards.business.text.includes(e.businessLine)
     const aOk = cards.agency && cards.agency.text.includes(`${e.agency} /month`) && cards.agency.text.includes(e.agencyLine) && cards.agency.text.includes(e.perBusiness)
     bOk ? pass(`${width} ${billing}: Business shows ${e.business}/month with its billing disclosure`) : fail(`${width} ${billing}: Business card text ${cards.business?.text}`)
-    aOk ? pass(`${width} ${billing}: Agency shows ${e.agency}/month, disclosure, and ${e.perBusiness}`) : fail(`${width} ${billing}: Agency card text ${cards.agency?.text}`)
-    const ctas = await page.evaluate(() => Array.from(document.querySelectorAll('a[data-plan-cta]')).map((a) => ({ plan: a.dataset.planCta, href: a.href })))
-    const want = { business_dashboard: TRIAL, agency_dashboard: subscribe('agency_dashboard', billing), marketplace: REGISTER }
-    const wrong = ctas.filter((c) => c.href !== want[c.plan])
-    wrong.length === 0 && ctas.length >= 4 ? pass(`${width} ${billing}: all ${ctas.length} plan buttons go to the right destination`) : fail(`${width} ${billing}: wrong destinations ${JSON.stringify(wrong)} (count ${ctas.length})`)
+    aOk ? pass(`${width} ${billing}: Agency shows ${e.agency}/month, disclosure, and per-business price`) : fail(`${width} ${billing}: Agency card text ${cards.agency?.text}`)
+    const links = await page.evaluate(() =>
+      Array.from(document.querySelectorAll('a[data-cta-route]')).map((a) => ({ plan: a.dataset.planCta || a.dataset.altPlan, route: a.dataset.ctaRoute, href: a.href })),
+    )
+    const want = (l) => (l.route === 'trial' ? TRIAL : l.route === 'register' ? REGISTER : subscribe(l.plan, billing))
+    const wrong = links.filter((l) => l.href !== want(l) || (l.route === 'trial' && l.plan !== 'business_dashboard') || (l.route === 'register' && l.plan !== 'marketplace'))
+    wrong.length === 0 && links.length === EXPECTED_ROUTED_LINKS
+      ? pass(`${width} ${billing}: all ${links.length} plan links go to the right destination`)
+      : fail(`${width} ${billing}: wrong destinations ${JSON.stringify(wrong)} (count ${links.length})`)
   }
 
   // Keyboard: arrow keys move between billing options.
+  await page.locator('label').filter({ hasText: /^Monthly/ }).first().click()
   await page.locator('input[type="radio"][value="monthly"]').focus()
   await page.keyboard.press('ArrowRight')
   const afterKey = await page.evaluate(() => document.querySelector('input[type="radio"]:checked')?.value)
@@ -126,6 +190,8 @@ for (const width of [360, 390, 768, 1440]) {
     console.log('Headings:', m.headings.map((h) => `H${h.level}:${h.text.slice(0, 40)}`).join(' | '))
   }
   await page.locator('label').filter({ hasText: /^Monthly/ }).first().click()
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await page.screenshot({ path: `${outDir}/pricing-${width}-fold.png` })
   await page.screenshot({ path: `${outDir}/pricing-${width}.png`, fullPage: true })
   await context.close()
 }

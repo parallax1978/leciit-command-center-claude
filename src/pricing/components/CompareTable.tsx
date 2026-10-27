@@ -1,6 +1,9 @@
 import { Container } from '../../components/ui/Container'
+import { LinkButton } from '../../components/ui/Button'
 import { Check, Close } from '../../components/ui/Icons'
-import { COMPARE_GROUPS, type CompareValue } from '../content'
+import { AGENCY_CARD, BUSINESS_CARD, COMPARE_GROUPS, type CompareValue } from '../content'
+import { ROUTES, subscribeUrl, type BillingPeriod } from '../plans'
+import { track } from '../../lib/analytics'
 
 function Value({ value }: { value: CompareValue }) {
   if (value === true) {
@@ -31,7 +34,7 @@ function Value({ value }: { value: CompareValue }) {
 }
 
 /** Full side-by-side comparison. A real table, so screen readers announce row and column headers. */
-export function CompareTable() {
+export function CompareTable({ billing }: { billing: BillingPeriod }) {
   return (
     <section aria-labelledby="compare-heading" className="border-t border-line py-16 sm:py-20" id="compare">
       <Container>
@@ -84,6 +87,30 @@ export function CompareTable() {
               </tbody>
             ))}
           </table>
+        </div>
+        <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:justify-end">
+          <LinkButton
+            href={ROUTES.trialStart}
+            variant="primary"
+            size="md"
+            className="whitespace-nowrap"
+            data-plan-cta="business_dashboard"
+            data-cta-route="trial"
+            onClick={() => track('plan_cta_click', { plan: 'business_dashboard', billing, placement: 'compare' })}
+          >
+            {BUSINESS_CARD.ctaLabel}
+          </LinkButton>
+          <LinkButton
+            href={subscribeUrl('agency_dashboard', billing)}
+            variant="outline"
+            size="md"
+            className="whitespace-nowrap"
+            data-plan-cta="agency_dashboard"
+            data-cta-route="subscribe"
+            onClick={() => track('plan_cta_click', { plan: 'agency_dashboard', billing, placement: 'compare' })}
+          >
+            {AGENCY_CARD.ctaLabel}
+          </LinkButton>
         </div>
       </Container>
     </section>

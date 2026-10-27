@@ -4,7 +4,7 @@ import { PrimaryCta } from '../../components/cta/PrimaryCta'
 import { PRODUCT_NAME } from '../../config/site'
 import { ROUTES } from '../plans'
 
-/** Same lockup and trial button as the landing page, plus Sign In for existing customers who want to upgrade. */
+/** Same lockup and trial button as the landing page, plus Log In (Legiit's own label) for customers who want to upgrade. */
 export function PricingHeader() {
   return (
     <header className="border-b border-line bg-canvas">
@@ -16,7 +16,7 @@ export function PricingHeader() {
         </a>
         <div className="flex items-center gap-1 sm:gap-3">
           <a href={ROUTES.signIn} className="hidden min-h-[44px] items-center rounded-md px-3 text-[15px] font-medium text-ink-soft hover:text-ink btn-focus sm:inline-flex">
-            Sign In
+            Log In
           </a>
           <PrimaryCta placement="header" className="!px-3 sm:!px-4" />
         </div>

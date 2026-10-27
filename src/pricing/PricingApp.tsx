@@ -6,11 +6,12 @@ import { PricingHeader } from './components/PricingHeader'
 import { BillingToggle } from './components/BillingToggle'
 import { PlanCard } from './components/PlanCard'
 import { MarketplaceStrip } from './components/MarketplaceStrip'
-import { IncludedSection } from './components/IncludedSection'
+import { PerBusiness } from './components/PerBusiness'
 import { CompareTable } from './components/CompareTable'
+import { IncludedSection } from './components/IncludedSection'
 import { PricingFinal } from './components/PricingFinal'
-import { AGENCY_CARD, BUSINESS_CARD, PRICING_FAQ, PRICING_FAQ_COPY, PRICING_HERO } from './content'
-import { BUSINESS_PLAN, ROUTES, type BillingPeriod } from './plans'
+import { AGENCY_CARD, BUSINESS_CARD, PRICING_FAQ, PRICING_FAQ_COPY, PRICING_FOOTER_LINKS, PRICING_HERO } from './content'
+import { BUSINESS_PLAN, type BillingPeriod } from './plans'
 import { annualDiscountPercent } from './price'
 import { COMPANY_LINE } from '../config/site'
 import { track } from '../lib/analytics'
@@ -18,6 +19,7 @@ import { track } from '../lib/analytics'
 const H1_GRADIENT = 'linear-gradient(95deg, #6A13CF 12%, #C71E92 98%)'
 
 export default function PricingApp() {
+  // Monthly by default: the real month-to-month price beside the trial. Annual is one tap away with its full yearly total.
   const [billing, setBilling] = useState<BillingPeriod>('monthly')
 
   const changeBilling = (next: BillingPeriod) => {
@@ -35,50 +37,48 @@ export default function PricingApp() {
       </a>
       <PricingHeader />
       <main id="main">
-        <section aria-labelledby="pricing-heading" className="pb-14 pt-12 sm:pb-20 sm:pt-16">
+        <section aria-labelledby="pricing-heading" className="pb-14 pt-8 sm:pb-20 sm:pt-14">
           <Container>
             <div className="mx-auto max-w-3xl text-center">
               <p className="eyebrow">{PRICING_HERO.eyebrow}</p>
-              <h1 id="pricing-heading" className="mt-4 text-[2.375rem] font-semibold leading-[1.08] tracking-[-0.025em] text-ink sm:text-[2.75rem] lg:text-[3.25rem]">
+              <h1 id="pricing-heading" className="mt-3 text-[2rem] font-semibold leading-[1.1] tracking-[-0.025em] text-ink sm:mt-4 sm:text-[2.75rem] lg:text-[3.25rem]">
                 <span className="block">{PRICING_HERO.h1Line1}</span>
                 <span className="block bg-clip-text text-transparent" style={{ backgroundImage: H1_GRADIENT }}>
                   {PRICING_HERO.h1Line2}
                 </span>
               </h1>
-              <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-ink-soft sm:text-xl sm:leading-relaxed">{PRICING_HERO.subhead}</p>
-              <div className="mt-8 flex justify-center">
+              <p className="mx-auto mt-4 max-w-3xl text-balance text-[17px] leading-relaxed text-ink-soft sm:mt-5 sm:text-xl sm:leading-relaxed">
+                {PRICING_HERO.subheadBefore}
+                <a href="#agency" className="whitespace-nowrap rounded-sm font-medium text-brand-purple underline decoration-brand-purple/40 underline-offset-4 hover:decoration-brand-purple btn-focus">
+                  {PRICING_HERO.subheadLink}
+                </a>
+                {PRICING_HERO.subheadAfter}
+              </p>
+              <div className="mt-6 flex justify-center sm:mt-8">
                 <BillingToggle value={billing} onChange={changeBilling} annualDiscountPercent={annualDiscountPercent(BUSINESS_PLAN)} />
               </div>
             </div>
 
             <h2 className="sr-only">Plans and prices</h2>
-            <div className="mx-auto mt-10 grid max-w-5xl gap-6 md:grid-cols-2 md:gap-8">
+            <div className="mx-auto mt-6 grid max-w-[1000px] gap-6 sm:mt-8 md:grid-cols-2 md:gap-x-8 md:gap-y-0">
               <PlanCard copy={BUSINESS_CARD} billing={billing} highlighted />
-              <div className="flex flex-col">
-                <PlanCard copy={AGENCY_CARD} billing={billing} />
-                <p className="mt-3 text-center text-sm text-ink-muted">
-                  Not sure yet?{' '}
-                  <a href={ROUTES.trialStart} className="font-medium text-brand-purple underline-offset-4 hover:underline btn-focus rounded-sm">
-                    Start with the Business trial
-                  </a>{' '}
-                  and upgrade later.
-                </p>
-              </div>
+              <PlanCard copy={AGENCY_CARD} billing={billing} />
             </div>
 
-            <div className="mx-auto mt-8 max-w-5xl">
+            <div className="mx-auto mt-8 max-w-[1000px]">
               <MarketplaceStrip />
             </div>
 
-            <p className="mx-auto mt-10 max-w-5xl text-center text-sm text-ink-muted">{COMPANY_LINE}</p>
+            <p className="mx-auto mt-10 max-w-[1000px] text-center text-sm text-ink-muted">{COMPANY_LINE}</p>
           </Container>
         </section>
+        <PerBusiness billing={billing} />
+        <CompareTable billing={billing} />
         <IncludedSection />
-        <CompareTable />
         <Faq eyebrow={PRICING_FAQ_COPY.eyebrow} title={PRICING_FAQ_COPY.title} items={PRICING_FAQ} headingId="pricing-faq-heading" />
         <PricingFinal billing={billing} />
       </main>
-      <Footer />
+      <Footer links={PRICING_FOOTER_LINKS} />
     </div>
   )
 }
