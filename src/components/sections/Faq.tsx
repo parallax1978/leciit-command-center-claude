@@ -1,10 +1,19 @@
 import { useId, useState } from 'react'
 import { Container } from '../ui/Container'
 import { Plus } from '../ui/Icons'
-import { FAQ_COPY, FAQ_ITEMS } from '../../config/faq'
+import { FAQ_COPY, FAQ_ITEMS, type FaqItem } from '../../config/faq'
 import { track } from '../../lib/analytics'
 
-export function Faq() {
+interface FaqProps {
+  eyebrow?: string
+  title?: string
+  items?: FaqItem[]
+  /** Section id prefix so two FAQ sections never collide on one page. */
+  headingId?: string
+}
+
+/** Accordion FAQ. Defaults to the landing page copy; the pricing page passes its own. */
+export function Faq({ eyebrow = FAQ_COPY.eyebrow, title = FAQ_COPY.title, items = FAQ_ITEMS, headingId = 'faq-heading' }: FaqProps = {}) {
   const baseId = useId()
   const [openIds, setOpenIds] = useState<Set<string>>(() => new Set())
 
@@ -20,17 +29,17 @@ export function Faq() {
   }
 
   return (
-    <section aria-labelledby="faq-heading" className="border-t border-line py-16 sm:py-20 lg:py-24">
+    <section aria-labelledby={headingId} className="border-t border-line py-16 sm:py-20 lg:py-24">
       <Container>
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-16">
           <div>
-            <p className="eyebrow">{FAQ_COPY.eyebrow}</p>
-            <h2 id="faq-heading" className="h2 mt-3">
-              {FAQ_COPY.title}
+            <p className="eyebrow">{eyebrow}</p>
+            <h2 id={headingId} className="h2 mt-3">
+              {title}
             </h2>
           </div>
           <div className="border-t border-line-strong">
-            {FAQ_ITEMS.map((item) => {
+            {items.map((item) => {
               const expanded = openIds.has(item.id)
               const buttonId = `${baseId}-${item.id}-button`
               const panelId = `${baseId}-${item.id}-panel`

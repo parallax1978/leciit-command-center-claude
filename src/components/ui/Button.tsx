@@ -1,6 +1,6 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react'
 
-type Variant = 'primary' | 'inverse' | 'secondary' | 'ghost'
+type Variant = 'primary' | 'inverse' | 'outline' | 'outlineInverse' | 'secondary' | 'ghost'
 /** `hero` is the standard `lg` size scaled by 25% (font, padding, gap, icon, border, radius). */
 type Size = 'sm' | 'md' | 'lg' | 'hero'
 
@@ -15,6 +15,8 @@ const baseClass =
 const variantClass: Record<Variant, string> = {
   primary: 'btn-brand border-transparent',
   inverse: 'border-white bg-white text-brand-purple hover:bg-[#F3EBFC] focus-visible:!outline-white',
+  outline: 'border-brand-purple bg-canvas text-brand-purple hover:bg-brand-tint',
+  outlineInverse: 'border-white/70 bg-transparent text-white hover:bg-white/10 focus-visible:!outline-white',
   secondary: 'border-line-strong bg-canvas text-ink hover:bg-canvas-sunken',
   ghost: 'border-transparent text-ink hover:bg-canvas-sunken',
 }

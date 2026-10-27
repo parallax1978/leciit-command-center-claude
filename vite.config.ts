@@ -7,6 +7,14 @@ export default defineConfig({
   build: {
     // Keep the caption track as a real same-origin file rather than an inlined data URL.
     assetsInlineLimit: (filePath) => (filePath.endsWith('.vtt') ? false : undefined),
+    rollupOptions: {
+      // Two pages share one component and brand system: the landing page and the pricing page.
+      input: {
+        // Paths resolve from the project root, where every npm script runs.
+        main: 'index.html',
+        pricing: 'pricing.html',
+      },
+    },
   },
   server: { host: true, port: 5173 },
   preview: { host: true, port: 4173 },
