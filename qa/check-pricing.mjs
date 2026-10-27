@@ -61,6 +61,7 @@ const readCards = (page) =>
   })
 
 for (const [width, height] of [
+  [320, 640],
   [360, 640],
   [390, 664],
   [768, 1024],
@@ -148,12 +149,20 @@ for (const [width, height] of [
       businessCtaBottom: bottom('article[aria-labelledby="plan-business_dashboard"] a[data-plan-cta]'),
       agencyCtaBottom: bottom('article[aria-labelledby="plan-agency_dashboard"] a[data-plan-cta]'),
       headerCta: document.querySelector('a[data-cta-placement="header"]')?.href,
+      headerOverlap: (() => {
+        const visible = Array.from(document.querySelectorAll('header a[href="#top"] > *')).filter((el) => getComputedStyle(el).display !== 'none')
+        const right = Math.max(...visible.map((el) => el.getBoundingClientRect().right))
+        return Math.round(right - document.querySelector('a[data-cta-placement="header"]').getBoundingClientRect().left)
+      })(),
     }
   })
 
   m.sw <= m.iw ? pass(`${width}: no horizontal overflow`) : fail(`${width}: overflow ${m.sw} > ${m.iw}`)
   m.h1Count === 1 ? pass(`${width}: one h1`) : fail(`${width}: ${m.h1Count} h1 elements`)
-  m.h1LinesPerSpan.length === 2 && m.h1LinesPerSpan.every((n) => n === 1) ? pass(`${width}: H1 is exactly two lines`) : fail(`${width}: H1 lines per span ${JSON.stringify(m.h1LinesPerSpan)}`)
+  if (width >= 360) {
+    m.h1LinesPerSpan.length === 2 && m.h1LinesPerSpan.every((n) => n === 1) ? pass(`${width}: H1 is exactly two lines`) : fail(`${width}: H1 lines per span ${JSON.stringify(m.h1LinesPerSpan)}`)
+  }
+  m.headerOverlap <= 0 ? pass(`${width}: header lockup and trial button do not overlap`) : fail(`${width}: header overlap ${m.headerOverlap}px`)
   const skips = m.headings.filter((h, i) => i > 0 && h.level > m.headings[i - 1].level + 1)
   skips.length === 0 ? pass(`${width}: heading levels never skip`) : fail(`${width}: heading skips ${JSON.stringify(skips)}`)
   !m.emDash ? pass(`${width}: no em dashes`) : fail(`${width}: em dash in page text`)
@@ -171,9 +180,12 @@ for (const [width, height] of [
     : fail(`${width}: FAQ links ${JSON.stringify(m.faqLinks)}`)
   m.anchors.length === 0 ? pass(`${width}: anchors #business, #agency, #per-business, #compare exist`) : fail(`${width}: missing anchors ${m.anchors}`)
   m.headerCta === TRIAL ? pass(`${width}: header button goes to the trial start`) : fail(`${width}: header button ${m.headerCta}`)
-  m.businessCtaBottom !== null && m.businessCtaBottom <= m.ih
-    ? pass(`${width}x${height}: Business trial button is in the first screen (bottom ${m.businessCtaBottom})`)
-    : fail(`${width}x${height}: Business trial button below the fold (bottom ${m.businessCtaBottom})`)
+  // 320px is the WCAG reflow width (400% zoom); there the header's trial button is the first-screen action.
+  if (width >= 360) {
+    m.businessCtaBottom !== null && m.businessCtaBottom <= m.ih
+      ? pass(`${width}x${height}: Business trial button is in the first screen (bottom ${m.businessCtaBottom})`)
+      : fail(`${width}x${height}: Business trial button below the fold (bottom ${m.businessCtaBottom})`)
+  }
   if (width >= 768) {
     m.cardRows.every(([b, a]) => Math.abs(b - a) <= 2) ? pass(`${width}: both cards' buttons and lists line up`) : fail(`${width}: card rows out of line ${JSON.stringify(m.cardRows)}`)
     m.agencyCtaBottom !== null && m.agencyCtaBottom <= m.ih
@@ -183,12 +195,16 @@ for (const [width, height] of [
   errors.length === 0 ? pass(`${width}: no console errors`) : fail(`${width}: console errors ${errors.join(' | ')}`)
 
   // Billing states: prices, disclosures, and every routed link's destination.
-  for (const billing of ['monthly', 'yearly']) {
+  // Annual first, then back to Monthly, so each step is a real change that gets announced.
+  for (const billing of ['yearly', 'monthly']) {
     const label = billing === 'monthly' ? 'Monthly' : 'Annual'
     await page.locator('label').filter({ hasText: new RegExp(`^${label}`) }).first().click()
     await page.waitForTimeout(100)
     const cards = await readCards(page)
     const e = EXPECT[billing]
+    const status = await page.evaluate(() => document.querySelector('[role="status"]')?.textContent)
+    const wantStatus = billing === 'yearly' ? 'Annual billing: Business $39.20 a month, billed $470.40 a year; Agency $135.20 a month, billed $1,622.40 a year.' : 'Monthly billing: Business $49 a month; Agency $169 a month.'
+    status === wantStatus ? pass(`${width} ${billing}: billing change is announced in one sentence`) : fail(`${width} ${billing}: status text ${JSON.stringify(status)}`)
     const bOk = cards.business && cards.business.text.includes(`${e.business} /month`) && cards.business.text.includes(e.businessLine)
     const aOk = cards.agency && cards.agency.text.includes(`${e.agency} /month`) && cards.agency.text.includes(e.agencyLine) && cards.agency.text.includes(e.perBusiness)
     bOk ? pass(`${width} ${billing}: Business shows ${e.business}/month with its billing disclosure`) : fail(`${width} ${billing}: Business card text ${cards.business?.text}`)
@@ -234,6 +250,19 @@ for (const [width, height] of [
   await deep.waitForTimeout(150)
   const agencyTop = await deep.evaluate(() => Math.round(document.getElementById('agency').getBoundingClientRect().top))
   agencyTop >= 0 && agencyTop <= 64 ? pass(`${width}: /pricing#agency opens on the Agency plan (top ${agencyTop})`) : fail(`${width}: /pricing#agency lands with the Agency plan at ${agencyTop}`)
+  await context.close()
+}
+
+// Forced colors (Windows High Contrast): the selected billing option must still look different.
+{
+  const context = await browser.newContext({ viewport: { width: 390, height: 664 }, forcedColors: 'active' })
+  const page = await context.newPage()
+  await page.goto(url, { waitUntil: 'networkidle' })
+  const shot = async () => page.locator('fieldset').first().screenshot()
+  const monthly = await shot()
+  await page.locator('label').filter({ hasText: /^Annual/ }).first().click()
+  const yearly = await shot()
+  !monthly.equals(yearly) ? pass('forced colors: the selected billing option is visible') : fail('forced colors: both billing states look identical')
   await context.close()
 }
 

@@ -1,6 +1,9 @@
 import { useId } from 'react'
 import type { BillingPeriod } from '../plans'
 
+/** Forced-colors mode (Windows High Contrast) drops backgrounds and shadows, so the selected option gets an outline in the system highlight colour. */
+const FORCED_COLORS_SELECTED = 'forced-colors:outline forced-colors:outline-2 forced-colors:-outline-offset-2 forced-colors:outline-[color:Highlight]'
+
 interface BillingToggleProps {
   value: BillingPeriod
   onChange: (next: BillingPeriod) => void
@@ -44,7 +47,7 @@ export function BillingToggle({ value, onChange, annualDiscountPercent, classNam
               <label
                 htmlFor={id}
                 className={`inline-flex min-h-[44px] cursor-pointer select-none items-center gap-2 rounded-full px-4 text-[15px] font-semibold transition-colors motion-reduce:transition-none peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-purple ${
-                  checked ? 'bg-canvas text-ink shadow-[0_1px_3px_rgba(15,15,20,0.16)] ring-2 ring-inset ring-brand-purple' : 'text-ink-soft hover:text-ink'
+                  checked ? `bg-canvas text-ink shadow-[0_1px_3px_rgba(15,15,20,0.16)] ring-2 ring-inset ring-brand-purple ${FORCED_COLORS_SELECTED}` : 'text-ink-soft hover:text-ink'
                 }`}
               >
                 {opt.label}

@@ -60,7 +60,7 @@ export function CompareTable({ billing }: { billing: BillingPeriod }) {
             {COMPARE_GROUPS.map((group) => (
               <tbody key={group.title}>
                 <tr>
-                  <th scope="colgroup" colSpan={3} className="pb-2 pt-8 text-xs font-semibold uppercase tracking-[0.1em] text-ink-muted">
+                  <th scope="rowgroup" colSpan={3} className="pb-2 pt-8 text-xs font-semibold uppercase tracking-[0.1em] text-ink-muted">
                     {group.title}
                   </th>
                 </tr>

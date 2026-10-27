@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { AGENCY_CARD, BUSINESS_CARD, COMPARE_GROUPS, MARKETPLACE_STRIP, PER_BUSINESS, PRICING_FAQ, PRICING_FINAL, PRICING_HERO } from './content'
+import { AGENCY_CARD, BUSINESS_CARD, COMPARE_GROUPS, MARKETPLACE_STRIP, PER_BUSINESS, PRICING_FAQ, PRICING_FINAL, PRICING_HERO, billingAnnouncement } from './content'
 import { AGENCY_PLAN, BUSINESS_PLAN } from './plans'
 
 const isInitialCaps = (label: string) =>
@@ -111,5 +111,12 @@ describe('comparison table', () => {
     const perBusiness = rows.find((r) => r.label === 'Price per included business')!
     expect(perBusiness.business).toEqual({ main: '$49/month', sub: '$39.20/month billed annually' })
     expect(perBusiness.agency).toEqual({ main: '$8.45/month', sub: '$6.76/month billed annually' })
+  })
+})
+
+describe('billing announcement', () => {
+  it('names both plans and their prices in one sentence for each billing period', () => {
+    expect(billingAnnouncement('yearly')).toBe('Annual billing: Business $39.20 a month, billed $470.40 a year; Agency $135.20 a month, billed $1,622.40 a year.')
+    expect(billingAnnouncement('monthly')).toBe('Monthly billing: Business $49 a month; Agency $169 a month.')
   })
 })

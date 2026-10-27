@@ -1,4 +1,4 @@
-import { AGENCY_PLAN, BUSINESS_PLAN, LEGIIT_BUCKS_PERCENT, MARKETPLACE_PLAN, ROUTES, type PaidPlan } from './plans'
+import { AGENCY_PLAN, BUSINESS_PLAN, LEGIIT_BUCKS_PERCENT, MARKETPLACE_PLAN, ROUTES, type BillingPeriod, type PaidPlan } from './plans'
 import { annualDiscountPercent, annualSavings, formatCount, formatUsd, monthlyEquivalent, perIncludedBusiness, yearlyCost } from './price'
 import type { FaqItem } from '../config/faq'
 import { PRIMARY_CTA_LABEL } from '../config/site'
@@ -266,3 +266,11 @@ export const PRICING_FOOTER_LINKS = [
   { label: 'Contact', href: ROUTES.contactEmail },
   { label: 'Log In', href: ROUTES.signIn },
 ] as const
+
+/** What screen readers hear when the billing period changes: both plans' prices in one sentence. */
+export function billingAnnouncement(billing: BillingPeriod): string {
+  if (billing === 'yearly') {
+    return `Annual billing: Business ${formatUsd(monthlyEquivalent(BUSINESS_PLAN, 'yearly'))} a month, billed ${formatUsd(BUSINESS_PLAN.yearlyPrice)} a year; Agency ${formatUsd(monthlyEquivalent(AGENCY_PLAN, 'yearly'))} a month, billed ${formatUsd(AGENCY_PLAN.yearlyPrice)} a year.`
+  }
+  return `Monthly billing: Business ${formatUsd(BUSINESS_PLAN.monthlyPrice)} a month; Agency ${formatUsd(AGENCY_PLAN.monthlyPrice)} a month.`
+}

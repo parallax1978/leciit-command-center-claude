@@ -10,7 +10,7 @@ import { PerBusiness } from './components/PerBusiness'
 import { CompareTable } from './components/CompareTable'
 import { IncludedSection } from './components/IncludedSection'
 import { PricingFinal } from './components/PricingFinal'
-import { AGENCY_CARD, BUSINESS_CARD, PRICING_FAQ, PRICING_FAQ_COPY, PRICING_FOOTER_LINKS, PRICING_HERO } from './content'
+import { AGENCY_CARD, BUSINESS_CARD, PRICING_FAQ, PRICING_FAQ_COPY, PRICING_FOOTER_LINKS, PRICING_HERO, billingAnnouncement } from './content'
 import { BUSINESS_PLAN, DEFAULT_BILLING, type BillingPeriod } from './plans'
 import { annualDiscountPercent } from './price'
 import { COMPANY_LINE } from '../config/site'
@@ -20,6 +20,8 @@ const H1_GRADIENT = 'linear-gradient(95deg, #6A13CF 12%, #C71E92 98%)'
 
 export default function PricingApp() {
   const [billing, setBilling] = useState<BillingPeriod>(DEFAULT_BILLING)
+  // Empty on load, so nothing is announced until the visitor changes billing.
+  const [announcement, setAnnouncement] = useState('')
 
   // The page renders after the browser's own jump to a fragment such as #agency (the planned
   // redirect target for /pricing/agency-plan), so repeat the jump once the sections exist.
@@ -31,6 +33,7 @@ export default function PricingApp() {
   const changeBilling = (next: BillingPeriod) => {
     track('billing_change', { billing: next })
     setBilling(next)
+    setAnnouncement(billingAnnouncement(next))
   }
 
   return (
@@ -62,6 +65,9 @@ export default function PricingApp() {
               </p>
               <div className="mt-5 flex justify-center sm:mt-6 short:!mt-4">
                 <BillingToggle value={billing} onChange={changeBilling} annualDiscountPercent={annualDiscountPercent(BUSINESS_PLAN)} />
+              </div>
+              <div role="status" className="sr-only">
+                {announcement}
               </div>
             </div>
 

@@ -9,7 +9,7 @@ Plan data was captured from Legiit's live pages and pricing API on October 27, 2
 ```bash
 npm run check                                     # typecheck, unit tests (incl. src/pricing/*.test.ts), build
 npm run preview                                   # serves dist/ at http://localhost:4173
-node qa/check-pricing.mjs http://127.0.0.1:4173   # browser QA, 177 checks at phone, tablet, and laptop window sizes
+node qa/check-pricing.mjs http://127.0.0.1:4173   # browser QA, 225 checks from 320px phones to laptop windows, plus High Contrast mode
 ```
 
 ## Page sequence
