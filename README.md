@@ -4,6 +4,8 @@ A complete, responsive landing page for cold paid traffic from business owners w
 
 Built with React 18, TypeScript (strict), Tailwind CSS 3, and Vite 5. No backend, scan, AI API, database, payment flow, tracker, or signup form.
 
+The build has a second page, the Command Center pricing page (`pricing.html`, code in `src/pricing`). See [PRICING.md](PRICING.md).
+
 ## Run it
 
 ```bash
