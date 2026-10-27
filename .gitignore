@@ -4,3 +4,5 @@ dist
 *.log
 qa/screenshots
 *.tsbuildinfo
+dist-pricing
+dist-pricing-preview

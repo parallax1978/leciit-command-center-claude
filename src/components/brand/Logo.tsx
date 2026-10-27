@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { LOGO } from '../../config/media'
+import { LOGO } from '../../config/logo'
 
 interface LogoProps {
   height?: number

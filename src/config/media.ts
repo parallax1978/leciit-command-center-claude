@@ -14,16 +14,9 @@ import specialistHelp from '../assets/product/specialist-help.jpg'
 import services from '../assets/product/services.jpg'
 import performance from '../assets/product/performance.jpg'
 import briefBuilder from '../assets/product/brief-builder.jpg'
-import logo from '../assets/legiit-logo-128.png'
 
-/** Official logo, resized from the 2253 x 1024 original to 128px tall for the header and footer. Same ratio. */
-export const LOGO = {
-  src: logo,
-  alt: 'Legiit',
-  width: 282,
-  height: 128,
-  fallbackText: 'Legiit',
-} as const
+// The logo lives in its own module so pages without the product media (the pricing page) do not bundle it.
+export { LOGO } from './logo'
 
 export interface CaptionTrack {
   src: string

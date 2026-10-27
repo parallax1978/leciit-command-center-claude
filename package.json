@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "test": "vitest run",
-    "check": "npm run typecheck && npm run test && vite build"
+    "check": "npm run typecheck && npm run test && vite build",
+    "build:pricing": "vite build --config vite.pricing.config.ts",
+    "build:pricing-preview": "node scripts/build-pricing-preview.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

@@ -2,6 +2,7 @@
  * Pricing page QA (developer tool, not shipped).
  *
  * Usage: node qa/check-pricing.mjs [baseUrl]   (default http://127.0.0.1:4173)
+ *        PRICING_URL=<full page URL> node qa/check-pricing.mjs
  *
  * Checks at realistic window sizes (phones with browser toolbars, a tablet,
  * and laptop windows from 1280x620 to 1440x789): no horizontal overflow,
@@ -17,7 +18,8 @@ import { chromium } from 'playwright-core'
 import { mkdirSync, existsSync } from 'node:fs'
 
 const base = (process.argv[2] ?? 'http://127.0.0.1:4173').replace(/\/$/, '')
-const url = `${base}/pricing.html`
+// PRICING_URL tests a deployed copy, e.g. PRICING_URL=http://127.0.0.1:4200/pricing/ or a file:// preview.
+const url = process.env.PRICING_URL ?? `${base}/pricing.html`
 const outDir = 'qa/screenshots'
 mkdirSync(outDir, { recursive: true })
 const executablePath = process.env.CHROMIUM_PATH ?? ['/opt/pw-browsers/chromium', '/opt/pw-browsers/chromium-1194/chrome-linux/chrome'].find((p) => existsSync(p))
