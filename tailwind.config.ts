@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss'
+import plugin from 'tailwindcss/plugin'
 
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
@@ -54,5 +55,13 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // `short:` targets laptop windows under about 720px tall (1366x768 and 1280x720 screens), where the
+    // pricing hero tightens so both plan buttons stay in the first screen. A variant, not a screen, so the
+    // max-[...] variants used across the site keep working. Its rules print before the breakpoints, so
+    // uses carry the important modifier (short:!pt-6).
+    plugin(({ addVariant }) => {
+      addVariant('short', '@media (min-width: 768px) and (max-height: 720px)')
+    }),
+  ],
 } satisfies Config

@@ -11,7 +11,7 @@ import { CompareTable } from './components/CompareTable'
 import { IncludedSection } from './components/IncludedSection'
 import { PricingFinal } from './components/PricingFinal'
 import { AGENCY_CARD, BUSINESS_CARD, PRICING_FAQ, PRICING_FAQ_COPY, PRICING_FOOTER_LINKS, PRICING_HERO } from './content'
-import { BUSINESS_PLAN, type BillingPeriod } from './plans'
+import { BUSINESS_PLAN, DEFAULT_BILLING, type BillingPeriod } from './plans'
 import { annualDiscountPercent } from './price'
 import { COMPANY_LINE } from '../config/site'
 import { track } from '../lib/analytics'
@@ -19,8 +19,7 @@ import { track } from '../lib/analytics'
 const H1_GRADIENT = 'linear-gradient(95deg, #6A13CF 12%, #C71E92 98%)'
 
 export default function PricingApp() {
-  // Monthly by default: the real month-to-month price beside the trial. Annual is one tap away with its full yearly total.
-  const [billing, setBilling] = useState<BillingPeriod>('monthly')
+  const [billing, setBilling] = useState<BillingPeriod>(DEFAULT_BILLING)
 
   const changeBilling = (next: BillingPeriod) => {
     track('billing_change', { billing: next })
@@ -37,30 +36,30 @@ export default function PricingApp() {
       </a>
       <PricingHeader />
       <main id="main">
-        <section aria-labelledby="pricing-heading" className="pb-14 pt-8 sm:pb-20 sm:pt-14">
+        <section aria-labelledby="pricing-heading" className="pb-14 pt-6 sm:pb-20 sm:pt-10 short:!pt-6">
           <Container>
-            <div className="mx-auto max-w-3xl text-center">
-              <p className="eyebrow">{PRICING_HERO.eyebrow}</p>
-              <h1 id="pricing-heading" className="mt-3 text-[2rem] font-semibold leading-[1.1] tracking-[-0.025em] text-ink sm:mt-4 sm:text-[2.75rem] lg:text-[3.25rem]">
+            <div className="mx-auto max-w-4xl text-center">
+              <p className="eyebrow hidden sm:block short:!hidden">{PRICING_HERO.eyebrow}</p>
+              <h1 id="pricing-heading" className="text-[1.875rem] font-semibold leading-[1.1] tracking-[-0.025em] text-ink sm:mt-3 sm:text-[2.75rem] lg:text-[3rem] lg:leading-[1.08] short:!mt-0 short:!text-[2.5rem]">
                 <span className="block">{PRICING_HERO.h1Line1}</span>
                 <span className="block bg-clip-text text-transparent" style={{ backgroundImage: H1_GRADIENT }}>
                   {PRICING_HERO.h1Line2}
                 </span>
               </h1>
-              <p className="mx-auto mt-4 max-w-3xl text-balance text-[17px] leading-relaxed text-ink-soft sm:mt-5 sm:text-xl sm:leading-relaxed">
+              <p className="mx-auto mt-3 max-w-[46rem] text-balance text-base leading-relaxed text-ink-soft sm:mt-4 sm:text-lg short:!mt-3">
                 {PRICING_HERO.subheadBefore}
                 <a href="#agency" className="whitespace-nowrap rounded-sm font-medium text-brand-purple underline decoration-brand-purple/40 underline-offset-4 hover:decoration-brand-purple btn-focus">
                   {PRICING_HERO.subheadLink}
                 </a>
                 {PRICING_HERO.subheadAfter}
               </p>
-              <div className="mt-6 flex justify-center sm:mt-8">
+              <div className="mt-5 flex justify-center sm:mt-6 short:!mt-4">
                 <BillingToggle value={billing} onChange={changeBilling} annualDiscountPercent={annualDiscountPercent(BUSINESS_PLAN)} />
               </div>
             </div>
 
             <h2 className="sr-only">Plans and prices</h2>
-            <div className="mx-auto mt-6 grid max-w-[1000px] gap-6 sm:mt-8 md:grid-cols-2 md:gap-x-8 md:gap-y-0">
+            <div className="mx-auto mt-5 grid max-w-[1000px] gap-6 sm:mt-6 md:grid-cols-2 md:gap-x-8 md:gap-y-0 short:!mt-4">
               <PlanCard copy={BUSINESS_CARD} billing={billing} highlighted />
               <PlanCard copy={AGENCY_CARD} billing={billing} />
             </div>

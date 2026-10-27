@@ -13,7 +13,8 @@ interface BillingToggleProps {
  * Monthly / Annual switch built on native radio inputs inside a fieldset, so
  * keyboard and screen-reader behaviour come from the browser (arrow keys move
  * between options, the group is announced as "Billing period"). The selected
- * option is a white segment on a gray track, quieter than the plan buttons.
+ * option is a white segment with a purple outline on a gray track, quieter
+ * than the plan buttons.
  */
 export function BillingToggle({ value, onChange, annualDiscountPercent, className = '' }: BillingToggleProps) {
   const name = useId()
@@ -43,7 +44,7 @@ export function BillingToggle({ value, onChange, annualDiscountPercent, classNam
               <label
                 htmlFor={id}
                 className={`inline-flex min-h-[44px] cursor-pointer select-none items-center gap-2 rounded-full px-4 text-[15px] font-semibold transition-colors motion-reduce:transition-none peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-purple ${
-                  checked ? 'bg-canvas text-ink shadow-[0_1px_3px_rgba(15,15,20,0.16)] ring-1 ring-black/[0.06]' : 'text-ink-soft hover:text-ink'
+                  checked ? 'bg-canvas text-ink shadow-[0_1px_3px_rgba(15,15,20,0.16)] ring-2 ring-inset ring-brand-purple' : 'text-ink-soft hover:text-ink'
                 }`}
               >
                 {opt.label}

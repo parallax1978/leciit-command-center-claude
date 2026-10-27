@@ -15,6 +15,13 @@
 export type BillingPeriod = 'monthly' | 'yearly'
 export type PaidPlanId = 'business_dashboard' | 'agency_dashboard'
 
+/**
+ * Billing period selected when the page loads. Monthly puts the real
+ * month-to-month price beside the trial. Most competitors default to annual,
+ * so test this against 'yearly' on paid conversion (see PRICING.md).
+ */
+export const DEFAULT_BILLING: BillingPeriod = 'monthly'
+
 export interface Allowances {
   audits: number
   keywords: number
@@ -99,6 +106,8 @@ export const MARKETPLACE_PLAN = {
   priceLabel: 'Free',
   /** Legiit's published fee on marketplace sales. */
   saleFeePercent: 15,
+  /** Legiit Terms: payments through third-party payment providers "may be subject to a 3% processing fee"; wallet payments are not. */
+  processingFeePercent: 3,
   publishedFeatures: ['Buy and sell services', '15% fee per sale', 'No dashboard access', 'No subscription required'],
 } as const
 

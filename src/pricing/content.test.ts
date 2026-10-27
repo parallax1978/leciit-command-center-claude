@@ -58,7 +58,7 @@ describe('plan cards', () => {
       'Full business dashboard access',
       '50,000 AI credits each month',
       '3 Audits, 5 Keywords, 25 Backlink Data',
-      'Additional businesses $10/month each',
+      'Additional businesses at $10/month each',
       'Support included',
     ])
     expect(AGENCY_CARD.points).toEqual([
@@ -66,7 +66,7 @@ describe('plan cards', () => {
       'Full business dashboard access',
       '50,000 AI credits each month',
       '25 Audits, 50 Keywords, 500 Backlink Data',
-      'Additional businesses $10/month each',
+      'Businesses beyond 20 at $10/month each',
       'Support included',
     ])
   })
@@ -87,9 +87,9 @@ describe('common setups', () => {
       { businesses: '1', plan: 'Business', price: '$49/month' },
       { businesses: '2', plan: 'Business plus 1 additional business', price: '$59/month' },
       { businesses: 'Up to 20', plan: 'Agency', price: '$169/month' },
-      { businesses: '21 or more', plan: 'Agency plus additional businesses', price: '$169/month plus $10/month for each business over 20' },
+      { businesses: '21', plan: 'Agency plus 1 additional business', price: '$179/month' },
     ])
-    expect(PER_BUSINESS.lead).toContain('$8.45 per business with all 20 in use')
+    expect(PER_BUSINESS.lead).toContain('$169/month billed monthly, which is $8.45 per business with all 20 in use')
     expect(PER_BUSINESS.tableNote).toBe('Annual billing takes 20% off the plan price: $135.20/month for Agency, billed at $1,622.40 a year.')
   })
 })

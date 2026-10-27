@@ -9,7 +9,7 @@ Plan data was captured from Legiit's live pages and pricing API on October 27, 2
 ```bash
 npm run check                                     # typecheck, unit tests (incl. src/pricing/*.test.ts), build
 npm run preview                                   # serves dist/ at http://localhost:4173
-node qa/check-pricing.mjs http://127.0.0.1:4173   # browser QA, 97 checks at 360, 390, 768, 1440 px
+node qa/check-pricing.mjs http://127.0.0.1:4173   # browser QA, 147 checks at phone, tablet, and laptop window sizes
 ```
 
 ## Page sequence
@@ -17,9 +17,9 @@ node qa/check-pricing.mjs http://127.0.0.1:4173   # browser QA, 97 checks at 360
 | # | Section | File | Notes |
 |---|---|---|---|
 | 1 | Header | `components/PricingHeader.tsx` | Landing lockup, "Log In" (hidden below 640 px; the footer has it), gradient "Start Free Trial" |
-| 2 | Hero | `PricingApp.tsx` | H1 "Try Command Center / Free For 7 Days"; subhead links "choose Agency" to `#agency`; Monthly / Annual switch with "Save 20%" |
+| 2 | Hero | `PricingApp.tsx` | H1 "Try Command Center / Free For 7 Days"; subhead links "choose Agency" to `#agency`; Monthly / Annual switch with "Save 20%". On laptop windows under about 720px tall the hero tightens (the `short:` variant in `tailwind.config.ts`) so both plan buttons stay in the first screen |
 | 3 | Plan cards | `components/PlanCard.tsx` | Business (gradient frame, trial pill, gradient button) and Agency (outline button). Price, billing line, button, and a second route come before the six points. Cards align row by row through CSS subgrid |
-| 4 | Marketplace band | `components/MarketplaceStrip.tsx` | Free account for buyers and sellers, terms in plain words, no asterisk |
+| 4 | Marketplace band | `components/MarketplaceStrip.tsx` | Free account for buyers and sellers, with the 15% seller fee and the 3% third-party processing fee from Legiit's Terms in plain words, no asterisk |
 | 5 | Per-business | `components/PerBusiness.tsx` | "One plan for up to 20 businesses." with common setups priced from the monthly rates |
 | 6 | Compare | `components/CompareTable.tsx` | Real table with row and column headers, then both plan buttons |
 | 7 | Included in both plans | `components/IncludedSection.tsx` | Capabilities from the landing page copy |
@@ -38,9 +38,13 @@ node qa/check-pricing.mjs http://127.0.0.1:4173   # browser QA, 97 checks at 360
 
 Anchors: `#business`, `#agency`, `#per-business`, `#compare`. Redirect `/pricing/agency-plan` to `/pricing#agency` with a 301.
 
+## First screen
+
+Measured by the QA script: both plan buttons are in the first screen in laptop windows from 1280x620 to 1440x789 and on a 768x1024 tablet, and the Business trial button is in the first screen on phones from 360x640 (390x664 approximates an iPhone with Safari's toolbars). On the smallest phones (375x553, an iPhone SE with toolbars) the header's "Start Free Trial" button is the visible action.
+
 ## Billing display
 
-Default is Monthly, so the price beside the trial is the real month-to-month price. Each state says how the price is charged:
+Default is Monthly (`DEFAULT_BILLING` in `src/pricing/plans.ts`), so the price beside the trial is the real month-to-month price. 17 of the 22 competitor pages reviewed with a billing switch default to annual, so this is the first thing to test. Each state says how the price is charged:
 
 - Monthly: "$49 /month. Billed monthly. Save $117.60 a year with annual billing." and "$169 /month. Billed monthly. Save $405.60 a year with annual billing."
 - Annual: "$39.20 /month. Billed annually at $470.40. Save $117.60 a year." and "$135.20 /month. Billed annually at $1,622.40. Save $405.60 a year."

@@ -3,7 +3,8 @@
  *
  * Usage: node qa/check-pricing.mjs [baseUrl]   (default http://127.0.0.1:4173)
  *
- * Checks at 360x740, 390x844, 768x1024, and 1440x900: no horizontal overflow,
+ * Checks at realistic window sizes (phones with browser toolbars, a tablet,
+ * and laptop windows from 1280x620 to 1440x789): no horizontal overflow,
  * heading order, a two-line H1 on phones, plan buttons in the first screen,
  * exact prices and billing disclosures in both billing states (from the
  * verified Legiit plan data), every plan link's destination including the
@@ -45,7 +46,7 @@ const EXPECT = {
     perBusiness: '$6.76 per business per month with all 20 in use',
   },
 }
-const SETUPS = ['1 Business $49/month', '2 Business plus 1 additional business $59/month', 'Up to 20 Agency $169/month', '21 or more Agency plus additional businesses $169/month plus $10/month for each business over 20']
+const SETUPS = ['1 Business $49/month', '2 Business plus 1 additional business $59/month', 'Up to 20 Agency $169/month', '21 Agency plus 1 additional business $179/month']
 // Every plan link on the page: 4 in the cards, 1 marketplace, 2 per-business, 2 compare, 2 final.
 const EXPECTED_ROUTED_LINKS = 11
 
@@ -60,10 +61,12 @@ const readCards = (page) =>
   })
 
 for (const [width, height] of [
-  [360, 740],
-  [390, 844],
+  [360, 640],
+  [390, 664],
   [768, 1024],
-  [1440, 900],
+  [1280, 620],
+  [1366, 657],
+  [1440, 789],
 ]) {
   const context = await browser.newContext({ viewport: { width, height } })
   const page = await context.newPage()

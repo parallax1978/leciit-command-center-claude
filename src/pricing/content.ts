@@ -46,7 +46,7 @@ export const BUSINESS_CARD: PlanCardCopy = {
     'Full business dashboard access',
     `${formatCount(BUSINESS_PLAN.aiCreditsMonthly)} AI credits each month`,
     allowanceLine(BUSINESS_PLAN),
-    `Additional businesses ${formatUsd(BUSINESS_PLAN.additionalBusinessMonthly)}/month each`,
+    `Additional businesses at ${formatUsd(BUSINESS_PLAN.additionalBusinessMonthly)}/month each`,
     'Support included',
   ],
   ctaLabel: 'Start My 7-Day Free Trial',
@@ -63,7 +63,7 @@ export const AGENCY_CARD: PlanCardCopy = {
     'Full business dashboard access',
     `${formatCount(AGENCY_PLAN.aiCreditsMonthly)} AI credits each month`,
     allowanceLine(AGENCY_PLAN),
-    `Additional businesses ${formatUsd(AGENCY_PLAN.additionalBusinessMonthly)}/month each`,
+    `Businesses beyond ${AGENCY_PLAN.businessesIncluded} at ${formatUsd(AGENCY_PLAN.additionalBusinessMonthly)}/month each`,
     'Support included',
   ],
   ctaLabel: 'Choose Agency',
@@ -73,7 +73,7 @@ export const AGENCY_CARD: PlanCardCopy = {
 
 export const MARKETPLACE_STRIP = {
   title: 'Only buying or selling services?',
-  body: `A Legiit marketplace account is free to join, with no subscription and no dashboard access. Sellers pay a ${MARKETPLACE_PLAN.saleFeePercent}% fee per sale.`,
+  body: `A Legiit marketplace account is free to join, with no subscription and no dashboard access. Sellers pay a ${MARKETPLACE_PLAN.saleFeePercent}% fee per sale, and payments through third-party providers may carry a ${MARKETPLACE_PLAN.processingFeePercent}% processing fee.`,
   ctaLabel: 'Create A Free Account',
 } as const
 
@@ -89,22 +89,18 @@ const extra = BUSINESS_PLAN.additionalBusinessMonthly
 export const PER_BUSINESS = {
   eyebrow: 'Managing more than one business?',
   title: `One plan for up to ${AGENCY_PLAN.businessesIncluded} businesses.`,
-  lead: `Agency includes up to ${AGENCY_PLAN.businessesIncluded} businesses for ${formatUsd(AGENCY_PLAN.monthlyPrice)}/month, which is ${formatUsd(perIncludedBusiness(AGENCY_PLAN, 'monthly'))} per business with all ${AGENCY_PLAN.businessesIncluded} in use. Each additional business is ${formatUsd(extra)}/month on either plan.`,
+  lead: `Agency includes up to ${AGENCY_PLAN.businessesIncluded} businesses for ${formatUsd(AGENCY_PLAN.monthlyPrice)}/month billed monthly, which is ${formatUsd(perIncludedBusiness(AGENCY_PLAN, 'monthly'))} per business with all ${AGENCY_PLAN.businessesIncluded} in use. Each additional business is ${formatUsd(extra)}/month on either plan.`,
   tableCaption: 'Common setups on monthly billing',
   rows: [
     { businesses: '1', plan: 'Business', price: `${formatUsd(BUSINESS_PLAN.monthlyPrice)}/month` },
     { businesses: '2', plan: 'Business plus 1 additional business', price: `${formatUsd(BUSINESS_PLAN.monthlyPrice + extra)}/month` },
     { businesses: `Up to ${AGENCY_PLAN.businessesIncluded}`, plan: 'Agency', price: `${formatUsd(AGENCY_PLAN.monthlyPrice)}/month` },
-    {
-      businesses: `${AGENCY_PLAN.businessesIncluded + 1} or more`,
-      plan: 'Agency plus additional businesses',
-      price: `${formatUsd(AGENCY_PLAN.monthlyPrice)}/month plus ${formatUsd(AGENCY_PLAN.additionalBusinessMonthly)}/month for each business over ${AGENCY_PLAN.businessesIncluded}`,
-    },
+    { businesses: String(AGENCY_PLAN.businessesIncluded + 1), plan: 'Agency plus 1 additional business', price: `${formatUsd(AGENCY_PLAN.monthlyPrice + AGENCY_PLAN.additionalBusinessMonthly)}/month` },
   ] satisfies SetupRow[],
   tableNote: `Annual billing takes ${annualDiscountPercent(AGENCY_PLAN)}% off the plan price: ${formatUsd(monthlyEquivalent(AGENCY_PLAN, 'yearly'))}/month for Agency, billed at ${formatUsd(yearlyCost(AGENCY_PLAN, 'yearly'))} a year.`,
   ctaLabel: AGENCY_CARD.ctaLabel,
   ctaNote: AGENCY_CARD.ctaNote,
-  fallbackBefore: 'Not ready to commit? ',
+  fallbackBefore: 'Prefer to try it first? ',
   fallbackLink: 'Start with the 7-day Business trial',
   fallbackAfter: ' and upgrade as you add businesses.',
 } as const
@@ -147,7 +143,7 @@ export interface CompareGroup {
 const billedYearly = (plan: PaidPlan) => ({ main: `${formatUsd(yearlyCost(plan, 'yearly'))}/year`, sub: `${formatUsd(monthlyEquivalent(plan, 'yearly'))}/month` })
 const perBusiness = (plan: PaidPlan) => ({
   main: `${formatUsd(perIncludedBusiness(plan, 'monthly'))}/month`,
-  sub: `${formatUsd(perIncludedBusiness(plan, 'yearly'))} billed annually`,
+  sub: `${formatUsd(perIncludedBusiness(plan, 'yearly'))}/month billed annually`,
 })
 
 export const COMPARE_GROUPS: CompareGroup[] = [
@@ -201,14 +197,14 @@ export const PRICING_FAQ_COPY = {
 export const PRICING_FAQ: FaqItem[] = [
   {
     id: 'trial-start',
-    question: 'What Do I Need To Start The Free Trial?',
-    answer: ['Your website and email address. Then you create your account and add your business details.'],
+    question: 'How Do I Start The Free Trial?',
+    answer: ['Select Start My 7-Day Free Trial and enter your website and email. The next steps set up your account and your business details.'],
   },
   {
-    id: 'trial-end',
-    question: 'What Happens When My 7 Days End?',
+    id: 'after-trial',
+    question: 'What Does Business Cost After The Trial?',
     answer: [
-      `Your free trial of the Business Dashboard ends, and you are asked to upgrade to keep accessing your data and insights. Business is ${formatUsd(BUSINESS_PLAN.monthlyPrice)}/month billed monthly, or ${formatUsd(BUSINESS_PLAN.yearlyPrice)}/year billed annually.`,
+      `Business is ${formatUsd(BUSINESS_PLAN.monthlyPrice)}/month billed monthly, or ${formatUsd(BUSINESS_PLAN.yearlyPrice)}/year billed annually. Each additional business is ${formatUsd(BUSINESS_PLAN.additionalBusinessMonthly)}/month.`,
     ],
   },
   {
@@ -220,7 +216,7 @@ export const PRICING_FAQ: FaqItem[] = [
     id: 'annual',
     question: 'How Does Annual Billing Work?',
     answer: [
-      `Annual billing costs ${annualDiscountPercent(BUSINESS_PLAN)}% less than paying monthly. Business is ${formatUsd(BUSINESS_PLAN.yearlyPrice)}/year (${formatUsd(monthlyEquivalent(BUSINESS_PLAN, 'yearly'))}/month), and Agency is ${formatUsd(AGENCY_PLAN.yearlyPrice)}/year (${formatUsd(monthlyEquivalent(AGENCY_PLAN, 'yearly'))}/month).`,
+      `Annual billing takes ${annualDiscountPercent(BUSINESS_PLAN)}% off the plan price. Business is ${formatUsd(BUSINESS_PLAN.yearlyPrice)}/year (${formatUsd(monthlyEquivalent(BUSINESS_PLAN, 'yearly'))}/month), and Agency is ${formatUsd(AGENCY_PLAN.yearlyPrice)}/year (${formatUsd(monthlyEquivalent(AGENCY_PLAN, 'yearly'))}/month).`,
     ],
   },
   {
