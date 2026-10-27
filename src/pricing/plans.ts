@@ -106,13 +106,13 @@ export const MARKETPLACE_PLAN = {
 export const LEGIIT_BUCKS_PERCENT = 2
 
 /**
- * Routes. The trial start is the entry Legiit's own navigation and the
- * landing page use. The subscription route is what Legiit's live Business
- * "Subscribe" button builds for signed-out visitors; the agency variant
- * follows the same pattern (the live agency button drops the plan, a bug).
+ * Routes. Trial and Agency buttons open the plan checkout directly (see
+ * trialUrl and checkoutUrl). The Business subscribe link keeps the sign-in
+ * redirect Legiit's live Business "Subscribe" button builds for signed-out
+ * visitors.
  */
 export const ROUTES = {
-  trialStart: 'https://legiit.com/command-center/start',
+  subscriptionPurchase: 'https://legiit.com/subscription-purchase',
   register: 'https://legiit.com/register',
   signIn: 'https://legiit.com/sign-in',
   support: 'https://legiit.freshdesk.com/support/home',
@@ -120,6 +120,19 @@ export const ROUTES = {
   terms: 'https://legiit.com/terms',
   privacy: 'https://legiit.com/privacy',
 } as const
+
+/** Plan checkout with the chosen billing period, e.g. https://legiit.com/subscription-purchase?plan=agency_dashboard&billing=monthly */
+export function checkoutUrl(planId: PaidPlanId, billing: BillingPeriod): string {
+  const url = new URL(ROUTES.subscriptionPurchase)
+  url.searchParams.set('plan', planId)
+  url.searchParams.set('billing', billing)
+  return url.toString()
+}
+
+/** Every trial button and link: the Business checkout, where the 7-day free trial starts. */
+export function trialUrl(billing: BillingPeriod): string {
+  return checkoutUrl('business_dashboard', billing)
+}
 
 /** Signed-out checkout link: sign in, then return to the plan purchase with the chosen billing period. */
 export function subscribeUrl(planId: PaidPlanId, billing: BillingPeriod): string {

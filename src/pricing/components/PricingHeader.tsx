@@ -2,7 +2,7 @@ import { Container } from '../../components/ui/Container'
 import { Logo } from '../../components/brand/Logo'
 import { PrimaryCta } from '../../components/cta/PrimaryCta'
 import { PRODUCT_NAME } from '../../config/site'
-import { ROUTES, type BillingPeriod } from '../plans'
+import { ROUTES, trialUrl, type BillingPeriod } from '../plans'
 import { track } from '../../lib/analytics'
 
 /** Same lockup and trial button as the landing page, plus Log In (Legiit's own label) for customers who want to upgrade. */
@@ -19,7 +19,7 @@ export function PricingHeader({ billing }: { billing: BillingPeriod }) {
           <a href={ROUTES.signIn} className="hidden min-h-[44px] items-center rounded-md px-3 text-[15px] font-medium text-ink-soft hover:text-ink btn-focus sm:inline-flex">
             Log In
           </a>
-          <PrimaryCta placement="header" className="!px-3 sm:!px-4" onTrack={() => track('plan_cta_click', { plan: 'business_dashboard', billing, placement: 'header' })} />
+          <PrimaryCta placement="header" href={trialUrl(billing)} className="!px-3 sm:!px-4" onTrack={() => track('plan_cta_click', { plan: 'business_dashboard', billing, placement: 'header' })} />
         </div>
       </Container>
     </header>

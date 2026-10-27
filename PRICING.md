@@ -35,12 +35,14 @@ npm run build:pricing-preview                     # one self-contained file -> d
 
 | Button or link | Destination |
 |---|---|
-| Business trial (card, compare, closing, header, fallbacks) | `https://legiit.com/command-center/start`, no parameters |
+| "Start My 7-Day Free Trial" (card, compare, closing), header "Start Free Trial", and the "Try Business free for 7 days" links | `https://legiit.com/subscription-purchase?plan=business_dashboard&billing=monthly`, or `billing=yearly` when Annual is selected (`trialUrl` in `src/pricing/plans.ts`) |
+| "Choose Agency" (card, per-business, compare, closing) | `https://legiit.com/subscription-purchase?plan=agency_dashboard&billing=monthly`, or `billing=yearly` (`checkoutUrl`) |
 | "Subscribe to Business" (for visitors whose trial ended) | `https://legiit.com/sign-in?redirect=%2Fsubscription-purchase%3Fplan%3Dbusiness_dashboard%26billing%3D{monthly or yearly}` |
-| "Choose Agency" (card, per-business, compare, closing) | Same pattern with `plan=agency_dashboard` and the selected billing period. This is the pattern Legiit's live Business button uses; the live Agency button drops both values |
 | "Create A Free Account" | `https://legiit.com/register` |
 
-Anchors: `#business`, `#agency`, `#per-business`, `#compare`. Redirect `/pricing/agency-plan` to `/pricing#agency` with a 301.
+When checked on October 27, 2026, a signed-out visit to `/subscription-purchase` redirected to `/sign-in` without keeping the plan, so visitors who logged in landed on the homepage. The purchase page should send signed-out visitors through log-in or registration and back to the same checkout, plan and billing intact; every main button on this page depends on it. The landing page's trial buttons still go to `https://legiit.com/command-center/start`.
+
+Anchors: `#business`, `#agency`, `#per-business`, `#compare`. Redirect `/pricing/agency-plan` to `/pricing/#agency` with a 301.
 
 ## First screen
 
@@ -67,7 +69,7 @@ Unverified, so not stated: card requirement at trial start, whether the trial co
 3. Trial terms: is a card collected, and does the trial convert to paid on its own? If either is true, state it here and in checkout.
 4. A trial user can upgrade straight to Agency (the page offers "Try Business free for 7 days, then upgrade to Agency").
 5. Whether the 7-day trial applies to annual billing, and which billing period applies when it ends. The trial button carries no billing period, and in the Annual view it sits under "Billed annually at $470.40".
-6. `/subscription-purchase?plan=agency_dashboard&billing=...` opens Agency checkout after sign-in, and "Register Now" on the sign-in page keeps the redirect.
+6. `/subscription-purchase?plan=business_dashboard` starts the 7-day trial and `plan=agency_dashboard` opens Agency checkout, for `billing=monthly` and `yearly`, including for signed-out visitors (see Destinations).
 7. Agency's 50,000 AI credits equal Business's despite up to 20 businesses, and the API's `uptime_monitor_limit` is 1 on Agency versus 5 on Business. Confirm both.
 8. Legiit's Terms mention a 3% processing fee on some third-party payments. Confirm whether it applies to subscriptions.
 

@@ -19,8 +19,8 @@ export const PRICING_HERO = {
   subheadAfter: ` to manage up to ${AGENCY_PLAN.businessesIncluded} businesses.`,
 } as const
 
-/** Where a plan link goes: the trial start, the sign-in checkout for a plan, or marketplace registration. */
-export type CtaRoute = 'trial' | 'subscribe' | 'register'
+/** Where a plan link goes: the trial start, the plan checkout, the sign-in-first checkout, or marketplace registration. */
+export type CtaRoute = 'trial' | 'checkout' | 'subscribe' | 'register'
 
 export interface PlanCardCopy {
   plan: PaidPlan
@@ -51,7 +51,7 @@ export const BUSINESS_CARD: PlanCardCopy = {
     'Support included',
   ],
   ctaLabel: PRIMARY_CTA_LABEL,
-  ctaNote: 'Begin with your website and email.',
+  ctaNote: 'Log in to your Legiit account to start.',
   altRoute: { before: 'Already used your trial? ', linkLabel: 'Subscribe to Business', after: '.', route: 'subscribe' },
 }
 
@@ -199,7 +199,7 @@ export const PRICING_FAQ: FaqItem[] = [
   {
     id: 'trial-start',
     question: 'How Do I Start The Free Trial?',
-    answer: [`Select ${PRIMARY_CTA_LABEL} and enter your website and email. The next steps set up your account and your business details.`],
+    answer: [`Select ${PRIMARY_CTA_LABEL} to open the Business checkout. If you are not logged in, Legiit asks you to log in or create an account first.`],
   },
   {
     id: 'after-trial',

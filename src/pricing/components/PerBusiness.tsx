@@ -3,7 +3,7 @@ import { LinkButton, iconClass, iconSize } from '../../components/ui/Button'
 import { ArrowRight } from '../../components/ui/Icons'
 import { PER_BUSINESS } from '../content'
 import { breakBeforeUnit } from './breakBeforeUnit'
-import { ROUTES, subscribeUrl, type BillingPeriod } from '../plans'
+import { checkoutUrl, trialUrl, type BillingPeriod } from '../plans'
 import { track } from '../../lib/analytics'
 
 /**
@@ -25,12 +25,12 @@ export function PerBusiness({ billing }: { billing: BillingPeriod }) {
             <p className="lead mt-4 text-pretty">{PER_BUSINESS.lead}</p>
             <div className="btn-xl-fit-agency mt-8">
               <LinkButton
-                href={subscribeUrl('agency_dashboard', billing)}
+                href={checkoutUrl('agency_dashboard', billing)}
                 variant="primary"
                 size="xl"
                 className="w-full whitespace-nowrap sm:w-auto"
                 data-plan-cta="agency_dashboard"
-                data-cta-route="subscribe"
+                data-cta-route="checkout"
                 onClick={() => track('plan_cta_click', { plan: 'agency_dashboard', billing, placement: 'per-business' })}
               >
                 {PER_BUSINESS.ctaLabel}
@@ -40,7 +40,7 @@ export function PerBusiness({ billing }: { billing: BillingPeriod }) {
               <p className="mt-1 text-sm leading-relaxed text-ink-soft">
                 {PER_BUSINESS.fallbackBefore}
                 <a
-                  href={ROUTES.trialStart}
+                  href={trialUrl(billing)}
                   className="rounded-sm font-medium text-brand-purple underline decoration-brand-purple/40 underline-offset-4 hover:decoration-brand-purple btn-focus"
                   data-alt-plan="business_dashboard"
                   data-cta-route="trial"

@@ -8,6 +8,8 @@ interface PrimaryCtaProps {
   className?: string
   /** Replaces the default cta_click event, for pages with their own events (the pricing page). */
   onTrack?: () => void
+  /** Replaces CTA_URL, for pages whose trial starts elsewhere (the pricing page). */
+  href?: string
 }
 
 const config = {
@@ -18,14 +20,14 @@ const config = {
 } as const
 
 /**
- * The shared trial button. Every placement links to CTA_URL exactly.
+ * The shared trial button. Every placement links to CTA_URL exactly unless a page passes its own href.
  * Only the hero placement carries the 25% size increase.
  */
-export function PrimaryCta({ placement, className = '', onTrack }: PrimaryCtaProps) {
+export function PrimaryCta({ placement, className = '', onTrack, href = CTA_URL }: PrimaryCtaProps) {
   const { label, size, variant, icon } = config[placement]
   return (
     <LinkButton
-      href={CTA_URL}
+      href={href}
       size={size}
       variant={variant}
       className={`whitespace-nowrap ${placement === 'header' ? 'shrink-0' : ''} ${className}`}

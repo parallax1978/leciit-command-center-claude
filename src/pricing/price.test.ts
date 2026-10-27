@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { AGENCY_PLAN, BUSINESS_PLAN, LEGIIT_BUCKS_PERCENT, MARKETPLACE_PLAN, subscribeUrl } from './plans'
+import { AGENCY_PLAN, BUSINESS_PLAN, LEGIIT_BUCKS_PERCENT, MARKETPLACE_PLAN, checkoutUrl, subscribeUrl, trialUrl } from './plans'
 import { annualDiscountPercent, annualSavings, formatCount, formatUsd, monthlyEquivalent, perIncludedBusiness, yearlyCost } from './price'
 
 describe('verified plan data', () => {
@@ -58,6 +58,15 @@ describe('price math', () => {
 })
 
 describe('checkout links', () => {
+  it('opens the Agency checkout directly, with the chosen billing period', () => {
+    expect(checkoutUrl('agency_dashboard', 'monthly')).toBe('https://legiit.com/subscription-purchase?plan=agency_dashboard&billing=monthly')
+    expect(checkoutUrl('agency_dashboard', 'yearly')).toBe('https://legiit.com/subscription-purchase?plan=agency_dashboard&billing=yearly')
+  })
+  it('starts the trial at the Business checkout, with the chosen billing period', () => {
+    expect(trialUrl('monthly')).toBe('https://legiit.com/subscription-purchase?plan=business_dashboard&billing=monthly')
+    expect(trialUrl('yearly')).toBe('https://legiit.com/subscription-purchase?plan=business_dashboard&billing=yearly')
+  })
+
   it('builds the signed-out subscribe link Legiit uses, with the chosen billing period', () => {
     expect(subscribeUrl('business_dashboard', 'yearly')).toBe(
       'https://legiit.com/sign-in?redirect=%2Fsubscription-purchase%3Fplan%3Dbusiness_dashboard%26billing%3Dyearly',

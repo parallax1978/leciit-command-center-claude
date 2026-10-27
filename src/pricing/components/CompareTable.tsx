@@ -2,7 +2,7 @@ import { Container } from '../../components/ui/Container'
 import { LinkButton } from '../../components/ui/Button'
 import { Check } from '../../components/ui/Icons'
 import { AGENCY_CARD, BUSINESS_CARD, COMPARE_GROUPS, type CompareValue } from '../content'
-import { ROUTES, subscribeUrl, type BillingPeriod } from '../plans'
+import { checkoutUrl, trialUrl, type BillingPeriod } from '../plans'
 import { track } from '../../lib/analytics'
 import { breakBeforeUnit } from './breakBeforeUnit'
 import { AgencyNote } from './AgencyNote'
@@ -84,7 +84,7 @@ export function CompareTable({ billing }: { billing: BillingPeriod }) {
         </div>
         <div className="btn-xl-fit mt-10 flex flex-col gap-3 lg:flex-row lg:justify-end">
           <LinkButton
-            href={ROUTES.trialStart}
+            href={trialUrl(billing)}
             variant="primary"
             size="xl"
             className="whitespace-nowrap"
@@ -95,12 +95,12 @@ export function CompareTable({ billing }: { billing: BillingPeriod }) {
             {BUSINESS_CARD.ctaLabel}
           </LinkButton>
           <LinkButton
-            href={subscribeUrl('agency_dashboard', billing)}
+            href={checkoutUrl('agency_dashboard', billing)}
             variant="outline"
             size="xl"
             className="whitespace-nowrap"
             data-plan-cta="agency_dashboard"
-            data-cta-route="subscribe"
+            data-cta-route="checkout"
             onClick={() => track('plan_cta_click', { plan: 'agency_dashboard', billing, placement: 'compare' })}
           >
             {AGENCY_CARD.ctaLabel}

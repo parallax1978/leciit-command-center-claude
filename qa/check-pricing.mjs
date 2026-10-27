@@ -29,9 +29,11 @@ const results = []
 const pass = (m) => results.push({ ok: true, m })
 const fail = (m) => results.push({ ok: false, m })
 
-const TRIAL = 'https://legiit.com/command-center/start'
+// Trial buttons and links open the Business checkout with the selected billing period.
+const trial = (billing) => `https://legiit.com/subscription-purchase?plan=business_dashboard&billing=${billing}`
 const REGISTER = 'https://legiit.com/register'
 const subscribe = (plan, billing) => `https://legiit.com/sign-in?redirect=${encodeURIComponent(`/subscription-purchase?plan=${plan}&billing=${billing}`)}`
+const checkout = (plan, billing) => `https://legiit.com/subscription-purchase?plan=${plan}&billing=${billing}`
 const EXPECT = {
   monthly: {
     business: '$49',
@@ -188,7 +190,7 @@ for (const [width, height] of [
     ? pass(`${width}: FAQ contact answer links the email and support center`)
     : fail(`${width}: FAQ links ${JSON.stringify(m.faqLinks)}`)
   m.anchors.length === 0 ? pass(`${width}: anchors #business, #agency, #per-business, #compare exist`) : fail(`${width}: missing anchors ${m.anchors}`)
-  m.headerCta === TRIAL ? pass(`${width}: header button goes to the trial start`) : fail(`${width}: header button ${m.headerCta}`)
+  m.headerCta === trial('monthly') ? pass(`${width}: header button goes to the Business checkout`) : fail(`${width}: header button ${m.headerCta}`)
   // 320px is the WCAG reflow width (400% zoom); there the header's trial button is the first-screen action.
   // The plan buttons are 108px tall, so "in the first screen" means at least 44px of the button shows.
   if (width >= 360) {
@@ -226,7 +228,7 @@ for (const [width, height] of [
     const links = await page.evaluate(() =>
       Array.from(document.querySelectorAll('a[data-cta-route]')).map((a) => ({ plan: a.dataset.planCta || a.dataset.altPlan, route: a.dataset.ctaRoute, href: a.href })),
     )
-    const want = (l) => (l.route === 'trial' ? TRIAL : l.route === 'register' ? REGISTER : subscribe(l.plan, billing))
+    const want = (l) => (l.route === 'trial' ? trial(billing) : l.route === 'register' ? REGISTER : l.route === 'checkout' ? checkout(l.plan, billing) : subscribe(l.plan, billing))
     const wrong = links.filter((l) => l.href !== want(l) || (l.route === 'trial' && l.plan !== 'business_dashboard') || (l.route === 'register' && l.plan !== 'marketplace'))
     wrong.length === 0 && links.length === EXPECTED_ROUTED_LINKS
       ? pass(`${width} ${billing}: all ${links.length} plan links go to the right destination`)

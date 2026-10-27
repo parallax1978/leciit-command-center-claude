@@ -1,5 +1,5 @@
 import { AGENCY_CARD } from '../content'
-import { ROUTES, type BillingPeriod } from '../plans'
+import { trialUrl, type BillingPeriod } from '../plans'
 import { track } from '../../lib/analytics'
 
 interface AgencyNoteProps {
@@ -24,7 +24,7 @@ export function AgencyNote({ billing, placement, tone = 'default', className = '
       <p className={inverse ? '' : 'text-ink-soft'}>
         {altRoute.before}
         <a
-          href={ROUTES.trialStart}
+          href={trialUrl(billing)}
           className={`whitespace-nowrap rounded-sm font-medium underline underline-offset-4 btn-focus ${
             inverse ? 'text-white decoration-white/60 hover:decoration-white focus-visible:!outline-white' : 'text-brand-purple decoration-brand-purple/40 hover:decoration-brand-purple'
           }`}

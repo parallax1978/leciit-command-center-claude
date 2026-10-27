@@ -2,7 +2,7 @@ import { Container } from '../../components/ui/Container'
 import { LinkButton, iconClass, iconSize } from '../../components/ui/Button'
 import { ArrowRight } from '../../components/ui/Icons'
 import { PRICING_FINAL, BUSINESS_CARD, AGENCY_CARD } from '../content'
-import { ROUTES, subscribeUrl, type BillingPeriod } from '../plans'
+import { checkoutUrl, trialUrl, type BillingPeriod } from '../plans'
 import { track } from '../../lib/analytics'
 import { AgencyNote } from './AgencyNote'
 
@@ -20,7 +20,7 @@ export function PricingFinal({ billing }: { billing: BillingPeriod }) {
           <p className="mx-auto mt-4 max-w-xl text-balance text-[17px] leading-relaxed text-white/95 sm:text-lg">{PRICING_FINAL.body}</p>
           <div className="btn-xl-fit mt-8 flex flex-col items-center justify-center gap-3 lg:flex-row">
             <LinkButton
-              href={ROUTES.trialStart}
+              href={trialUrl(billing)}
               variant="inverse"
               size="xl"
               className="w-full whitespace-nowrap lg:w-auto"
@@ -32,12 +32,12 @@ export function PricingFinal({ billing }: { billing: BillingPeriod }) {
               <ArrowRight size={iconSize.xl} className={`shrink-0 ${iconClass.xl}`} />
             </LinkButton>
             <LinkButton
-              href={subscribeUrl('agency_dashboard', billing)}
+              href={checkoutUrl('agency_dashboard', billing)}
               variant="outlineInverse"
               size="xl"
               className="w-full whitespace-nowrap lg:w-auto"
               data-plan-cta="agency_dashboard"
-              data-cta-route="subscribe"
+              data-cta-route="checkout"
               onClick={() => track('plan_cta_click', { plan: 'agency_dashboard', billing, placement: 'final' })}
             >
               {AGENCY_CARD.ctaLabel}

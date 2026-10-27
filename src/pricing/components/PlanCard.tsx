@@ -1,5 +1,5 @@
 import type { BillingPeriod } from '../plans'
-import { ROUTES, subscribeUrl } from '../plans'
+import { checkoutUrl, subscribeUrl, trialUrl } from '../plans'
 import { annualSavings, formatUsd, monthlyEquivalent, perIncludedBusiness, yearlyCost } from '../price'
 import type { CtaRoute, PlanCardCopy } from '../content'
 import { LinkButton, iconClass, iconSize } from '../../components/ui/Button'
@@ -26,8 +26,9 @@ export function PlanCard({ copy, billing, highlighted = false }: PlanCardProps) 
   const { plan, altRoute } = copy
   const headingId = `plan-${plan.id}`
   const isAgency = plan.businessesIncluded > 1
-  const routeHref = (route: CtaRoute) => (route === 'trial' ? ROUTES.trialStart : subscribeUrl(plan.id, billing))
-  const primaryRoute: CtaRoute = plan.trialDays ? 'trial' : 'subscribe'
+  const routeHref = (route: CtaRoute) => (route === 'trial' ? trialUrl(billing) : route === 'checkout' ? checkoutUrl(plan.id, billing) : subscribeUrl(plan.id, billing))
+  // Business starts the trial; Agency (no trial) opens its checkout.
+  const primaryRoute: CtaRoute = plan.trialDays ? 'trial' : 'checkout'
   // The trial is a Business trial, so a trial link always counts as Business.
   const altPlan = altRoute.route === 'trial' ? 'business_dashboard' : plan.id
 
