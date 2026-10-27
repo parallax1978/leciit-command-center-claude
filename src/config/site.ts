@@ -10,3 +10,7 @@ export const HEADER_CTA_LABEL = 'Start Free Trial' as const
 export const PRODUCT_NAME = 'Command Center' as const
 /** Legiit company history. Not a claim about Command Center's age or customer outcomes. */
 export const COMPANY_LINE = 'From Legiit. Connecting businesses and freelancers since 2018.' as const
+/** Footer text on both pages. */
+export const FOOTER = {
+  line: 'Command Center by Legiit',
+} as const

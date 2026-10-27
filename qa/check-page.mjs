@@ -10,7 +10,7 @@
  * behaviour, reduced motion, and image fallbacks. Screenshots -> qa/screenshots.
  */
 import { chromium } from 'playwright-core'
-import { mkdirSync, readdirSync, statSync } from 'node:fs'
+import { mkdirSync, readdirSync, statSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 
 const base = process.argv[2] ?? 'http://127.0.0.1:4173'
@@ -19,6 +19,7 @@ mkdirSync(outDir, { recursive: true })
 
 function findChromium() {
   const root = process.env.PLAYWRIGHT_BROWSERS_PATH ?? '/opt/pw-browsers'
+  if (!existsSync(root)) return undefined
   for (const entry of readdirSync(root)) {
     if (!entry.startsWith('chromium')) continue
     for (const sub of ['chrome-linux/chrome', 'chrome-linux64/chrome', 'chrome']) {

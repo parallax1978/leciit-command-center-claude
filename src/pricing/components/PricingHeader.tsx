@@ -13,7 +13,7 @@ export function PricingHeader({ billing }: { billing: BillingPeriod }) {
         <a href="#top" className="-ml-2 inline-flex min-h-[44px] min-w-0 items-center gap-2 rounded-md px-2 btn-focus sm:gap-3" aria-label={`Legiit ${PRODUCT_NAME}, back to top`}>
           <Logo height={26} className="sm:!h-7" />
           <span aria-hidden="true" className="h-5 w-px shrink-0 bg-line-strong max-[359px]:hidden" />
-          <span className="whitespace-nowrap text-[13px] font-medium text-ink max-[359px]:hidden sm:text-[15px]">{PRODUCT_NAME}</span>
+          <span className="min-w-0 truncate text-[13px] font-medium text-ink max-[359px]:hidden sm:text-[15px]">{PRODUCT_NAME}</span>
         </a>
         <div className="flex items-center gap-1 sm:gap-3">
           <a href={ROUTES.signIn} className="hidden min-h-[44px] items-center rounded-md px-3 text-[15px] font-medium text-ink-soft hover:text-ink btn-focus sm:inline-flex">

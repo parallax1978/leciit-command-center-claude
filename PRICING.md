@@ -68,7 +68,7 @@ Unverified, so not stated: card requirement at trial start, whether the trial co
 2. Annual plans are charged once a year at $470.40 and $1,622.40 (the API lists these yearly prices; checkout cannot be viewed signed out).
 3. Trial terms: is a card collected, and does the trial convert to paid on its own? If either is true, state it here and in checkout.
 4. A trial user can upgrade straight to Agency (the page offers "Try Business free for 7 days, then upgrade to Agency").
-5. Whether the 7-day trial applies to annual billing, and which billing period applies when it ends. The trial button carries no billing period, and in the Annual view it sits under "Billed annually at $470.40".
+5. Whether the 7-day trial applies to annual billing, and which billing period applies when it ends. The trial links carry the selected billing period (`billing=yearly` in the Annual view, where the button sits under "Billed annually at $470.40").
 6. `/subscription-purchase?plan=business_dashboard` starts the 7-day trial and `plan=agency_dashboard` opens Agency checkout, for `billing=monthly` and `yearly`, including for signed-out visitors (see Destinations).
 7. Agency's 50,000 AI credits equal Business's despite up to 20 businesses, and the API's `uptime_monitor_limit` is 1 on Agency versus 5 on Business. Confirm both.
 8. Legiit's Terms mention a 3% processing fee on some third-party payments. Confirm whether it applies to subscriptions.

@@ -256,6 +256,7 @@ for (const [width, height] of [
     console.log('Headings:', m.headings.map((h) => `H${h.level}:${h.text.slice(0, 40)}`).join(' | '))
   }
   await page.locator('label').filter({ hasText: /^Monthly/ }).first().click()
+  await page.waitForTimeout(400) // the switch's 150ms colour transition
   await page.evaluate(() => window.scrollTo(0, 0))
   await page.screenshot({ path: `${outDir}/pricing-${width}-fold.png` })
   await page.screenshot({ path: `${outDir}/pricing-${width}.png`, fullPage: true })

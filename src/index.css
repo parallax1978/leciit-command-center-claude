@@ -77,7 +77,8 @@
     }
   }
   .btn-xl {
-    font-size: min(32px, 100cqi / var(--btn-em, 15.96));
+    /* --btn-fit is set by LinkButton only when a wider fallback font would overflow the button. */
+    font-size: calc(min(32px, 100cqi / var(--btn-em, 15.96)) * var(--btn-fit, 1));
     min-height: 108px;
     padding-inline: 0.75em;
     gap: 1.25em;

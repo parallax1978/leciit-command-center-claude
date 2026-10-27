@@ -100,9 +100,8 @@ export const FINAL_CTA = {
   body: 'Bring your plans, tools, and expert help together in Command Center.',
 } as const
 
-export const FOOTER = {
-  line: 'Command Center by Legiit',
-} as const
+// The footer text lives in ./site so the pricing page does not depend on this file.
+export { FOOTER } from './site'
 
 export interface WalkthroughChapter {
   id: string

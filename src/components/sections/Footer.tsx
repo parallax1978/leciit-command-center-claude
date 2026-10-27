@@ -1,6 +1,6 @@
 import { Container } from '../ui/Container'
 import { Logo } from '../brand/Logo'
-import { FOOTER } from '../../config/copy'
+import { FOOTER } from '../../config/site'
 
 /** Simple footer. Both legal destinations were checked and return 200. */
 const LEGAL_LINKS = [

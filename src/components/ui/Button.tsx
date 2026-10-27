@@ -1,8 +1,10 @@
-import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react'
+import { useLayoutEffect, useRef, type AnchorHTMLAttributes, type ButtonHTMLAttributes, type ReactNode } from 'react'
 
 type Variant = 'primary' | 'inverse' | 'outline' | 'outlineInverse' | 'secondary' | 'ghost'
-/** `hero` is the standard `lg` size scaled by 25% (font, padding, gap, icon, border, radius). */
-/** `xl` is `lg` doubled (see .btn-xl in index.css). */
+/**
+ * `hero` is the standard `lg` size scaled by 25% (font, padding, gap, icon, border, radius).
+ * `xl` is `lg` doubled (see .btn-xl in index.css).
+ */
 type Size = 'sm' | 'md' | 'lg' | 'hero' | 'xl'
 
 /*
@@ -56,9 +58,35 @@ export function Button({ variant = 'primary', size = 'md', className = '', child
   )
 }
 
+/**
+ * `xl` labels are sized for Inter (see .btn-xl). If a device falls back to a wider font and the
+ * label would overflow its button, this scales it down just enough to fit (--btn-fit); otherwise
+ * it does nothing. It re-checks when the container resizes and once web fonts have loaded.
+ */
+function useFitLabel(enabled: boolean) {
+  const ref = useRef<HTMLAnchorElement>(null)
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!enabled || !el) return
+    const fit = () => {
+      el.style.removeProperty('--btn-fit')
+      const ratio = el.clientWidth / el.scrollWidth
+      if (ratio < 1) el.style.setProperty('--btn-fit', (ratio * 0.98).toFixed(3))
+    }
+    fit()
+    // The container's width does not depend on the button, so resizing it cannot loop.
+    const observer = new ResizeObserver(fit)
+    if (el.parentElement) observer.observe(el.parentElement)
+    document.fonts?.ready.then(fit)
+    return () => observer.disconnect()
+  }, [enabled])
+  return ref
+}
+
 export function LinkButton({ variant = 'primary', size = 'md', className = '', children, ...rest }: CommonProps & AnchorHTMLAttributes<HTMLAnchorElement>) {
+  const ref = useFitLabel(size === 'xl')
   return (
-    <a className={buttonClass(variant, size, className)} {...rest}>
+    <a ref={ref} className={buttonClass(variant, size, className)} {...rest}>
       {children}
     </a>
   )

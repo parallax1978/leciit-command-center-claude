@@ -17,7 +17,8 @@ export default defineConfig({
     },
   },
   server: { host: true, port: 5173 },
-  preview: { host: true, port: 4173 },
+  // strictPort: the QA scripts expect 4173, so fail rather than silently serve on another port.
+  preview: { host: true, port: 4173, strictPort: true },
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],
