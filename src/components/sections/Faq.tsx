@@ -8,8 +8,24 @@ interface FaqProps {
   eyebrow?: string
   title?: string
   items?: FaqItem[]
-  /** Section id prefix so two FAQ sections never collide on one page. */
+  /** Id of the section heading, so two FAQ sections on one page never share it. */
   headingId?: string
+}
+
+/** Splits a paragraph around each link text so those words render as links. */
+function withLinks(paragraph: string, links: FaqItem['links']) {
+  if (!links?.length) return paragraph
+  const pattern = new RegExp(`(${links.map((l) => l.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`)
+  return paragraph.split(pattern).map((part, i) => {
+    const link = links.find((l) => l.text === part)
+    return link ? (
+      <a key={i} href={link.href} className="rounded-sm font-medium text-brand-purple underline decoration-brand-purple/40 underline-offset-4 hover:decoration-brand-purple btn-focus">
+        {part}
+      </a>
+    ) : (
+      part
+    )
+  })
 }
 
 /** Accordion FAQ. Defaults to the landing page copy; the pricing page passes its own. */
@@ -61,7 +77,7 @@ export function Faq({ eyebrow = FAQ_COPY.eyebrow, title = FAQ_COPY.title, items 
                   <div id={panelId} role="region" aria-labelledby={buttonId} hidden={!expanded} className="pb-5">
                     {item.answer.map((paragraph) => (
                       <p key={paragraph} className="mt-2 max-w-prose text-[16px] leading-relaxed text-ink-soft first:mt-0">
-                        {paragraph}
+                        {withLinks(paragraph, item.links)}
                       </p>
                     ))}
                   </div>

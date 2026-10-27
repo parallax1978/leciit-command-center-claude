@@ -20,7 +20,7 @@ const SUBGRID = 'md:row-span-3 md:grid md:grid-rows-subgrid md:gap-0'
  * One paid plan, laid out in three parts: price, button, points. Price,
  * billing terms, and the button come first so they are in the first screen.
  * The billing line always says how the price is charged and what annual
- * billing saves.
+ * billing costs and saves, so the annual rate is visible in both states.
  */
 export function PlanCard({ copy, billing, highlighted = false }: PlanCardProps) {
   const { plan, altRoute } = copy
@@ -34,7 +34,7 @@ export function PlanCard({ copy, billing, highlighted = false }: PlanCardProps) 
   const billingLine =
     billing === 'yearly'
       ? `Billed annually at ${formatUsd(yearlyCost(plan, 'yearly'))}. Save ${formatUsd(annualSavings(plan))} a year.`
-      : `Billed monthly. Save ${formatUsd(annualSavings(plan))} a year with annual billing.`
+      : `Billed monthly. Or ${formatUsd(monthlyEquivalent(plan, 'yearly'))}/month billed annually, saving ${formatUsd(annualSavings(plan))} a year.`
 
   const card = (
     <article aria-labelledby={headingId} className={`flex h-full flex-col rounded-2xl bg-white p-5 sm:p-7 ${SUBGRID} ${highlighted ? '' : 'border border-line-strong'}`}>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { AGENCY_PLAN, BUSINESS_PLAN, MARKETPLACE_PLAN, subscribeUrl } from './plans'
+import { AGENCY_PLAN, BUSINESS_PLAN, LEGIIT_BUCKS_PERCENT, MARKETPLACE_PLAN, subscribeUrl } from './plans'
 import { annualDiscountPercent, annualSavings, formatCount, formatUsd, monthlyEquivalent, perIncludedBusiness, yearlyCost } from './price'
 
 describe('verified plan data', () => {
@@ -12,6 +12,10 @@ describe('verified plan data', () => {
     expect([BUSINESS_PLAN.aiCreditsMonthly, AGENCY_PLAN.aiCreditsMonthly]).toEqual([50000, 50000])
     expect([BUSINESS_PLAN.trialDays, AGENCY_PLAN.trialDays]).toEqual([7, null])
     expect(MARKETPLACE_PLAN.saleFeePercent).toBe(15)
+    expect(MARKETPLACE_PLAN.processingFeePercent).toBe(3)
+    expect(MARKETPLACE_PLAN.publishedFeatures).toContain('15% fee per sale')
+    expect(LEGIIT_BUCKS_PERCENT).toBe(2)
+    for (const plan of [BUSINESS_PLAN, AGENCY_PLAN]) expect(plan.publishedFeatures).toContain('2% back in Legiit Bucks on purchases')
   })
 
   it('keeps the published allowance label exactly', () => {

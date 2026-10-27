@@ -1,6 +1,7 @@
-import { AGENCY_PLAN, BUSINESS_PLAN, LEGIIT_BUCKS_PERCENT, MARKETPLACE_PLAN, type PaidPlan } from './plans'
+import { AGENCY_PLAN, BUSINESS_PLAN, LEGIIT_BUCKS_PERCENT, MARKETPLACE_PLAN, ROUTES, type PaidPlan } from './plans'
 import { annualDiscountPercent, annualSavings, formatCount, formatUsd, monthlyEquivalent, perIncludedBusiness, yearlyCost } from './price'
 import type { FaqItem } from '../config/faq'
+import { PRIMARY_CTA_LABEL } from '../config/site'
 
 /**
  * Customer-facing copy for the pricing page. Every statement traces to the
@@ -42,14 +43,14 @@ export const BUSINESS_CARD: PlanCardCopy = {
   anchorId: 'business',
   persona: 'For owners running one business',
   points: [
-    '1 business included',
+    `${BUSINESS_PLAN.businessesIncluded} business included`,
     'Full business dashboard access',
     `${formatCount(BUSINESS_PLAN.aiCreditsMonthly)} AI credits each month`,
     allowanceLine(BUSINESS_PLAN),
     `Additional businesses at ${formatUsd(BUSINESS_PLAN.additionalBusinessMonthly)}/month each`,
     'Support included',
   ],
-  ctaLabel: 'Start My 7-Day Free Trial',
+  ctaLabel: PRIMARY_CTA_LABEL,
   ctaNote: 'Begin with your website and email.',
   altRoute: { before: 'Already used your trial? ', linkLabel: 'Subscribe to Business', after: '.', route: 'subscribe' },
 }
@@ -68,7 +69,7 @@ export const AGENCY_CARD: PlanCardCopy = {
   ],
   ctaLabel: 'Choose Agency',
   ctaNote: 'Log in to your Legiit account to check out.',
-  altRoute: { before: 'New to Legiit? ', linkLabel: 'Try Business free for 7 days', after: ', then upgrade to Agency.', route: 'trial' },
+  altRoute: { before: 'New to Legiit? ', linkLabel: `Try Business free for ${BUSINESS_PLAN.trialDays} days`, after: ', then upgrade to Agency.', route: 'trial' },
 }
 
 export const MARKETPLACE_STRIP = {
@@ -92,8 +93,8 @@ export const PER_BUSINESS = {
   lead: `Agency includes up to ${AGENCY_PLAN.businessesIncluded} businesses for ${formatUsd(AGENCY_PLAN.monthlyPrice)}/month billed monthly, which is ${formatUsd(perIncludedBusiness(AGENCY_PLAN, 'monthly'))} per business with all ${AGENCY_PLAN.businessesIncluded} in use. Each additional business is ${formatUsd(extra)}/month on either plan.`,
   tableCaption: 'Common setups on monthly billing',
   rows: [
-    { businesses: '1', plan: 'Business', price: `${formatUsd(BUSINESS_PLAN.monthlyPrice)}/month` },
-    { businesses: '2', plan: 'Business plus 1 additional business', price: `${formatUsd(BUSINESS_PLAN.monthlyPrice + extra)}/month` },
+    { businesses: String(BUSINESS_PLAN.businessesIncluded), plan: 'Business', price: `${formatUsd(BUSINESS_PLAN.monthlyPrice)}/month` },
+    { businesses: String(BUSINESS_PLAN.businessesIncluded + 1), plan: 'Business plus 1 additional business', price: `${formatUsd(BUSINESS_PLAN.monthlyPrice + extra)}/month` },
     { businesses: `Up to ${AGENCY_PLAN.businessesIncluded}`, plan: 'Agency', price: `${formatUsd(AGENCY_PLAN.monthlyPrice)}/month` },
     { businesses: String(AGENCY_PLAN.businessesIncluded + 1), plan: 'Agency plus 1 additional business', price: `${formatUsd(AGENCY_PLAN.monthlyPrice + AGENCY_PLAN.additionalBusinessMonthly)}/month` },
   ] satisfies SetupRow[],
@@ -101,7 +102,7 @@ export const PER_BUSINESS = {
   ctaLabel: AGENCY_CARD.ctaLabel,
   ctaNote: AGENCY_CARD.ctaNote,
   fallbackBefore: 'Prefer to try it first? ',
-  fallbackLink: 'Start with the 7-day Business trial',
+  fallbackLink: `Start with the ${BUSINESS_PLAN.trialDays}-day Business trial`,
   fallbackAfter: ' and upgrade as you add businesses.',
 } as const
 
@@ -125,8 +126,8 @@ export const INCLUDED_GROUPS = [
   },
 ] as const
 
-/** A cell value: text, a two-line value, or a yes/no mark. */
-export type CompareValue = string | boolean | { main: string; sub: string }
+/** A cell value: text, a two-line value, or a check mark for "included". */
+export type CompareValue = string | true | { main: string; sub: string }
 
 export interface CompareRow {
   label: string
@@ -198,7 +199,7 @@ export const PRICING_FAQ: FaqItem[] = [
   {
     id: 'trial-start',
     question: 'How Do I Start The Free Trial?',
-    answer: ['Select Start My 7-Day Free Trial and enter your website and email. The next steps set up your account and your business details.'],
+    answer: [`Select ${PRIMARY_CTA_LABEL} and enter your website and email. The next steps set up your account and your business details.`],
   },
   {
     id: 'after-trial',
@@ -210,7 +211,7 @@ export const PRICING_FAQ: FaqItem[] = [
   {
     id: 'agency-trial',
     question: 'Is There A Free Trial For Agency?',
-    answer: ['No, the 7-day free trial is for the Business plan. Business can upgrade to Agency when you need more businesses.'],
+    answer: [`No, the ${BUSINESS_PLAN.trialDays}-day free trial is for the Business plan. Business can upgrade to Agency when you need more businesses.`],
   },
   {
     id: 'annual',
@@ -223,7 +224,7 @@ export const PRICING_FAQ: FaqItem[] = [
     id: 'more-businesses',
     question: 'Can I Add More Businesses?',
     answer: [
-      `Yes, each additional business is ${formatUsd(BUSINESS_PLAN.additionalBusinessMonthly)}/month on either plan. Business includes 1 business, and Agency includes up to ${AGENCY_PLAN.businessesIncluded}.`,
+      `Yes, each additional business is ${formatUsd(BUSINESS_PLAN.additionalBusinessMonthly)}/month on either plan. Business includes ${BUSINESS_PLAN.businessesIncluded} business, and Agency includes up to ${AGENCY_PLAN.businessesIncluded}.`,
     ],
   },
   {
@@ -245,6 +246,10 @@ export const PRICING_FAQ: FaqItem[] = [
     id: 'questions',
     question: 'Who Can I Ask Before I Buy?',
     answer: ['Email help@legiit.com or visit the Legiit support center.'],
+    links: [
+      { text: 'help@legiit.com', href: ROUTES.contactEmail },
+      { text: 'Legiit support center', href: ROUTES.support },
+    ],
   },
 ]
 
@@ -255,9 +260,9 @@ export const PRICING_FINAL = {
 
 /** Footer links on the pricing page. Every destination was checked on the live site. */
 export const PRICING_FOOTER_LINKS = [
-  { label: 'Privacy', href: 'https://legiit.com/privacy' },
-  { label: 'Terms', href: 'https://legiit.com/terms' },
-  { label: 'Support', href: 'https://legiit.freshdesk.com/support/home' },
-  { label: 'Contact', href: 'mailto:help@legiit.com' },
-  { label: 'Log In', href: 'https://legiit.com/sign-in' },
+  { label: 'Privacy', href: ROUTES.privacy },
+  { label: 'Terms', href: ROUTES.terms },
+  { label: 'Support', href: ROUTES.support },
+  { label: 'Contact', href: ROUTES.contactEmail },
+  { label: 'Log In', href: ROUTES.signIn },
 ] as const

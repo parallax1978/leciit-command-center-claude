@@ -9,7 +9,7 @@ Plan data was captured from Legiit's live pages and pricing API on October 27, 2
 ```bash
 npm run check                                     # typecheck, unit tests (incl. src/pricing/*.test.ts), build
 npm run preview                                   # serves dist/ at http://localhost:4173
-node qa/check-pricing.mjs http://127.0.0.1:4173   # browser QA, 147 checks at phone, tablet, and laptop window sizes
+node qa/check-pricing.mjs http://127.0.0.1:4173   # browser QA, 177 checks at phone, tablet, and laptop window sizes
 ```
 
 ## Page sequence
@@ -46,11 +46,11 @@ Measured by the QA script: both plan buttons are in the first screen in laptop w
 
 Default is Monthly (`DEFAULT_BILLING` in `src/pricing/plans.ts`), so the price beside the trial is the real month-to-month price. 17 of the 22 competitor pages reviewed with a billing switch default to annual, so this is the first thing to test. Each state says how the price is charged:
 
-- Monthly: "$49 /month. Billed monthly. Save $117.60 a year with annual billing." and "$169 /month. Billed monthly. Save $405.60 a year with annual billing."
+- Monthly: "$49 /month. Billed monthly. Or $39.20/month billed annually, saving $117.60 a year." and "$169 /month. Billed monthly. Or $135.20/month billed annually, saving $405.60 a year." The annual rate shows in the default view, so visitors who saw $39 elsewhere find it without switching.
 - Annual: "$39.20 /month. Billed annually at $470.40. Save $117.60 a year." and "$135.20 /month. Billed annually at $1,622.40. Save $405.60 a year."
 - Agency also shows "$8.45 per business per month with all 20 in use" ($6.76 on annual).
 
-Prices are exact (never "$39" or "$169.00"). The comparison table always shows both billing periods.
+Prices are exact (never "$39" or "$169.00"). The comparison table always shows both billing periods, and prices wrap before their unit ("$1,622.40" then "/year"), never inside a word.
 
 ## Deliberately left out
 
@@ -58,13 +58,14 @@ Unverified, so not stated: card requirement at trial start, whether the trial co
 
 ## Confirm before launch
 
-1. The landing page says "7 days free. Then $39/month for one business." The month-to-month price is $49; $39.20 is the annual-billed rate. Change the landing copy (for example "Then $49/month, or $39.20/month billed annually") or this page and the ads will disagree.
+1. The landing page promises $39 three times: "7 days free. Then $39/month for one business." (`heroTerms` in `src/config/offer.ts`, shown in the hero and closing section), "$39 / month after your trial" (`priceAmount` in `src/config/offer.ts`, the offer box), and "One business is included at $39/month after the trial" (`src/config/faq.ts`). The month-to-month price is $49; $39.20 is the annual-billed rate. Change all three (for example "Then $49/month, or $39.20/month billed annually"), or this page and the ads will disagree.
 2. Annual plans are charged once a year at $470.40 and $1,622.40 (the API lists these yearly prices; checkout cannot be viewed signed out).
 3. Trial terms: is a card collected, and does the trial convert to paid on its own? If either is true, state it here and in checkout.
 4. A trial user can upgrade straight to Agency (the page offers "Try Business free for 7 days, then upgrade to Agency").
-5. `/subscription-purchase?plan=agency_dashboard&billing=...` opens Agency checkout after sign-in, and "Register Now" on the sign-in page keeps the redirect.
-6. Agency's 50,000 AI credits equal Business's despite up to 20 businesses, and the API's `uptime_monitor_limit` is 1 on Agency versus 5 on Business. Confirm both.
-7. Legiit's Terms mention a 3% processing fee on some third-party payments. Confirm whether it applies to subscriptions.
+5. Whether the 7-day trial applies to annual billing, and which billing period applies when it ends. The trial button carries no billing period, and in the Annual view it sits under "Billed annually at $470.40".
+6. `/subscription-purchase?plan=agency_dashboard&billing=...` opens Agency checkout after sign-in, and "Register Now" on the sign-in page keeps the redirect.
+7. Agency's 50,000 AI credits equal Business's despite up to 20 businesses, and the API's `uptime_monitor_limit` is 1 on Agency versus 5 on Business. Confirm both.
+8. Legiit's Terms mention a 3% processing fee on some third-party payments. Confirm whether it applies to subscriptions.
 
 ## Tests to run after launch
 

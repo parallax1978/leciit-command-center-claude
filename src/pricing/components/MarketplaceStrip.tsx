@@ -20,7 +20,7 @@ export function MarketplaceStrip() {
         className="shrink-0 whitespace-nowrap"
         data-plan-cta="marketplace"
         data-cta-route="register"
-        onClick={() => track('plan_cta_click', { plan: 'marketplace', billing: 'monthly', placement: 'marketplace-strip' })}
+        onClick={() => track('plan_cta_click', { plan: 'marketplace', placement: 'marketplace-strip' })}
       >
         {MARKETPLACE_STRIP.ctaLabel}
       </LinkButton>

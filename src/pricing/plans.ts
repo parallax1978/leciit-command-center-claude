@@ -31,10 +31,8 @@ export interface Allowances {
 
 export interface PaidPlan {
   id: PaidPlanId
-  /** Name used on the page. */
+  /** Name used on the page (Legiit's own pages say "Business Dashboard" and "Agency Dashboard"). */
   name: string
-  /** Name Legiit uses in billing and on its current pages. */
-  billingName: string
   /** Monthly price in USD when billed monthly. */
   monthlyPrice: number
   /** Price in USD per year when billed annually. */
@@ -53,7 +51,6 @@ export interface PaidPlan {
 export const BUSINESS_PLAN: PaidPlan = {
   id: 'business_dashboard',
   name: 'Business',
-  billingName: 'Business Dashboard',
   monthlyPrice: 49,
   yearlyPrice: 470.4,
   businessesIncluded: 1,
@@ -77,7 +74,6 @@ export const BUSINESS_PLAN: PaidPlan = {
 export const AGENCY_PLAN: PaidPlan = {
   id: 'agency_dashboard',
   name: 'Agency',
-  billingName: 'Agency Dashboard',
   monthlyPrice: 169,
   yearlyPrice: 1622.4,
   businessesIncluded: 20,
@@ -97,13 +93,8 @@ export const AGENCY_PLAN: PaidPlan = {
   ],
 }
 
-export const PAID_PLANS: PaidPlan[] = [BUSINESS_PLAN, AGENCY_PLAN]
-
 /** The free marketplace account. Not part of Command Center (no dashboard access). */
 export const MARKETPLACE_PLAN = {
-  id: 'marketplace',
-  name: 'Marketplace',
-  priceLabel: 'Free',
   /** Legiit's published fee on marketplace sales. */
   saleFeePercent: 15,
   /** Legiit Terms: payments through third-party payment providers "may be subject to a 3% processing fee"; wallet payments are not. */

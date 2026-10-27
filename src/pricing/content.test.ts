@@ -103,4 +103,13 @@ describe('comparison table', () => {
     const saving = price.rows.find((r) => r.label === 'Annual saving')!
     expect([saving.business, saving.agency]).toEqual(['$117.60/year', '$405.60/year'])
   })
+
+  it('shows the published Legiit Bucks rate and per-business prices with their billing', () => {
+    const rows = COMPARE_GROUPS.flatMap((g) => g.rows)
+    const bucks = rows.find((r) => r.label === 'Legiit Bucks on purchases')!
+    expect([bucks.business, bucks.agency]).toEqual(['2% back', '2% back'])
+    const perBusiness = rows.find((r) => r.label === 'Price per included business')!
+    expect(perBusiness.business).toEqual({ main: '$49/month', sub: '$39.20/month billed annually' })
+    expect(perBusiness.agency).toEqual({ main: '$8.45/month', sub: '$6.76/month billed annually' })
+  })
 })

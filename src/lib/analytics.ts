@@ -19,11 +19,9 @@ export interface EventMap {
   faq_toggle: { id: string; expanded: boolean }
   allowances_toggle: { expanded: boolean }
   /** Pricing page: a plan button was clicked. A click is not a signup, trial, or purchase. */
-  plan_cta_click: { plan: 'business_dashboard' | 'agency_dashboard' | 'marketplace'; billing: 'monthly' | 'yearly'; placement: string }
+  plan_cta_click: { plan: 'business_dashboard' | 'agency_dashboard' | 'marketplace'; billing?: 'monthly' | 'yearly'; placement: string }
   /** Pricing page: the visitor switched the billing period. */
   billing_change: { billing: 'monthly' | 'yearly' }
-  /** Pricing page: the plan comparison was expanded or collapsed. */
-  compare_toggle: { expanded: boolean }
 }
 
 export type EventName = keyof EventMap

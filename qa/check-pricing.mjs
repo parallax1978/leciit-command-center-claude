@@ -34,8 +34,8 @@ const EXPECT = {
   monthly: {
     business: '$49',
     agency: '$169',
-    businessLine: 'Billed monthly. Save $117.60 a year with annual billing.',
-    agencyLine: 'Billed monthly. Save $405.60 a year with annual billing.',
+    businessLine: 'Billed monthly. Or $39.20/month billed annually, saving $117.60 a year.',
+    agencyLine: 'Billed monthly. Or $135.20/month billed annually, saving $405.60 a year.',
     perBusiness: '$8.45 per business per month with all 20 in use',
   },
   yearly: {
@@ -47,8 +47,8 @@ const EXPECT = {
   },
 }
 const SETUPS = ['1 Business $49/month', '2 Business plus 1 additional business $59/month', 'Up to 20 Agency $169/month', '21 Agency plus 1 additional business $179/month']
-// Every plan link on the page: 4 in the cards, 1 marketplace, 2 per-business, 2 compare, 2 final.
-const EXPECTED_ROUTED_LINKS = 11
+// Every plan link on the page: 4 in the cards, 1 marketplace, 2 per-business, 3 compare, 3 final.
+const EXPECTED_ROUTED_LINKS = 13
 
 const readCards = (page) =>
   page.evaluate(() => {
@@ -101,7 +101,28 @@ for (const [width, height] of [
       const el = document.querySelector(sel)
       return el ? Math.round(rect(el).bottom) : null
     }
+    // Table text may wrap at spaces or before a unit's slash, never inside a word.
+    const midWord = []
+    for (const cell of document.querySelectorAll('#compare td, #per-business td')) {
+      const walker = document.createTreeWalker(cell, NodeFilter.SHOW_TEXT)
+      let node
+      while ((node = walker.nextNode())) {
+        for (const piece of node.textContent.matchAll(/[^\s/]+/g)) {
+          const range = document.createRange()
+          range.setStart(node, piece.index)
+          range.setEnd(node, piece.index + piece[0].length)
+          if (new Set(Array.from(range.getClientRects()).map((r) => Math.round(r.top))).size > 1) midWord.push(piece[0])
+        }
+      }
+    }
+    const faqLinks = Array.from(document.querySelectorAll('[role="region"] a')).map((a) => a.getAttribute('href'))
     const text = document.body.innerText
+    // textContent includes collapsed FAQ answers, which innerText skips.
+    const allText = document.body.textContent
+    const banned = (allText.match(/unlimited|guarantee|refund|cancel|no credit card|money.back|risk.free/gi) || []).map((t) => t.toLowerCase())
+    const longParagraphs = Array.from(document.querySelectorAll('main p'))
+      .map((p) => p.textContent.trim().replace(/\s+/g, ' '))
+      .filter((t) => t.split(/(?<=[.!?])\s+(?=[A-Z“"$0-9])/).length > 2)
     return {
       sw: document.documentElement.scrollWidth,
       iw: window.innerWidth,
@@ -111,7 +132,11 @@ for (const [width, height] of [
       headings,
       h1Count: headings.filter((h) => h.level === 1).length,
       h1LinesPerSpan: h1Spans.map((s) => s.getClientRects().length),
-      emDash: /—/.test(text),
+      emDash: /—/.test(allText),
+      midWord,
+      faqLinks,
+      banned,
+      longParagraphs,
       popular: /popular/i.test(text),
       rounded39: /\$39(?!\.20)/.test(text),
       notCaps,
@@ -133,11 +158,17 @@ for (const [width, height] of [
   skips.length === 0 ? pass(`${width}: heading levels never skip`) : fail(`${width}: heading skips ${JSON.stringify(skips)}`)
   !m.emDash ? pass(`${width}: no em dashes`) : fail(`${width}: em dash in page text`)
   !m.popular ? pass(`${width}: no "Popular" label`) : fail(`${width}: "popular" appears in page text`)
+  m.banned.length === 0 ? pass(`${width}: no unverified terms (unlimited, guarantee, refund, cancel, no credit card)`) : fail(`${width}: unverified terms in page text ${JSON.stringify(m.banned)}`)
+  m.longParagraphs.length === 0 ? pass(`${width}: every paragraph has two sentences or fewer`) : fail(`${width}: long paragraphs ${JSON.stringify(m.longParagraphs)}`)
   !m.rounded39 ? pass(`${width}: no rounded $39 price`) : fail(`${width}: "$39" without ".20" appears`)
   m.notCaps.length === 0 ? pass(`${width}: every button label is Initial Caps`) : fail(`${width}: labels not Initial Caps ${JSON.stringify(m.notCaps)}`)
   m.small.length === 0 ? pass(`${width}: all targets at least 44px`) : fail(`${width}: small targets ${JSON.stringify(m.small)}`)
   m.tableOk ? pass(`${width}: comparison table has caption, column and row headers`) : fail(`${width}: comparison table semantics`)
   JSON.stringify(m.setupRows) === JSON.stringify(SETUPS) ? pass(`${width}: common-setups table prices are exact`) : fail(`${width}: setups ${JSON.stringify(m.setupRows)}`)
+  m.midWord.length === 0 ? pass(`${width}: table text never breaks inside a word`) : fail(`${width}: mid-word breaks ${JSON.stringify(m.midWord)}`)
+  JSON.stringify(m.faqLinks) === JSON.stringify(['mailto:help@legiit.com', 'https://legiit.freshdesk.com/support/home'])
+    ? pass(`${width}: FAQ contact answer links the email and support center`)
+    : fail(`${width}: FAQ links ${JSON.stringify(m.faqLinks)}`)
   m.anchors.length === 0 ? pass(`${width}: anchors #business, #agency, #per-business, #compare exist`) : fail(`${width}: missing anchors ${m.anchors}`)
   m.headerCta === TRIAL ? pass(`${width}: header button goes to the trial start`) : fail(`${width}: header button ${m.headerCta}`)
   m.businessCtaBottom !== null && m.businessCtaBottom <= m.ih
@@ -196,6 +227,13 @@ for (const [width, height] of [
   await page.evaluate(() => window.scrollTo(0, 0))
   await page.screenshot({ path: `${outDir}/pricing-${width}-fold.png` })
   await page.screenshot({ path: `${outDir}/pricing-${width}.png`, fullPage: true })
+
+  // Deep link: the planned redirect target /pricing#agency must open on the Agency plan.
+  const deep = await context.newPage()
+  await deep.goto(`${url}#agency`, { waitUntil: 'networkidle' })
+  await deep.waitForTimeout(150)
+  const agencyTop = await deep.evaluate(() => Math.round(document.getElementById('agency').getBoundingClientRect().top))
+  agencyTop >= 0 && agencyTop <= 64 ? pass(`${width}: /pricing#agency opens on the Agency plan (top ${agencyTop})`) : fail(`${width}: /pricing#agency lands with the Agency plan at ${agencyTop}`)
   await context.close()
 }
 

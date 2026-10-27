@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Container } from '../components/ui/Container'
 import { Footer } from '../components/sections/Footer'
 import { Faq } from '../components/sections/Faq'
@@ -21,6 +21,13 @@ const H1_GRADIENT = 'linear-gradient(95deg, #6A13CF 12%, #C71E92 98%)'
 export default function PricingApp() {
   const [billing, setBilling] = useState<BillingPeriod>(DEFAULT_BILLING)
 
+  // The page renders after the browser's own jump to a fragment such as #agency (the planned
+  // redirect target for /pricing/agency-plan), so repeat the jump once the sections exist.
+  useEffect(() => {
+    const id = decodeURIComponent(window.location.hash.slice(1))
+    if (id) document.getElementById(id)?.scrollIntoView()
+  }, [])
+
   const changeBilling = (next: BillingPeriod) => {
     track('billing_change', { billing: next })
     setBilling(next)
@@ -34,7 +41,7 @@ export default function PricingApp() {
       >
         Skip To Content
       </a>
-      <PricingHeader />
+      <PricingHeader billing={billing} />
       <main id="main">
         <section aria-labelledby="pricing-heading" className="pb-14 pt-6 sm:pb-20 sm:pt-10 short:!pt-6">
           <Container>
@@ -77,7 +84,7 @@ export default function PricingApp() {
         <Faq eyebrow={PRICING_FAQ_COPY.eyebrow} title={PRICING_FAQ_COPY.title} items={PRICING_FAQ} headingId="pricing-faq-heading" />
         <PricingFinal billing={billing} />
       </main>
-      <Footer links={PRICING_FOOTER_LINKS} />
+      <Footer links={PRICING_FOOTER_LINKS} navLabel="Footer" />
     </div>
   )
 }

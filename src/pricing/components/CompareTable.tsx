@@ -1,9 +1,11 @@
 import { Container } from '../../components/ui/Container'
 import { LinkButton } from '../../components/ui/Button'
-import { Check, Close } from '../../components/ui/Icons'
+import { Check } from '../../components/ui/Icons'
 import { AGENCY_CARD, BUSINESS_CARD, COMPARE_GROUPS, type CompareValue } from '../content'
 import { ROUTES, subscribeUrl, type BillingPeriod } from '../plans'
 import { track } from '../../lib/analytics'
+import { breakBeforeUnit } from './breakBeforeUnit'
+import { AgencyNote } from './AgencyNote'
 
 function Value({ value }: { value: CompareValue }) {
   if (value === true) {
@@ -14,23 +16,15 @@ function Value({ value }: { value: CompareValue }) {
       </>
     )
   }
-  if (value === false) {
-    return (
-      <>
-        <Close size={16} className="text-ink-muted" />
-        <span className="sr-only">Not included</span>
-      </>
-    )
-  }
   if (typeof value === 'object') {
     return (
       <>
-        <span className="block">{value.main}</span>
-        <span className="block text-sm text-ink-muted">{value.sub}</span>
+        <span className="block">{breakBeforeUnit(value.main)}</span>
+        <span className="block text-sm text-ink-muted">{breakBeforeUnit(value.sub)}</span>
       </>
     )
   }
-  return <span>{value}</span>
+  return <span>{breakBeforeUnit(value)}</span>
 }
 
 /** Full side-by-side comparison. A real table, so screen readers announce row and column headers. */
@@ -48,9 +42,9 @@ export function CompareTable({ billing }: { billing: BillingPeriod }) {
           <table className="w-full table-fixed border-collapse text-left text-[15px]">
             <caption className="sr-only">Business and Agency plan comparison</caption>
             <colgroup>
-              <col className="w-[40%] sm:w-[44%]" />
-              <col className="w-[30%] sm:w-[28%]" />
-              <col className="w-[30%] sm:w-[28%]" />
+              <col className="w-[34%] sm:w-[44%]" />
+              <col className="w-[33%] sm:w-[28%]" />
+              <col className="w-[33%] sm:w-[28%]" />
             </colgroup>
             <thead>
               <tr className="border-b border-line-strong">
@@ -76,10 +70,10 @@ export function CompareTable({ billing }: { billing: BillingPeriod }) {
                       {row.label}
                       {row.note && <span className="mt-0.5 block text-xs text-ink-muted">{row.note}</span>}
                     </th>
-                    <td className="py-3 pl-3 text-ink [overflow-wrap:anywhere] sm:pl-4">
+                    <td className="py-3 pl-3 text-ink sm:pl-4">
                       <Value value={row.business} />
                     </td>
-                    <td className="py-3 pl-3 text-ink [overflow-wrap:anywhere] sm:pl-4">
+                    <td className="py-3 pl-3 text-ink sm:pl-4">
                       <Value value={row.agency} />
                     </td>
                   </tr>
@@ -112,6 +106,7 @@ export function CompareTable({ billing }: { billing: BillingPeriod }) {
             {AGENCY_CARD.ctaLabel}
           </LinkButton>
         </div>
+        <AgencyNote billing={billing} placement="compare" className="mt-3 sm:text-right" />
       </Container>
     </section>
   )

@@ -142,7 +142,7 @@ A CTA click is not a signup or an activated trial. Attributing registrations, bu
 
 ## Verification
 
-Run on the production build with `npm run check` (typecheck, 12 content tests, build) and `node qa/check-page.mjs` (170 checks, all passing) at 360, 390, 768, and 1440 px:
+Run on the production build with `npm run check` (typecheck, 12 landing content tests plus the pricing tests, build) and `node qa/check-page.mjs` (166 checks, all passing) at 360, 390, 768, and 1440 px. The pricing page has its own QA, described in [PRICING.md](PRICING.md):
 
 - No horizontal overflow at any width; nine body sections in the required order (hero, intro, four product sections, offer, FAQ, closing); four trial buttons, all `https://legiit.com/command-center/start`; the only other outbound links are Privacy and Terms.
 - Hero button: 20px/700 text at 1440 and 18.75px at 900 and below, 1.4 line height, 67.5px minimum height, 18.75px by 30px padding, 25px gap, 1.25px declared border, 8.75px radius, brand gradient with the brand shadow and white text, centered, never overflowing, icon 23.75px where shown. Header and closing buttons carry the same gradient. Header, pricing, and closing buttons keep standard sizes; the pricing button is white with `#6A13CF` text.

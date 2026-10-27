@@ -6,6 +6,8 @@ import { track } from '../../lib/analytics'
 interface PrimaryCtaProps {
   placement: 'header' | 'hero' | 'offer' | 'final'
   className?: string
+  /** Replaces the default cta_click event, for pages with their own events (the pricing page). */
+  onTrack?: () => void
 }
 
 const config = {
@@ -19,7 +21,7 @@ const config = {
  * The shared trial button. Every placement links to CTA_URL exactly.
  * Only the hero placement carries the 25% size increase.
  */
-export function PrimaryCta({ placement, className = '' }: PrimaryCtaProps) {
+export function PrimaryCta({ placement, className = '', onTrack }: PrimaryCtaProps) {
   const { label, size, variant, icon } = config[placement]
   return (
     <LinkButton
@@ -28,7 +30,7 @@ export function PrimaryCta({ placement, className = '' }: PrimaryCtaProps) {
       variant={variant}
       className={`whitespace-nowrap ${placement === 'header' ? 'shrink-0' : ''} ${className}`}
       data-cta-placement={placement}
-      onClick={() => track('cta_click', { placement })}
+      onClick={() => (onTrack ? onTrack() : track('cta_click', { placement }))}
     >
       {label}
       <ArrowRight size={iconSize[size]} className={`shrink-0 ${icon || iconClass[size]}`} />

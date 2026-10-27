@@ -4,6 +4,7 @@ import { ArrowRight } from '../../components/ui/Icons'
 import { PRICING_FINAL, BUSINESS_CARD, AGENCY_CARD } from '../content'
 import { ROUTES, subscribeUrl, type BillingPeriod } from '../plans'
 import { track } from '../../lib/analytics'
+import { AgencyNote } from './AgencyNote'
 
 const BOX_GRADIENT = 'linear-gradient(115deg, #6A13CF 0%, #C71E92 100%)'
 
@@ -42,6 +43,7 @@ export function PricingFinal({ billing }: { billing: BillingPeriod }) {
               {AGENCY_CARD.ctaLabel}
             </LinkButton>
           </div>
+          <AgencyNote billing={billing} placement="final" tone="inverse" className="mt-5" />
         </div>
       </Container>
     </section>

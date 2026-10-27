@@ -2,6 +2,8 @@ export interface FaqItem {
   id: string
   question: string
   answer: string[]
+  /** Optional links: each `text` that appears in an answer is rendered as a link to `href`. */
+  links?: { text: string; href: string }[]
 }
 
 export const FAQ_COPY = {

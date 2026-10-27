@@ -2,6 +2,7 @@ import { Container } from '../../components/ui/Container'
 import { LinkButton, iconClass, iconSize } from '../../components/ui/Button'
 import { ArrowRight } from '../../components/ui/Icons'
 import { PER_BUSINESS } from '../content'
+import { breakBeforeUnit } from './breakBeforeUnit'
 import { ROUTES, subscribeUrl, type BillingPeriod } from '../plans'
 import { track } from '../../lib/analytics'
 
@@ -79,8 +80,8 @@ export function PerBusiness({ billing }: { billing: BillingPeriod }) {
                     <th scope="row" className="py-4 pr-3 text-lg font-semibold text-ink">
                       {row.businesses}
                     </th>
-                    <td className="py-4 pr-3 text-ink-soft [overflow-wrap:anywhere]">{row.plan}</td>
-                    <td className="py-4 font-medium text-ink [overflow-wrap:anywhere]">{row.price}</td>
+                    <td className="py-4 pr-3 text-ink-soft">{row.plan}</td>
+                    <td className="py-4 font-medium text-ink">{breakBeforeUnit(row.price)}</td>
                   </tr>
                 ))}
               </tbody>

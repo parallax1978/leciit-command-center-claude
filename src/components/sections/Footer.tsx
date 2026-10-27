@@ -13,15 +13,21 @@ interface FooterLink {
   href: string
 }
 
+interface FooterProps {
+  links?: readonly FooterLink[]
+  /** Accessible name of the link list. */
+  navLabel?: string
+}
+
 /** Defaults to the landing page's legal links; the pricing page adds support and log-in links. */
-export function Footer({ links = LEGAL_LINKS }: { links?: readonly FooterLink[] } = {}) {
+export function Footer({ links = LEGAL_LINKS, navLabel = 'Legal' }: FooterProps = {}) {
   return (
     <footer className="border-t border-line py-8">
       <Container className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <Logo height={22} />
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-ink-muted">
           <p>{FOOTER.line}</p>
-          <nav aria-label="Footer">
+          <nav aria-label={navLabel}>
             <ul className="flex flex-wrap items-center gap-x-5">
               {links.map((link) => (
                 <li key={link.href}>
