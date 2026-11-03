@@ -1,0 +1,10 @@
+{
+  "_comment": "Author records keyed by the feed's creator name. Only the fields shown on the live blog are filled; bio is left empty until Legiit supplies approved text. avatar and url come from the live post pages.",
+  "Amit": { "name": "Amit Rajdev", "slug": "amit", "url": "https://legiit.com/amitlrajdev", "avatar": "https://legiit-user.s3.amazonaws.com/000e82a96e908e73372bed4e5cb98096/26a54467fc96fd92bd6ddcd6449e26e2.png", "role": "Legiit seller and writer", "bio": "" },
+  "Melissa": { "name": "Melissa", "slug": "melissa", "url": "", "avatar": "", "role": "Writer", "bio": "" },
+  "Yash": { "name": "Yash", "slug": "yash", "url": "", "avatar": "", "role": "Writer", "bio": "" },
+  "Legiit": { "name": "Legiit Team", "slug": "legiit", "url": "https://legiit.com", "avatar": "", "role": "Legiit", "bio": "" },
+  "Sam": { "name": "Sam", "slug": "sam", "url": "", "avatar": "", "role": "Writer", "bio": "" },
+  "Jessica": { "name": "Jessica", "slug": "jessica", "url": "", "avatar": "", "role": "Writer", "bio": "" },
+  "Shak": { "name": "Shak", "slug": "shak", "url": "", "avatar": "", "role": "Writer", "bio": "" }
+}

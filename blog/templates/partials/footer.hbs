@@ -1,0 +1,47 @@
+<footer class="border-t border-line py-10">
+  <div class="mx-auto w-full max-w-page px-4 sm:px-6 lg:px-8">
+    <div class="grid gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+      <div>
+        <img src="{{site.logo}}" alt="Legiit" width="48" height="22" class="h-[22px] w-auto" loading="lazy" decoding="async" />
+        <p class="mt-3 max-w-sm text-sm leading-relaxed text-ink-muted">Guides on SEO, marketing, freelancing and running a business, from the Legiit marketplace.</p>
+      </div>
+      <div class="grid grid-cols-2 gap-6 sm:grid-cols-3">
+        <nav aria-label="Blog topics">
+          <p class="text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-muted">Topics</p>
+          <ul class="mt-3 space-y-1">
+            {{#each nav.footerTopics}}
+            <li><a href="{{url}}" class="inline-flex min-h-[44px] min-w-[44px] items-center text-[15px] text-ink-soft underline-offset-4 hover:text-ink hover:underline btn-focus rounded-sm">{{name}}</a></li>
+            {{/each}}
+            <li><a href="{{url.topics}}" class="inline-flex min-h-[44px] min-w-[44px] items-center text-[15px] font-medium text-brand-purple underline-offset-4 hover:underline btn-focus rounded-sm">All topics</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Blog">
+          <p class="text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-muted">Blog</p>
+          <ul class="mt-3 space-y-1">
+            <li><a href="{{url.index}}" class="inline-flex min-h-[44px] min-w-[44px] items-center text-[15px] text-ink-soft underline-offset-4 hover:text-ink hover:underline btn-focus rounded-sm">Latest posts</a></li>
+            <li><a href="{{url.archive}}" class="inline-flex min-h-[44px] min-w-[44px] items-center text-[15px] text-ink-soft underline-offset-4 hover:text-ink hover:underline btn-focus rounded-sm">Archive by month</a></li>
+            <li><a href="{{url.search}}" class="inline-flex min-h-[44px] min-w-[44px] items-center text-[15px] text-ink-soft underline-offset-4 hover:text-ink hover:underline btn-focus rounded-sm">Search</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Legiit">
+          <p class="text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-muted">Legiit</p>
+          <ul class="mt-3 space-y-1">
+            <li><a href="{{site.marketplaceUrl}}" class="inline-flex min-h-[44px] min-w-[44px] items-center text-[15px] text-ink-soft underline-offset-4 hover:text-ink hover:underline btn-focus rounded-sm">Marketplace</a></li>
+            <li><a href="{{site.pricingUrl}}" class="inline-flex min-h-[44px] min-w-[44px] items-center text-[15px] text-ink-soft underline-offset-4 hover:text-ink hover:underline btn-focus rounded-sm">Command Center pricing</a></li>
+            <li><a href="{{site.coursesUrl}}" class="inline-flex min-h-[44px] min-w-[44px] items-center text-[15px] text-ink-soft underline-offset-4 hover:text-ink hover:underline btn-focus rounded-sm">Courses</a></li>
+            <li><a href="{{site.supportUrl}}" class="inline-flex min-h-[44px] min-w-[44px] items-center text-[15px] text-ink-soft underline-offset-4 hover:text-ink hover:underline btn-focus rounded-sm">Support</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <div class="mt-8 flex flex-col gap-3 border-t border-line pt-6 text-sm text-ink-muted sm:flex-row sm:items-center sm:justify-between">
+      <p>Legiit Blog</p>
+      <nav aria-label="Legal">
+        <ul class="flex items-center gap-x-5">
+          <li><a href="{{site.privacyUrl}}" class="inline-flex min-h-[44px] min-w-[44px] items-center text-ink-soft underline-offset-4 hover:underline btn-focus rounded-sm">Privacy</a></li>
+          <li><a href="{{site.termsUrl}}" class="inline-flex min-h-[44px] min-w-[44px] items-center text-ink-soft underline-offset-4 hover:underline btn-focus rounded-sm">Terms</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</footer>

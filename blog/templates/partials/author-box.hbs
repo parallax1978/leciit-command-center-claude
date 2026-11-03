@@ -1,0 +1,20 @@
+{{!-- Who wrote the post, with a link to their profile and their other posts. The bio field is shown only when the CMS supplies one. --}}
+<section aria-labelledby="author-heading" class="mt-12 rounded-2xl border border-line p-6 sm:p-8">
+  <h2 id="author-heading" class="text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-muted">About the author</h2>
+  <div class="mt-4 flex items-start gap-4">
+    {{#if author.avatar}}
+    <img src="{{author.avatar}}" alt="" width="64" height="64" loading="lazy" decoding="async" class="h-16 w-16 shrink-0 rounded-full object-cover" />
+    {{else}}
+    <span aria-hidden="true" class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-tint text-xl font-semibold text-brand-purple">{{author.initial}}</span>
+    {{/if}}
+    <div class="min-w-0">
+      <p class="text-lg font-semibold text-ink">{{author.name}}</p>
+      {{#if author.role}}<p class="text-sm text-ink-muted">{{author.role}}</p>{{/if}}
+      {{#if author.bio}}<p class="mt-2 max-w-prose text-[15px] leading-relaxed text-ink-soft">{{author.bio}}</p>{{/if}}
+      <div class="mt-2 flex flex-wrap gap-x-5 text-[15px]">
+        {{#if author.pageUrl}}<a href="{{author.pageUrl}}" class="inline-flex min-h-[44px] items-center rounded-sm font-medium text-brand-purple underline-offset-4 hover:underline btn-focus">More posts by {{author.name}}</a>{{/if}}
+        {{#if author.url}}<a href="{{author.url}}" class="inline-flex min-h-[44px] items-center rounded-sm font-medium text-ink-soft underline-offset-4 hover:text-ink hover:underline btn-focus">Legiit profile</a>{{/if}}
+      </div>
+    </div>
+  </div>
+</section>

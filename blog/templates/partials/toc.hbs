@@ -1,0 +1,18 @@
+{{!-- Generated from the post's H2s (and H3s) by the CMS at render time. Links are real anchors, so they work without JavaScript. --}}
+<nav aria-label="On this page" class="toc">
+  <p class="text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-muted">On this page</p>
+  <ol class="mt-3 space-y-2 text-[14px] leading-snug">
+    {{#each toc}}
+    <li>
+      <a href="#{{id}}" class="toc-link link-inline block rounded-sm border-l-2 border-transparent py-1 pl-3 text-ink-soft hover:text-ink btn-focus">{{text}}</a>
+      {{#if children.length}}
+      <ol class="mt-1 space-y-1">
+        {{#each children}}
+        <li><a href="#{{id}}" class="toc-link link-inline block rounded-sm border-l-2 border-transparent py-1 pl-6 text-[13px] text-ink-muted hover:text-ink btn-focus">{{text}}</a></li>
+        {{/each}}
+      </ol>
+      {{/if}}
+    </li>
+    {{/each}}
+  </ol>
+</nav>

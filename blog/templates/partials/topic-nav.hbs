@@ -1,0 +1,13 @@
+{{!-- Every topic is a plain link, so crawlers and readers reach each category page from every listing page. --}}
+<nav aria-label="Topics" class="topic-nav -mx-4 overflow-x-auto px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+  <ul class="flex w-max items-center gap-2 py-1">
+    <li>
+      <a href="{{url.index}}" class="inline-flex min-h-[44px] items-center rounded-full border px-4 text-[14px] font-semibold btn-focus {{#if nav.allActive}}border-brand-purple bg-brand-tint text-brand-purple{{else}}border-line-strong bg-canvas text-ink-soft hover:border-ink-muted hover:text-ink{{/if}}"{{#if nav.allActive}} aria-current="page"{{/if}}>All posts</a>
+    </li>
+    {{#each nav.topics}}
+    <li>
+      <a href="{{url}}" class="inline-flex min-h-[44px] items-center gap-1.5 rounded-full border px-4 text-[14px] font-semibold btn-focus {{#if active}}border-brand-purple bg-brand-tint text-brand-purple{{else}}border-line-strong bg-canvas text-ink-soft hover:border-ink-muted hover:text-ink{{/if}}"{{#if active}} aria-current="page"{{/if}}>{{name}}<span class="text-[12px] font-medium {{#if active}}text-brand-purple{{else}}text-ink-muted{{/if}}">{{count}}</span></a>
+    </li>
+    {{/each}}
+  </ul>
+</nav>

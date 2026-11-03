@@ -1,0 +1,35 @@
+<div class="border-b border-line bg-canvas-sunken/60">
+  <div class="mx-auto w-full max-w-page px-4 pb-8 pt-6 sm:px-6 sm:pb-10 sm:pt-8 lg:px-8">
+    {{> breadcrumbs breadcrumbs=page.breadcrumbs}}
+    <div class="mt-6 max-w-3xl">
+      <h1 class="text-[2rem] font-semibold leading-[1.1] tracking-[-0.025em] text-ink sm:text-[2.5rem]">{{#if search.query}}Results for “{{search.query}}”{{else}}Search the blog{{/if}}</h1>
+      <p class="mt-3 text-lg text-ink-soft">{{#if search.query}}{{search.total}} posts match.{{else}}Type a topic, a tool or a question.{{/if}}</p>
+      <form action="{{url.search}}" method="get" role="search" class="mt-6 flex max-w-xl flex-col gap-2 sm:flex-row">
+        <label for="search-page-input" class="sr-only">Search the blog</label>
+        <input id="search-page-input" type="search" name="{{site.searchParam}}" value="{{search.query}}" placeholder="Search {{search.postCount}} posts" class="h-12 min-w-0 flex-1 rounded-lg border border-line-strong bg-canvas px-4 text-[16px] text-ink placeholder:text-ink-muted btn-focus" />
+        <button type="submit" class="btn-brand inline-flex h-12 items-center justify-center rounded-lg border border-transparent px-5 text-base font-semibold leading-none btn-focus">Search</button>
+      </form>
+    </div>
+    <div class="mt-6">
+      {{> topic-nav}}
+    </div>
+  </div>
+</div>
+
+<div class="mx-auto w-full max-w-page px-4 sm:px-6 lg:px-8">
+  <section aria-labelledby="results-heading" class="py-12 sm:py-16">
+    <h2 id="results-heading" class="sr-only">Results</h2>
+    {{#if search.posts.length}}
+    <div class="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+      {{#each search.posts}}
+      {{> post-card}}
+      {{/each}}
+    </div>
+    {{> pagination pagination=search.pagination}}
+    {{else}}
+    <p class="text-lg text-ink-soft">No posts match. Try a shorter word, or browse by topic above.</p>
+    {{/if}}
+  </section>
+</div>
+
+{{> cta-band band=search.band}}

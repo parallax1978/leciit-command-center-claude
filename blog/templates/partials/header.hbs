@@ -1,0 +1,30 @@
+{{!-- Same lockup, type and gradient button as the Command Center pages. Search goes to the CMS search route. --}}
+<header class="border-b border-line bg-canvas">
+  <div class="mx-auto flex min-h-[64px] w-full max-w-page items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+    <div class="flex min-w-0 items-center gap-2 sm:gap-3">
+      <a href="{{site.homeUrl}}" class="-ml-2 inline-flex min-h-[44px] items-center rounded-md px-2 btn-focus" aria-label="Legiit home">
+        <img src="{{site.logo}}" alt="Legiit" width="57" height="26" class="h-[26px] w-auto sm:h-7" decoding="async" />
+      </a>
+      <span aria-hidden="true" class="h-5 w-px shrink-0 bg-line-strong"></span>
+      <a href="{{url.index}}" class="inline-flex min-h-[44px] min-w-[44px] items-center rounded-md px-1.5 text-[13px] font-medium text-ink btn-focus sm:text-[15px]">Blog</a>
+    </div>
+    <nav aria-label="Blog" class="hidden items-center gap-1 lg:flex">
+      {{#each nav.primaryTopics}}
+      <a href="{{url}}" class="inline-flex min-h-[44px] items-center whitespace-nowrap rounded-md px-2.5 text-[15px] font-medium text-ink-soft hover:text-ink btn-focus">{{name}}</a>
+      {{/each}}
+      <a href="{{url.topics}}" class="inline-flex min-h-[44px] items-center whitespace-nowrap rounded-md px-2.5 text-[15px] font-medium text-ink-soft hover:text-ink btn-focus">All topics</a>
+      <a href="{{url.archive}}" class="inline-flex min-h-[44px] items-center whitespace-nowrap rounded-md px-2.5 text-[15px] font-medium text-ink-soft hover:text-ink btn-focus">Archive</a>
+    </nav>
+    <div class="flex items-center gap-1 sm:gap-2">
+      <form action="{{url.search}}" method="get" role="search" class="hidden md:block">
+        <label for="header-search" class="sr-only">Search the blog</label>
+        <input id="header-search" type="search" name="{{site.searchParam}}" placeholder="Search the blog" class="h-11 w-40 rounded-lg border border-line-strong bg-canvas px-3 text-[15px] text-ink placeholder:text-ink-muted btn-focus xl:w-52" />
+      </form>
+      <a href="{{site.signInUrl}}" class="hidden min-h-[44px] items-center whitespace-nowrap rounded-md px-3 text-[15px] font-medium text-ink-soft hover:text-ink btn-focus sm:inline-flex">Log In</a>
+      <a href="{{site.trialUrl}}" class="btn-brand inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-transparent px-3 text-[15px] font-semibold leading-none btn-focus sm:px-4" data-cta="header-trial">
+        Start Free Trial
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden sm:block"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+</header>

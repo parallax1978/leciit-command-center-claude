@@ -12,7 +12,10 @@
     "test": "vitest run",
     "check": "npm run typecheck && npm run test && vite build",
     "build:pricing": "vite build --config vite.pricing.config.ts",
-    "build:pricing-preview": "node scripts/build-pricing-preview.mjs"
+    "build:pricing-preview": "node scripts/build-pricing-preview.mjs",
+    "build:blog-preview": "node scripts/build-blog-preview.mjs && vite build --config vite.blog.config.mjs",
+    "dev:blog": "node scripts/build-blog-preview.mjs && vite --config vite.blog.config.mjs",
+    "preview:blog": "vite preview --config vite.blog.config.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -23,6 +26,7 @@
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "handlebars": "^4.7.8",
     "playwright-core": "^1.49.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",

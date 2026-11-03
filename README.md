@@ -6,6 +6,8 @@ Built with React 18, TypeScript (strict), Tailwind CSS 3, and Vite 5. No backend
 
 The build has a second page, the Command Center pricing page (`pricing.html`, code in `src/pricing`). See [PRICING.md](PRICING.md).
 
+The blog redesign (Handlebars templates in `blog/`, styles and script in `src/blog`) has its own build and QA. See [BLOG.md](BLOG.md).
+
 ## Run it
 
 ```bash

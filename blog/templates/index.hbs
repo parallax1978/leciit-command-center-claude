@@ -1,0 +1,59 @@
+<div class="border-b border-line bg-canvas-sunken/60">
+  <div class="mx-auto w-full max-w-page px-4 pb-8 pt-6 sm:px-6 sm:pb-10 sm:pt-8 lg:px-8">
+    {{> breadcrumbs breadcrumbs=page.breadcrumbs}}
+    <div class="mt-6 max-w-3xl">
+      <h1 class="text-[2.375rem] font-semibold leading-[1.08] tracking-[-0.025em] text-ink sm:text-[2.75rem] lg:text-[3rem]">
+        <span class="block">{{index.h1Line1}}</span>
+        <span class="block bg-clip-text text-transparent" style="background-image: linear-gradient(95deg, #6A13CF 12%, #C71E92 98%)">{{index.h1Line2}}</span>
+      </h1>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-soft sm:text-xl">{{index.intro}}</p>
+      <form action="{{url.search}}" method="get" role="search" class="mt-6 flex max-w-xl flex-col gap-2 sm:flex-row">
+        <label for="blog-search" class="sr-only">Search the blog</label>
+        <input id="blog-search" type="search" name="{{site.searchParam}}" placeholder="Search {{index.postCount}} posts" class="h-12 min-w-0 flex-1 rounded-lg border border-line-strong bg-canvas px-4 text-[16px] text-ink placeholder:text-ink-muted btn-focus" />
+        <button type="submit" class="btn-brand inline-flex h-12 items-center justify-center rounded-lg border border-transparent px-5 text-base font-semibold leading-none btn-focus">Search</button>
+      </form>
+    </div>
+    <div class="mt-6">
+      {{> topic-nav}}
+    </div>
+  </div>
+</div>
+
+<div class="mx-auto w-full max-w-page px-4 sm:px-6 lg:px-8">
+  {{#if index.featured}}
+  <section aria-labelledby="featured-heading" class="pt-10 sm:pt-12">
+    <h2 id="featured-heading" class="sr-only">Latest post</h2>
+    {{> post-card-featured index.featured}}
+  </section>
+  {{/if}}
+
+  <section aria-labelledby="latest-heading" class="py-12 sm:py-16">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <h2 id="latest-heading" class="h2">{{index.gridTitle}}</h2>
+      <a href="{{url.archive}}" class="inline-flex min-h-[44px] items-center rounded-sm text-[15px] font-medium text-brand-purple underline-offset-4 hover:underline btn-focus">Browse the archive by month</a>
+    </div>
+    <div class="mt-8 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+      {{#each index.posts}}
+      {{> post-card}}
+      {{/each}}
+    </div>
+    {{> pagination pagination=index.pagination}}
+  </section>
+
+  <section id="topics" aria-labelledby="topics-heading" class="border-t border-line py-12 sm:py-16">
+    <p class="eyebrow">Browse by topic</p>
+    <h2 id="topics-heading" class="h2 mt-3">Every post, sorted by what you want to do.</h2>
+    <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {{#each index.topics}}
+      <li>
+        <a href="{{url}}" class="flex h-full flex-col rounded-xl border border-line p-5 hover:border-brand-purple hover:bg-brand-tint/40 btn-focus">
+          <span class="text-[17px] font-semibold text-ink">{{name}}</span>
+          <span class="mt-1 text-sm text-ink-muted">{{count}} posts</span>
+        </a>
+      </li>
+      {{/each}}
+    </ul>
+  </section>
+</div>
+
+{{> cta-band band=index.band}}

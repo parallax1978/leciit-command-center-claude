@@ -1,0 +1,31 @@
+{{!-- Numbered, crawlable pagination: every page is a real link, so search engines and readers can reach every post. --}}
+{{#if pagination}}
+<nav aria-label="Pagination" class="mt-12 flex flex-col items-center gap-3">
+  <ul class="flex flex-wrap items-center justify-center gap-1.5">
+    <li>
+      {{#if pagination.prevUrl}}
+      <a href="{{pagination.prevUrl}}" rel="prev" class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1 rounded-lg border border-line-strong px-3 text-[15px] font-medium text-ink-soft hover:bg-canvas-sunken hover:text-ink btn-focus"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>Previous</a>
+      {{else}}
+      <span aria-disabled="true" class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1 rounded-lg border border-line px-3 text-[15px] font-medium text-line-strong"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>Previous</span>
+      {{/if}}
+    </li>
+    {{#each pagination.items}}
+    <li>
+      {{#if gap}}
+      <span aria-hidden="true" class="inline-flex min-h-[44px] min-w-[36px] items-center justify-center text-ink-muted">…</span>
+      {{else}}
+      <a href="{{url}}" class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border px-3 text-[15px] font-medium btn-focus {{#if current}}border-brand-purple bg-brand-tint text-brand-purple{{else}}border-line-strong text-ink-soft hover:bg-canvas-sunken hover:text-ink{{/if}}"{{#if current}} aria-current="page"{{/if}}>{{n}}</a>
+      {{/if}}
+    </li>
+    {{/each}}
+    <li>
+      {{#if pagination.nextUrl}}
+      <a href="{{pagination.nextUrl}}" rel="next" class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1 rounded-lg border border-line-strong px-3 text-[15px] font-medium text-ink-soft hover:bg-canvas-sunken hover:text-ink btn-focus">Next<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a>
+      {{else}}
+      <span aria-disabled="true" class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1 rounded-lg border border-line px-3 text-[15px] font-medium text-line-strong">Next<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span>
+      {{/if}}
+    </li>
+  </ul>
+  <p class="text-sm text-ink-muted">Page {{pagination.current}} of {{pagination.total}}</p>
+</nav>
+{{/if}}

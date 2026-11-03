@@ -1,0 +1,31 @@
+<div class="border-b border-line bg-canvas-sunken/60">
+  <div class="mx-auto w-full max-w-page px-4 pb-8 pt-6 sm:px-6 sm:pb-10 sm:pt-8 lg:px-8">
+    {{> breadcrumbs breadcrumbs=page.breadcrumbs}}
+    <div class="mt-6 max-w-3xl">
+      <p class="eyebrow">Topic</p>
+      <h1 class="mt-2 text-[2.375rem] font-semibold leading-[1.08] tracking-[-0.025em] text-ink sm:text-[2.75rem] lg:text-[3rem]">{{category.name}}</h1>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-soft sm:text-xl">{{#if category.description}}{{category.description}}{{else}}{{category.count}} posts on {{category.name}} from the Legiit blog, newest first.{{/if}}</p>
+    </div>
+    <div class="mt-6">
+      {{> topic-nav}}
+    </div>
+  </div>
+</div>
+
+<div class="mx-auto w-full max-w-page px-4 sm:px-6 lg:px-8">
+  <section aria-labelledby="category-posts-heading" class="py-12 sm:py-16">
+    <h2 id="category-posts-heading" class="sr-only">Posts in {{category.name}}</h2>
+    <div class="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+      {{#each category.posts}}
+      {{> post-card}}
+      {{/each}}
+    </div>
+    {{> pagination pagination=category.pagination}}
+  </section>
+
+  <div class="mx-auto max-w-3xl pb-4">
+    {{> cta-box cta=category.cta placement="category"}}
+  </div>
+</div>
+
+{{> cta-band band=category.band}}

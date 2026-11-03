@@ -6,3 +6,5 @@ qa/screenshots
 *.tsbuildinfo
 dist-pricing
 dist-pricing-preview
+blog-preview
+dist-blog

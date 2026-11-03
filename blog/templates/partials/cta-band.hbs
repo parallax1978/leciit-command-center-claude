@@ -1,0 +1,13 @@
+{{!-- Closing band on the landing page's gradient. --}}
+<section aria-labelledby="cta-band-heading" class="border-t border-line py-16 sm:py-20">
+  <div class="mx-auto w-full max-w-page px-4 sm:px-6 lg:px-8">
+    <div class="rounded-2xl px-6 py-12 text-center text-white sm:px-10 sm:py-16" style="background-image: linear-gradient(115deg, #6A13CF 0%, #C71E92 100%)">
+      <h2 id="cta-band-heading" class="mx-auto max-w-2xl text-balance text-[1.875rem] font-semibold leading-[1.1] tracking-[-0.02em] text-white sm:text-[2.25rem] lg:text-[2.5rem]">{{band.title}}</h2>
+      <p class="mx-auto mt-4 max-w-xl text-balance text-[17px] leading-relaxed text-white/95 sm:text-lg">{{band.body}}</p>
+      <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <a href="{{band.primaryUrl}}" class="inline-flex min-h-[54px] w-full items-center justify-center gap-4 whitespace-nowrap rounded-lg border border-white bg-white px-6 text-base font-semibold leading-none text-brand-purple hover:bg-[#F3EBFC] btn-focus focus-visible:!outline-white sm:w-auto" data-cta="band-primary">{{band.primaryLabel}}<svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="max-[419px]:hidden"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
+        <a href="{{band.secondaryUrl}}" class="inline-flex min-h-[54px] w-full items-center justify-center whitespace-nowrap rounded-lg border border-white/70 bg-transparent px-6 text-base font-semibold leading-none text-white hover:bg-white/10 btn-focus focus-visible:!outline-white sm:w-auto" data-cta="band-secondary">{{band.secondaryLabel}}</a>
+      </div>
+    </div>
+  </div>
+</section>

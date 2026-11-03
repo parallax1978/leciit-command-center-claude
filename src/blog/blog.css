@@ -1,0 +1,192 @@
+/*
+ * Blog styles on top of the shared brand system (src/index.css, imported here so Tailwind
+ * processes both as one stylesheet). .post-content styles whatever HTML the CMS editor
+ * produces, including old posts with inline fonts, coloured table cells and the editor's own
+ * call-to-action buttons.
+ */
+@import '../index.css';
+
+/* Keep a 16px base even when a host page sets a smaller body font. */
+body {
+  font-size: 1rem;
+}
+
+@layer components {
+  .post-content {
+    @apply text-[17px] leading-[1.7] text-ink-soft;
+  }
+  .post-content > * + * {
+    margin-top: 1.25em;
+  }
+  .post-content h2,
+  .post-content h1 {
+    @apply mt-12 scroll-mt-6 text-[1.625rem] font-semibold leading-[1.2] tracking-[-0.015em] text-ink sm:text-[1.875rem];
+  }
+  .post-content h3 {
+    @apply mt-9 scroll-mt-6 text-[1.25rem] font-semibold leading-[1.3] tracking-[-0.01em] text-ink sm:text-[1.375rem];
+  }
+  .post-content h4,
+  .post-content h5,
+  .post-content h6 {
+    @apply mt-7 text-[1.0625rem] font-semibold leading-snug text-ink;
+  }
+  .post-content h2 + *,
+  .post-content h3 + *,
+  .post-content h4 + * {
+    margin-top: 0.75em;
+  }
+  .post-content h2 + .table-scroll,
+  .post-content h3 + .table-scroll {
+    margin-top: 1.25em;
+  }
+  /* Links written in the article. The inserted call-to-action box styles its own buttons. */
+  .post-content a:not(.cta-box a) {
+    @apply rounded-sm text-brand-purple underline decoration-brand-purple/40 underline-offset-4 hover:decoration-brand-purple;
+  }
+  .post-content strong,
+  .post-content b {
+    @apply font-semibold text-ink;
+  }
+  .post-content ul,
+  .post-content ol {
+    @apply pl-6;
+  }
+  .post-content ul {
+    list-style: disc;
+  }
+  .post-content ol {
+    list-style: decimal;
+  }
+  .post-content li + li {
+    margin-top: 0.5em;
+  }
+  .post-content li > ul,
+  .post-content li > ol {
+    margin-top: 0.5em;
+  }
+  .post-content ul + ul,
+  .post-content ol + ol {
+    margin-top: 0.5em;
+  }
+  .post-content blockquote {
+    @apply border-l-[3px] border-brand-purple pl-5 text-ink;
+  }
+  .post-content hr {
+    @apply my-10 border-line;
+  }
+  .post-content img {
+    @apply mx-auto h-auto rounded-xl;
+    max-width: 100% !important;
+  }
+  .post-content figure {
+    @apply my-8;
+  }
+  .post-content figcaption {
+    @apply mt-2 text-center text-sm text-ink-muted;
+  }
+  .post-content code {
+    @apply rounded bg-canvas-sunken px-1.5 py-0.5 font-mono text-[0.9em] text-ink;
+  }
+  .post-content pre {
+    @apply overflow-x-auto rounded-xl bg-ink p-4 text-[14px] leading-relaxed text-white;
+  }
+  .post-content pre code {
+    @apply bg-transparent p-0 text-inherit;
+  }
+  .post-content .embed {
+    @apply my-8 overflow-hidden rounded-xl;
+    aspect-ratio: 16 / 9;
+  }
+  .post-content .embed iframe {
+    @apply h-full w-full;
+  }
+  .post-content iframe {
+    max-width: 100%;
+  }
+
+  /* Tables: scroll sideways on narrow screens, brand colours win over the editor's inline cell colours. */
+  .table-scroll {
+    @apply my-8 overflow-x-auto rounded-xl border border-line;
+  }
+  .post-content table {
+    @apply w-full border-collapse text-[15px] leading-snug;
+    min-width: 32rem;
+  }
+  .post-content th {
+    @apply border-b border-line px-4 py-3 text-left font-semibold text-ink !bg-canvas-sunken;
+  }
+  .post-content td {
+    @apply border-b border-line px-4 py-3 align-top !bg-transparent;
+  }
+  .post-content tr:last-child td {
+    @apply border-b-0;
+  }
+
+  /* Old editor output: inline fonts and sizes are ignored, the brand type applies. */
+  .post-content span[style],
+  .post-content div[style],
+  .post-content p[style],
+  .post-content li[style] {
+    font-family: inherit !important;
+    font-size: inherit !important;
+    line-height: inherit !important;
+  }
+  .post-content div {
+    margin-top: 0;
+  }
+  .post-content > div + div {
+    margin-top: 1.25em;
+  }
+
+  /* The editor's call-to-action buttons become brand buttons. */
+  .post-content .rte-call-action-group {
+    @apply my-8 flex flex-wrap items-center justify-center gap-3;
+  }
+  .post-content .rte-call-action-button {
+    @apply inline-flex min-h-[48px] items-center justify-center rounded-lg border border-transparent px-5 text-base font-semibold capitalize leading-none text-white no-underline;
+    background-image: linear-gradient(to right, #6a13cf, #c71e92);
+    background-image: linear-gradient(to right in oklab, #6a13cf, #c71e92);
+    box-shadow: 0 14px 32px -14px rgba(98, 16, 192, 0.48);
+  }
+  .post-content .rte-call-action-button:hover {
+    filter: brightness(0.95);
+  }
+
+  /* Inline call-to-action box inside the article keeps the article's own spacing. */
+  .post-content .cta-box {
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  /* Table of contents */
+  .toc-link[aria-current] {
+    @apply border-brand-purple font-semibold text-brand-purple;
+  }
+  .toc-mobile summary {
+    list-style: none;
+  }
+  .toc-mobile summary::-webkit-details-marker {
+    display: none;
+  }
+  .toc-mobile summary::after {
+    content: '+';
+    font-weight: 600;
+    color: #6a13cf;
+  }
+  .toc-mobile[open] summary::after {
+    content: '\2212';
+  }
+
+  .reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 60;
+    height: 3px;
+    width: 0;
+    background-image: linear-gradient(to right, #6a13cf, #c71e92);
+  }
+  .topic-nav {
+    scrollbar-width: thin;
+  }
+}
