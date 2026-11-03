@@ -1,13 +1,13 @@
-{{!-- The last item is the current page: plain text, not a link. The matching BreadcrumbList JSON-LD is in the head. --}}
-<nav aria-label="Breadcrumb" class="-my-2 text-sm">
-  <ol class="flex flex-wrap items-center gap-x-1.5 text-ink-muted">
+{{!-- The last item is the current page: plain text, not a link. The matching BreadcrumbList JSON-LD is in the head. On phones a long last item is cut with an ellipsis; the full title is the H1 right below. --}}
+<nav aria-label="Breadcrumb" class="crumbs">
+  <ol class="crumbs-list">
     {{#each breadcrumbs}}
-    <li class="flex items-center gap-x-1.5">
-      {{#if @index}}<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-line-strong"><path d="m9 6 6 6-6 6"/></svg>{{/if}}
+    <li class="crumbs-item">
+      {{#if @index}}<svg aria-hidden="true" focusable="false" class="crumbs-sep ico"><use href="#i-chev-right" /></svg>{{/if}}
       {{#if url}}
-      <a href="{{url}}" class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-sm text-ink-soft underline-offset-4 hover:text-ink hover:underline btn-focus">{{name}}</a>
+      <a href="{{url}}" class="crumbs-link btn-focus">{{name}}</a>
       {{else}}
-      <span aria-current="page" class="inline-flex min-h-[44px] items-center text-ink">{{name}}</span>
+      <span aria-current="page" class="crumbs-current">{{name}}</span>
       {{/if}}
     </li>
     {{/each}}

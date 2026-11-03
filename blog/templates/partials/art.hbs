@@ -1,0 +1,6 @@
+{{!-- Tile artwork: a gradient in the topic's brand tint, a faint blueprint grid and one line icon. All inline SVG and decorative, so screen readers skip it.
+     size: hero (posts) | banner (topic pages) | card | mini. The class names are spelled out so Tailwind keeps their rules. --}}
+<div class="tile {{#if (eq size "hero")}}tile--hero{{else if (eq size "banner")}}tile--banner{{else if (eq size "mini")}}tile--mini{{else}}tile--card{{/if}}{{#if art.guide}} tile--guide{{/if}}" style="--a:{{art.angle}}deg;--c1:{{art.from}};--c2:{{art.to}};--ti:{{art.ink}}" aria-hidden="true">
+  {{#unless (eq size "mini")}}<svg class="tile-grid" focusable="false"><use href="#art-grid" width="100%" height="100%" /></svg>{{/unless}}
+  <svg class="tile-icon ico" focusable="false"><use href="#i-{{art.icon}}" /></svg>
+</div>

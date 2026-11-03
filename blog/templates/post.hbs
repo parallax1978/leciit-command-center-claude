@@ -1,121 +1,113 @@
-<article>
-  <div class="border-b border-line bg-canvas-sunken/60">
-    <div class="mx-auto w-full max-w-page px-4 pb-8 pt-6 sm:px-6 sm:pb-10 sm:pt-8 lg:px-8">
+{{!-- Three columns on desktop: the topic tree on the left, the reading column in the middle, "On this page" and the topic's offer on the right.
+     The article comes first in the source, so readers and crawlers reach the content before the navigation. --}}
+<div class="lib">
+  <div class="lib-grid lib-grid--rail">
+    <article class="lib-main">
+      {{> browse}}
       {{> breadcrumbs breadcrumbs=page.breadcrumbs}}
-      <div class="mt-6 max-w-[52rem]">
-        <a href="{{post.category.url}}" class="group inline-flex min-h-[44px] items-center rounded-full btn-focus"><span class="rounded-full bg-brand-tint px-3 py-1 text-[13px] font-semibold text-brand-purple group-hover:bg-brand-purple group-hover:text-white">{{post.category.name}}</span></a>
-        <h1 class="mt-4 text-balance text-[2rem] font-semibold leading-[1.1] tracking-[-0.025em] text-ink sm:text-[2.5rem] lg:text-[2.75rem]">{{post.title}}</h1>
-        {{#if post.summary}}<p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-soft">{{post.summary}}</p>{{/if}}
-        <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-[15px] text-ink-muted">
-          {{#if post.author.avatar}}
-          <img src="{{post.author.avatar}}" alt="" width="40" height="40" decoding="async" class="h-10 w-10 rounded-full object-cover" />
-          {{else}}
-          <span aria-hidden="true" class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-tint text-base font-semibold text-brand-purple">{{post.author.initial}}</span>
-          {{/if}}
-          <span>
-            {{#if post.author.pageUrl}}<a href="{{post.author.pageUrl}}" rel="author" class="rounded-sm font-semibold text-ink underline-offset-4 hover:underline btn-focus">{{post.author.name}}</a>{{else}}<span class="font-semibold text-ink">{{post.author.name}}</span>{{/if}}
-          </span>
-          <span aria-hidden="true" class="text-line-strong">·</span>
-          <span>Published <time datetime="{{post.publishedISO}}">{{post.publishedText}}</time></span>
-          {{#if post.updatedISO}}
-          <span aria-hidden="true" class="text-line-strong">·</span>
-          <span>Updated <time datetime="{{post.updatedISO}}">{{post.updatedText}}</time></span>
-          {{/if}}
-          <span aria-hidden="true" class="text-line-strong">·</span>
-          <span>{{post.readingMinutes}} min read</span>
-        </div>
-      </div>
-    </div>
-  </div>
+      <div class="read">
+        <header id="post-top" class="post-head">
+          <div class="note">
+            {{#if post.updatedISO}}
+            <p class="note-date">Updated <time datetime="{{post.updatedISO}}">{{post.updatedText}}</time></p>
+            <p class="note-text">First published <time datetime="{{post.publishedISO}}">{{post.publishedText}}</time><span aria-hidden="true"> · </span>By {{#if post.author.pageUrl}}<a href="{{post.author.pageUrl}}" rel="author" class="note-link btn-focus">{{post.author.name}}</a>{{else}}{{post.author.name}}{{/if}}<span aria-hidden="true"> · </span>{{post.readingMinutes}} min read</p>
+            {{else}}
+            <p class="note-date"><time datetime="{{post.publishedISO}}">{{post.publishedText}}</time></p>
+            <p class="note-text">By {{#if post.author.pageUrl}}<a href="{{post.author.pageUrl}}" rel="author" class="note-link btn-focus">{{post.author.name}}</a>{{else}}{{post.author.name}}{{/if}}<span aria-hidden="true"> · </span>{{post.readingMinutes}} min read<span aria-hidden="true"> · </span><a href="{{post.category.url}}" class="note-link btn-focus">{{post.category.name}}</a></p>
+            {{/if}}
+          </div>
+          <h1 class="h1-xl post-title">{{post.title}}</h1>
+          {{#if post.summary}}
+          <p class="lead-xl">{{post.summary}}</p>
+          {{else}}{{#if post.leadHtml}}
+          <p class="lead-xl">{{{post.leadHtml}}}</p>
+          {{/if}}{{/if}}
+        </header>
 
-  <div class="mx-auto w-full max-w-page px-4 sm:px-6 lg:px-8">
-    <div class="grid gap-10 py-10 sm:py-12 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-14">
-      <div class="min-w-0 max-w-[46rem]">
-        {{#if post.image}}
-        <figure class="overflow-hidden rounded-2xl border border-line bg-canvas-sunken">
-          <img src="{{post.image.src}}" alt="{{post.image.alt}}" width="{{post.image.width}}" height="{{post.image.height}}" fetchpriority="high" decoding="async" class="aspect-[1200/630] w-full object-cover" />
-        </figure>
-        {{/if}}
+        <div class="post-hero">{{> art art=post.art size="hero"}}</div>
 
         {{#if post.toc.length}}
-        <details class="toc-mobile mt-8 rounded-xl border border-line bg-canvas-sunken/60 p-4 lg:hidden" open>
-          <summary class="flex min-h-[44px] cursor-pointer select-none items-center justify-between rounded-md text-[15px] font-semibold text-ink btn-focus">On this page</summary>
-          <div class="mt-3">
-            {{> toc toc=post.toc}}
-          </div>
+        <details class="toc-mobile">
+          <summary class="toc-mobile-summary btn-focus"><span>On This Page</span><svg aria-hidden="true" focusable="false" class="ico toc-mobile-chev"><use href="#i-chev-down" /></svg></summary>
+          {{> toc toc=post.toc}}
         </details>
         {{/if}}
 
-        <div class="post-content mt-8" id="post-content">
+        <div class="post-content" id="post-content">
+          {{{post.introHtml}}}
+          {{#if post.inlineCta}}{{> cta-inline cta=post.cta placement="post-inline"}}{{/if}}
+          {{#if post.image}}
+          <figure class="post-figure">
+            <img src="{{post.image.src}}" alt="{{post.image.alt}}" width="{{post.image.width}}" height="{{post.image.height}}" loading="eager" fetchpriority="high" decoding="async" />
+          </figure>
+          {{/if}}
           {{{post.bodyHtml}}}
         </div>
 
-        {{> cta-box cta=post.cta placement="post-end"}}
+        {{> cta-box cta=post.cta placement="post-end" art=post.art}}
 
-        <div class="mt-10 flex flex-wrap items-center gap-3 border-t border-line pt-6 text-[15px]">
-          <span class="font-semibold text-ink">Share</span>
-          <a href="{{post.share.x}}" class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-line-strong px-3 font-medium text-ink-soft hover:text-ink btn-focus">X</a>
-          <a href="{{post.share.linkedin}}" class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-line-strong px-3 font-medium text-ink-soft hover:text-ink btn-focus">LinkedIn</a>
-          <a href="{{post.share.facebook}}" class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-line-strong px-3 font-medium text-ink-soft hover:text-ink btn-focus">Facebook</a>
-          <button type="button" class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-line-strong px-3 font-medium text-ink-soft hover:text-ink btn-focus" data-copy-link="{{page.canonical}}">Copy Link</button>
+        <div class="share">
+          <span class="share-label">Share</span>
+          <a href="{{post.share.x}}" class="chip btn-focus">X</a>
+          <a href="{{post.share.linkedin}}" class="chip btn-focus">LinkedIn</a>
+          <a href="{{post.share.facebook}}" class="chip btn-focus">Facebook</a>
+          <button type="button" class="chip btn-focus" data-copy-link="{{page.canonical}}">Copy Link</button>
         </div>
 
         {{> author-box author=post.author}}
 
-        <nav aria-label="Previous and next posts" class="mt-10 grid gap-4 sm:grid-cols-2">
+        <nav aria-label="Previous and next posts" class="pn">
           {{#if post.prev}}
-          <a href="{{post.prev.url}}" rel="prev" class="flex flex-col rounded-xl border border-line p-5 hover:border-brand-purple btn-focus">
-            <span class="text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-muted">Older post</span>
-            <span class="mt-1 font-semibold text-ink">{{post.prev.title}}</span>
+          <a href="{{post.prev.url}}" rel="prev" class="pn-link btn-focus">
+            <span class="pn-label">Older post</span>
+            <span class="pn-title">{{post.prev.title}}</span>
           </a>
           {{else}}<span></span>{{/if}}
           {{#if post.next}}
-          <a href="{{post.next.url}}" rel="next" class="flex flex-col rounded-xl border border-line p-5 text-left hover:border-brand-purple btn-focus sm:text-right">
-            <span class="text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-muted">Newer post</span>
-            <span class="mt-1 font-semibold text-ink">{{post.next.title}}</span>
+          <a href="{{post.next.url}}" rel="next" class="pn-link pn-link--next btn-focus">
+            <span class="pn-label">Newer post</span>
+            <span class="pn-title">{{post.next.title}}</span>
           </a>
           {{/if}}
         </nav>
 
-        <section id="comments" aria-labelledby="comments-heading" class="mt-12">
-          <h2 id="comments-heading" class="text-xl font-semibold text-ink">Comments</h2>
+        <section id="comments" aria-labelledby="comments-heading" class="comments">
+          <h2 id="comments-heading" class="comments-h">Comments</h2>
           {{!-- CMS: render the comment list and form here. --}}
           <p class="mt-2 text-[15px] text-ink-muted">{{post.commentsNote}}</p>
         </section>
-      </div>
 
-      <aside class="hidden lg:block" aria-label="Page tools">
-        <div class="sticky top-6 space-y-6">
-          {{#if post.toc.length}}
-          <div class="toc-desktop max-h-[calc(100vh-3rem)] overflow-y-auto rounded-xl border border-line p-5">
-            {{> toc toc=post.toc}}
+        {{#if post.related.length}}
+        <section aria-labelledby="related-heading" class="lib-section">
+          <div class="sec-head">
+            <h2 id="related-heading" class="h2-lib">More on {{post.category.name}}</h2>
+            <a href="{{post.category.url}}" class="text-link btn-focus">All {{post.category.name}} posts</a>
           </div>
-          {{/if}}
-          <div class="rounded-xl border border-brand-purple/20 bg-brand-tint p-5">
-            <p class="eyebrow">{{post.cta.eyebrow}}</p>
-            <p class="mt-2 text-[17px] font-semibold leading-snug text-ink">{{post.cta.title}}</p>
-            <a href="{{post.cta.url}}" class="btn-brand mt-4 inline-flex min-h-[44px] w-full items-center justify-center rounded-lg border border-transparent px-4 text-[15px] font-semibold leading-none btn-focus" data-cta="rail-primary">{{post.cta.ctaLabel}}</a>
+          <div class="tiles tiles--tight">
+            {{#each post.related}}
+            {{> post-card}}
+            {{/each}}
           </div>
+        </section>
+        {{/if}}
+      </div>
+    </article>
+
+    <aside class="lib-rail" aria-label="On this page and next step">
+      <div class="rail-inner">
+        {{#if post.toc.length}}
+        <div class="toc-desktop">
+          {{> toc toc=post.toc topLink=true}}
         </div>
-      </aside>
-    </div>
-  </div>
+        {{/if}}
+        {{> cta-rail cta=post.cta}}
+      </div>
+    </aside>
 
-  {{#if post.related.length}}
-  <section aria-labelledby="related-heading" class="border-t border-line py-12 sm:py-16">
-    <div class="mx-auto w-full max-w-page px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-wrap items-end justify-between gap-4">
-        <h2 id="related-heading" class="h2">More on {{post.category.name}}</h2>
-        <a href="{{post.category.url}}" class="inline-flex min-h-[44px] items-center rounded-sm text-[15px] font-medium text-brand-purple underline-offset-4 hover:underline btn-focus">All {{post.category.name}} posts</a>
-      </div>
-      <div class="mt-8 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-        {{#each post.related}}
-        {{> post-card}}
-        {{/each}}
-      </div>
-    </div>
-  </section>
-  {{/if}}
-</article>
+    <aside class="lib-side" aria-label="Blog topics">
+      {{> sidebar mode="desktop"}}
+    </aside>
+  </div>
+</div>
 
 {{> cta-band band=post.band}}

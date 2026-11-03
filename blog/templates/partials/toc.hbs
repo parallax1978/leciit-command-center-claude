@@ -1,18 +1,10 @@
-{{!-- Generated from the post's H2s (and H3s) by the CMS at render time. Links are real anchors, so they work without JavaScript. --}}
+{{!-- "On this page": built from the post's H2s by the CMS at render time (or from a page's own sections). Real anchors, so it works without JavaScript; main.ts marks the section in view. Pass topLink=true to start the list with a link back to the top of the post. --}}
 <nav aria-label="On this page" class="toc">
-  <p class="text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-muted">On this page</p>
-  <ol class="mt-3 space-y-2 text-[14px] leading-snug">
+  <p class="toc-label">On this page</p>
+  <ol class="toc-list">
+    {{#if topLink}}<li><a href="#post-top" class="toc-link link-inline btn-focus">Introduction</a></li>{{/if}}
     {{#each toc}}
-    <li>
-      <a href="#{{id}}" class="toc-link link-inline block rounded-sm border-l-2 border-transparent py-1 pl-3 text-ink-soft hover:text-ink btn-focus">{{text}}</a>
-      {{#if children.length}}
-      <ol class="mt-1 space-y-1">
-        {{#each children}}
-        <li><a href="#{{id}}" class="toc-link link-inline block rounded-sm border-l-2 border-transparent py-1 pl-6 text-[13px] text-ink-muted hover:text-ink btn-focus">{{text}}</a></li>
-        {{/each}}
-      </ol>
-      {{/if}}
-    </li>
+    <li><a href="#{{id}}" class="toc-link link-inline btn-focus">{{text}}</a></li>
     {{/each}}
   </ol>
 </nav>

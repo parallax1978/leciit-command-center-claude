@@ -1,0 +1,11 @@
+{{!-- Phones and tablets: the sidebar folds into one disclosure at the top of the page. A native <details>, so it opens with a tap and works without JavaScript. --}}
+<details class="browse">
+  <summary class="browse-summary btn-focus">
+    <svg class="browse-icon ico" aria-hidden="true" focusable="false"><use href="#i-sidebar" /></svg>
+    <span>Browse Topics</span>
+    <svg class="browse-chev ico" aria-hidden="true" focusable="false"><use href="#i-chev-down" /></svg>
+  </summary>
+  <div class="browse-panel">
+    {{> sidebar mode="phone"}}
+  </div>
+</details>

@@ -1,24 +1,10 @@
-{{!-- One post in a grid. The title is the accessible link; the image link is decorative so screen readers hear the title once. --}}
-<article class="group flex flex-col">
-  <a href="{{url}}" tabindex="-1" aria-hidden="true" class="block overflow-hidden rounded-xl border border-line bg-canvas-sunken">
-    {{#if image}}
-    <img src="{{image.src}}" alt="" width="{{image.width}}" height="{{image.height}}" loading="lazy" decoding="async" class="card-image aspect-[1200/630] w-full object-cover transition-transform duration-300 group-hover:scale-[1.02] motion-reduce:transition-none" />
-    {{else}}
-    <div class="aspect-[1200/630] w-full" style="background-image: linear-gradient(115deg, #6A13CF 0%, #C71E92 100%)"></div>
-    {{/if}}
+{{!-- One post as a tile, like Apple's section tiles: artwork, then the title under it, no border. The whole card is one link, so readers and screen readers meet it once. --}}
+<article class="card">
+  <a href="{{url}}" class="card-link btn-focus">
+    {{> art art=art size="card"}}
+    <div class="card-text">
+      <h3 class="card-title">{{title}}</h3>
+      <p class="card-meta">{{category.name}}<span aria-hidden="true"> · </span><time datetime="{{publishedISO}}">{{publishedShort}}</time></p>
+    </div>
   </a>
-  <div class="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px]">
-    <a href="{{category.url}}" class="link-inline rounded-sm font-semibold text-brand-purple underline-offset-4 hover:underline btn-focus">{{category.name}}</a>
-    <span aria-hidden="true" class="text-line-strong">·</span>
-    <span class="font-medium text-ink-muted">{{readingMinutes}} min read</span>
-  </div>
-  <h3 class="mt-2 text-[19px] font-semibold leading-snug tracking-[-0.01em]">
-    <a href="{{url}}" class="rounded-sm text-ink hover:text-brand-purple btn-focus">{{title}}</a>
-  </h3>
-  <p class="mt-2 line-clamp-3 text-[15px] leading-relaxed text-ink-soft">{{excerpt}}</p>
-  <p class="mt-3 text-sm text-ink-muted">
-    {{#if author.pageUrl}}<a href="{{author.pageUrl}}" class="link-inline rounded-sm font-medium text-ink-soft underline-offset-4 hover:underline btn-focus">{{author.name}}</a>{{else}}<span class="font-medium text-ink-soft">{{author.name}}</span>{{/if}}
-    <span aria-hidden="true"> · </span>
-    <time datetime="{{publishedISO}}">{{publishedText}}</time>
-  </p>
 </article>
