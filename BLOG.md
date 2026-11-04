@@ -27,15 +27,21 @@ buyer's guides. The full build is 1,791 pages.
 
 ## Run and check
 
+Needs Node 20 or newer and `curl` on the PATH (the first run downloads the feed with it).
+
 ```
 npm install
 npm run build:blog-preview   # renders blog-preview/ from https://legiit.com/blogs.xml, then builds dist-blog/
-npm run preview:blog         # serves dist-blog/ at http://127.0.0.1:4174
-node qa/check-blog.mjs       # 763 checks: headings, breadcrumbs, JSON-LD, canonicals, target sizes, links
+npm run preview:blog         # serves dist-blog/ at http://127.0.0.1:4174; keep it running in a second terminal
+node qa/check-blog.mjs       # 763 checks against that server: headings, breadcrumbs, JSON-LD, canonicals, target sizes, links
 ```
 
-The feed is downloaded once to `blog-preview/.cache/blogs.xml`. Pass `--feed <file>` to use a saved copy.
-The build takes a few seconds; the Vite build of all 1,791 pages about a minute.
+The feed is downloaded once to `blog-preview/.cache/blogs.xml` (29 MB). To use a saved copy, set
+`BLOG_FEED=path/to/blogs.xml` before `npm run build:blog-preview` (npm does not pass flags through), or run
+the two steps yourself: `node scripts/build-blog-preview.mjs --feed path/to/blogs.xml`, then
+`npx vite build --config vite.blog.config.mjs`. Rendering takes a few seconds; the Vite build of all 1,791
+pages about a minute. The QA script checks the reference build: it reads `blog-preview/manifest.json` and
+opens the generated file names, so to run it against staging, point its sample list at the staging URLs.
 
 ## What the CMS needs
 
@@ -44,14 +50,23 @@ The build takes a few seconds; the Vite build of all 1,791 pages about a minute.
 | `blog/templates/layouts/base.hbs` | The document: head tags, JSON-LD, Inter from Google Fonts, the icon sprite, header, footer |
 | `blog/templates/{index,category,post,search,archive,author}.hbs` | One template per page type. `category.hbs` also renders the buyer's guides listing |
 | `blog/templates/partials/*.hbs` | `header` (global bar and section bar), `footer` (navy directory), `breadcrumbs` (phones and tablets), `sidebar` (filter and topic tree), `browse` (the sidebar as a phone disclosure), `art-defs` (the icon sprite), `post-image` (a featured image), `post-card` (image, title, topic and date), `post-story` (card with excerpt), `post-row` (list row), `toc`, `pagination`, `cta-inline`, `cta-rail`, `cta-band` |
-| `src/blog/blog.css`, `src/blog/main.ts` | Styles and the small script. Vite builds them into one CSS and one JS file in `dist-blog/assets/`; the CMS links those two files instead of the dev `<script>` tag in `base.hbs` |
+| `src/blog/blog.css`, `src/blog/main.ts` | Styles and the small script. Vite builds them into one CSS file (about 37 KB) and one JS file (5 KB) in `dist-blog/assets/`; the CMS links those two files instead of the dev `<script>` tag in `base.hbs` (see below) |
+| `tailwind.blog.config.ts`, `vite.blog.config.mjs` | The build configuration for those two files. Tailwind scans only the blog templates and script |
 | `blog/sample/ctas.json` | The call to action for each topic. This is real configuration, not sample content |
 | `blog/sample/images.json` | The featured image (URL, width, height) of every post, taken from each live post's `og:image`. The CMS has these in its own database |
 | `scripts/build-blog-preview.mjs` | The reference implementation of every rule below (`processBody`, pagination, JSON-LD, the hub tree) |
 
-The CMS can run these Handlebars files directly or port the markup to its own template language. The markup
-and class names are what matter. Tailwind compiles the classes it finds in `blog/templates/**/*.hbs`, so
-rebuild the CSS after changing classes.
+The CMS can run these Handlebars files directly or port the markup to its own template language. Running
+them directly needs the two helpers `eq` and `json` and the partials registered, as in
+`scripts/build-blog-preview.mjs`. The markup and class names are what matter. Tailwind compiles the classes
+it finds in `blog/templates/**/*.hbs` and `src/blog/**/*.ts`, so rebuild the CSS after changing classes. Old
+post bodies that carry Bootstrap-era class names (`container`, `text-white`) get no styling from it, on
+purpose: `blog.css` styles the body by element.
+
+**Linking the compiled files.** In the layout's head: `<link rel="stylesheet" href="/path/main.css">`, the
+three Google Fonts tags from `base.hbs` (they load Inter; the CSS does not), and
+`<script type="module" src="/path/main.js"></script>`. The script runs on load with no DOMContentLoaded
+guard, so it must be a module or carry `defer`; it has no imports.
 
 ## Brand tokens used
 
@@ -209,7 +224,7 @@ Apply these when a post is rendered (or once, when it is saved). They fix what t
 - JSON-LD on every page: a `BreadcrumbList` that matches the visible breadcrumb (the list above the title on
   phones and tablets; the footer breadcrumb shows the same trail with the logo standing for Legiit). The
   last breadcrumb is the current page as plain text (today it is a `javascript:void(0)` link). `<` inside
-  JSON-LD is written as `<`.
+  JSON-LD is written as `\u003c`.
 - Posts add `BlogPosting`: headline, description, image, datePublished, dateModified, author (Person with a
   profile URL), publisher (Organization), mainEntityOfPage, articleSection, wordCount, inLanguage.
 - The blog home adds `Blog`; author pages add `ProfilePage`.

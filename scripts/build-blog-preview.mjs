@@ -10,7 +10,7 @@
  *
  * Everything the CMS has to compute per post is done here in one place (processBody, splitIntro,
  * excerpt, reading time, table of contents, JSON-LD, goal hubs, tile art, buyer's guides), so
- * BLOG.md can point developers at the exact rules.
+ * BLOG.md (README.md in the developer handoff) can point developers at the exact rules.
  */
 import Handlebars from 'handlebars'
 import { parseFragment, serialize } from 'parse5'
@@ -193,8 +193,10 @@ const NEWS_HUB = 'legiit-news'
 // ---------- Feed ----------
 
 function feedPath() {
+  // --feed <file> on the command line, or BLOG_FEED=<file> in the environment (npm run passes no flags through).
   const i = argv.indexOf('--feed')
   if (i >= 0 && argv[i + 1]) return argv[i + 1]
+  if (process.env.BLOG_FEED) return process.env.BLOG_FEED
   const cached = join(OUT, '.cache', 'blogs.xml')
   if (!existsSync(cached)) {
     mkdirSync(join(OUT, '.cache'), { recursive: true })
@@ -427,7 +429,6 @@ function splitIntro(html, title) {
 Handlebars.registerHelper('json', (v) => JSON.stringify(v).replace(/</g, '\\u003c'))
 Handlebars.registerHelper('eq', (a, b) => a === b)
 /** Separator for "A, B and C" lists: pass @index and the list length. */
-Handlebars.registerHelper('andSep', (i, n) => (i >= n - 1 ? '' : i === n - 2 ? ' and ' : ', '))
 for (const f of readdirSync(join(TEMPLATES, 'partials'))) Handlebars.registerPartial(basename(f, '.hbs'), read(join(TEMPLATES, 'partials', f)))
 const layout = Handlebars.compile(read(join(TEMPLATES, 'layouts', 'base.hbs')))
 const page = Object.fromEntries(['index', 'category', 'post', 'search', 'archive', 'author'].map((n) => [n, Handlebars.compile(read(join(TEMPLATES, `${n}.hbs`)))]))
