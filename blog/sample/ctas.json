@@ -4,155 +4,172 @@
     "eyebrow": "On Legiit",
     "title": "Get this done by a vetted freelancer",
     "body": "Legiit sellers handle SEO, content, design and marketing work with reviews you can check before you buy.",
-    "ctaLabel": "Browse The Marketplace",
+    "ctaLabel": "Browse the marketplace",
     "url": "https://legiit.com/marketplace",
-    "secondaryLabel": "Try Command Center Free",
-    "secondaryUrl": "https://legiit.com/subscription-purchase?plan=business_dashboard&billing=monthly"
+    "secondaryLabel": "Try Command Center free",
+    "secondaryUrl": "https://legiit.com/subscription-purchase?plan=business_dashboard&billing=monthly",
+    "railLabel": "Browse services"
   },
   "byCategory": {
     "seo": {
       "eyebrow": "SEO services on Legiit",
       "title": "Hire a vetted SEO expert for this work",
       "body": "Backlinks, local SEO, on-page fixes and audits from reviewed sellers, with prices shown up front.",
-      "ctaLabel": "Browse SEO Services",
+      "ctaLabel": "Browse SEO services",
       "url": "https://legiit.com/categories/seo",
-      "secondaryLabel": "Try Command Center Free",
-      "secondaryUrl": "https://legiit.com/subscription-purchase?plan=business_dashboard&billing=monthly"
+      "secondaryLabel": "Try Command Center free",
+      "secondaryUrl": "https://legiit.com/subscription-purchase?plan=business_dashboard&billing=monthly",
+      "railLabel": "Browse SEO services"
     },
     "social-media-marketing": {
       "eyebrow": "Social media services on Legiit",
       "title": "Hand your social media to a reviewed freelancer",
       "body": "Content calendars, posting, ads and growth campaigns from sellers with public reviews and fixed prices.",
-      "ctaLabel": "Browse Social Media Services",
+      "ctaLabel": "Browse social media services",
       "url": "https://legiit.com/categories/social-media-marketing",
-      "secondaryLabel": "Try Command Center Free",
-      "secondaryUrl": "https://legiit.com/subscription-purchase?plan=business_dashboard&billing=monthly"
+      "secondaryLabel": "Try Command Center free",
+      "secondaryUrl": "https://legiit.com/subscription-purchase?plan=business_dashboard&billing=monthly",
+      "railLabel": "Browse services"
     },
     "linkedin": {
       "eyebrow": "Social media services on Legiit",
       "title": "Hand your social media to a reviewed freelancer",
       "body": "Content calendars, posting, ads and growth campaigns from sellers with public reviews and fixed prices.",
-      "ctaLabel": "Browse Social Media Services",
+      "ctaLabel": "Browse social media services",
       "url": "https://legiit.com/categories/social-media-marketing",
-      "secondaryLabel": "Try Command Center Free",
-      "secondaryUrl": "https://legiit.com/subscription-purchase?plan=business_dashboard&billing=monthly"
+      "secondaryLabel": "Try Command Center free",
+      "secondaryUrl": "https://legiit.com/subscription-purchase?plan=business_dashboard&billing=monthly",
+      "railLabel": "Browse services"
     },
     "tiktok": {
       "eyebrow": "Social media services on Legiit",
       "title": "Hand your social media to a reviewed freelancer",
       "body": "Content calendars, posting, ads and growth campaigns from sellers with public reviews and fixed prices.",
-      "ctaLabel": "Browse Social Media Services",
+      "ctaLabel": "Browse social media services",
       "url": "https://legiit.com/categories/social-media-marketing",
-      "secondaryLabel": "Try Command Center Free",
-      "secondaryUrl": "https://legiit.com/subscription-purchase?plan=business_dashboard&billing=monthly"
+      "secondaryLabel": "Try Command Center free",
+      "secondaryUrl": "https://legiit.com/subscription-purchase?plan=business_dashboard&billing=monthly",
+      "railLabel": "Browse services"
     },
     "ecommerce": {
       "eyebrow": "Ecommerce help on Legiit",
       "title": "Get your store built, fixed or promoted",
       "body": "Store setup, product SEO, page speed and design work from reviewed sellers, with prices shown up front.",
-      "ctaLabel": "Browse Programming And Tech Services",
+      "ctaLabel": "Browse programming and tech services",
       "url": "https://legiit.com/categories/programming-technology",
-      "secondaryLabel": "Browse SEO Services",
-      "secondaryUrl": "https://legiit.com/categories/seo"
+      "secondaryLabel": "Browse SEO services",
+      "secondaryUrl": "https://legiit.com/categories/seo",
+      "railLabel": "Browse services"
     },
     "website": {
       "eyebrow": "Web services on Legiit",
       "title": "Get your website built or fixed by a pro",
       "body": "Design, development, page speed and landing pages from reviewed sellers, with prices shown up front.",
-      "ctaLabel": "Browse Web And Tech Services",
+      "ctaLabel": "Browse web and tech services",
       "url": "https://legiit.com/categories/programming-technology",
-      "secondaryLabel": "Browse Design Services",
-      "secondaryUrl": "https://legiit.com/categories/graphics-design"
+      "secondaryLabel": "Browse design services",
+      "secondaryUrl": "https://legiit.com/categories/graphics-design",
+      "railLabel": "Browse services"
     },
     "affiliate-marketing": {
       "eyebrow": "Marketing services on Legiit",
       "title": "Hire a marketer to grow your affiliate site",
       "body": "Content, SEO and promotion from reviewed sellers, with prices shown up front.",
-      "ctaLabel": "Browse Digital Marketing Services",
+      "ctaLabel": "Browse digital marketing services",
       "url": "https://legiit.com/categories/digital-marketing",
-      "secondaryLabel": "Browse SEO Services",
-      "secondaryUrl": "https://legiit.com/categories/seo"
+      "secondaryLabel": "Browse SEO services",
+      "secondaryUrl": "https://legiit.com/categories/seo",
+      "railLabel": "Browse services"
     },
     "agency": {
       "eyebrow": "For agencies",
       "title": "Run every client from one Command Center",
       "body": "The Agency plan covers up to 20 businesses, and the marketplace has white-label-friendly sellers for the work you resell.",
-      "ctaLabel": "See Agency Pricing",
+      "ctaLabel": "See Agency pricing",
       "url": "https://legiit.com/pricing",
-      "secondaryLabel": "Browse The Marketplace",
-      "secondaryUrl": "https://legiit.com/marketplace"
+      "secondaryLabel": "Browse the marketplace",
+      "secondaryUrl": "https://legiit.com/marketplace",
+      "railLabel": "See pricing"
     },
     "business": {
       "eyebrow": "Command Center",
       "title": "Run your business from one dashboard",
       "body": "AI tools, visibility tracking and vetted freelancers in one place. Try the Business plan free for 7 days.",
-      "ctaLabel": "Start My 7-Day Free Trial",
+      "ctaLabel": "Start my 7-day free trial",
       "url": "https://legiit.com/subscription-purchase?plan=business_dashboard&billing=monthly",
-      "secondaryLabel": "See Pricing",
-      "secondaryUrl": "https://legiit.com/pricing"
+      "secondaryLabel": "See pricing",
+      "secondaryUrl": "https://legiit.com/pricing",
+      "railLabel": "Start free trial"
     },
     "growth": {
       "eyebrow": "Command Center",
       "title": "Run your business from one dashboard",
       "body": "AI tools, visibility tracking and vetted freelancers in one place. Try the Business plan free for 7 days.",
-      "ctaLabel": "Start My 7-Day Free Trial",
+      "ctaLabel": "Start my 7-day free trial",
       "url": "https://legiit.com/subscription-purchase?plan=business_dashboard&billing=monthly",
-      "secondaryLabel": "See Pricing",
-      "secondaryUrl": "https://legiit.com/pricing"
+      "secondaryLabel": "See pricing",
+      "secondaryUrl": "https://legiit.com/pricing",
+      "railLabel": "Start free trial"
     },
     "get-more-stuff-done": {
       "eyebrow": "Command Center",
       "title": "Run your business from one dashboard",
       "body": "AI tools, visibility tracking and vetted freelancers in one place. Try the Business plan free for 7 days.",
-      "ctaLabel": "Start My 7-Day Free Trial",
+      "ctaLabel": "Start my 7-day free trial",
       "url": "https://legiit.com/subscription-purchase?plan=business_dashboard&billing=monthly",
-      "secondaryLabel": "See Pricing",
-      "secondaryUrl": "https://legiit.com/pricing"
+      "secondaryLabel": "See pricing",
+      "secondaryUrl": "https://legiit.com/pricing",
+      "railLabel": "Start free trial"
     },
     "outsourcing": {
       "eyebrow": "On Legiit",
       "title": "Outsource it to a reviewed freelancer",
       "body": "Browse sellers by category, check their reviews and order with the price shown up front.",
-      "ctaLabel": "Browse The Marketplace",
+      "ctaLabel": "Browse the marketplace",
       "url": "https://legiit.com/marketplace",
-      "secondaryLabel": "Find Virtual Assistants",
-      "secondaryUrl": "https://legiit.com/categories/business"
+      "secondaryLabel": "Find virtual assistants",
+      "secondaryUrl": "https://legiit.com/categories/business",
+      "railLabel": "Browse services"
     },
     "virtual-assistant": {
       "eyebrow": "On Legiit",
       "title": "Hire a virtual assistant with public reviews",
       "body": "Admin, research, data entry and support help from reviewed sellers, with prices shown up front.",
-      "ctaLabel": "Browse Business Services",
+      "ctaLabel": "Browse business services",
       "url": "https://legiit.com/categories/business",
-      "secondaryLabel": "Browse The Marketplace",
-      "secondaryUrl": "https://legiit.com/marketplace"
+      "secondaryLabel": "Browse the marketplace",
+      "secondaryUrl": "https://legiit.com/marketplace",
+      "railLabel": "Browse services"
     },
     "freelancing": {
       "eyebrow": "Sell on Legiit",
       "title": "Turn your skills into orders on Legiit",
       "body": "Create a free account, list your services and get paid through the marketplace.",
-      "ctaLabel": "Create A Free Account",
+      "ctaLabel": "Create a free account",
       "url": "https://legiit.com/register",
-      "secondaryLabel": "See The Courses",
-      "secondaryUrl": "https://legiit.com/courses"
+      "secondaryLabel": "See the courses",
+      "secondaryUrl": "https://legiit.com/courses",
+      "railLabel": "Start selling"
     },
     "case-studies": {
       "eyebrow": "SEO services on Legiit",
       "title": "Get the same work done for your site",
       "body": "The services in this case study are sold on Legiit by reviewed sellers, with prices shown up front.",
-      "ctaLabel": "Browse SEO Services",
+      "ctaLabel": "Browse SEO services",
       "url": "https://legiit.com/categories/seo",
-      "secondaryLabel": "Try Command Center Free",
-      "secondaryUrl": "https://legiit.com/subscription-purchase?plan=business_dashboard&billing=monthly"
+      "secondaryLabel": "Try Command Center free",
+      "secondaryUrl": "https://legiit.com/subscription-purchase?plan=business_dashboard&billing=monthly",
+      "railLabel": "Browse SEO services"
     },
     "roundup": {
       "eyebrow": "On Legiit",
       "title": "See this week's best-selling services",
       "body": "Browse the sellers in this roundup, check their reviews and order with the price shown up front.",
-      "ctaLabel": "Browse Trending Services",
+      "ctaLabel": "Browse trending services",
       "url": "https://legiit.com/best-seller",
-      "secondaryLabel": "Browse The Marketplace",
-      "secondaryUrl": "https://legiit.com/marketplace"
+      "secondaryLabel": "Browse the marketplace",
+      "secondaryUrl": "https://legiit.com/marketplace",
+      "railLabel": "See best sellers"
     }
   }
 }

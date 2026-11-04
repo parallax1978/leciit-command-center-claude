@@ -1,10 +1,6 @@
-{{!-- One post as a tile, like Apple's section tiles: artwork, then the title under it, no border. The whole card is one link, so readers and screen readers meet it once. --}}
-<article class="card">
-  <a href="{{url}}" class="card-link btn-focus">
-    {{> art art=art size="card"}}
-    <div class="card-text">
-      <h3 class="card-title">{{title}}</h3>
-      <p class="card-meta">{{category.name}}<span aria-hidden="true"> · </span><time datetime="{{publishedISO}}">{{publishedShort}}</time></p>
-    </div>
-  </a>
-</article>
+{{!-- One post as an image-and-caption item (the buyer's guide rows and topic rows). The real featured image, 16:9, 12px radius. --}}
+<a href="{{url}}" class="btn-focus">
+  <span class="vgrid-media">{{> post-image post=this}}</span>
+  <span class="vgrid-cap">{{title}}</span>
+  <span class="vgrid-sub">{{category.name}}<span aria-hidden="true"> · </span><time datetime="{{publishedISO}}">{{publishedText}}</time></span>
+</a>

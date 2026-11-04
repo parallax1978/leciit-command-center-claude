@@ -1,74 +1,86 @@
-{{!-- A topic page in the library: the topic tree on the left, the topic's tile, buyer's guides and every post in the middle, "On this page" and the topic's offer on the right. --}}
-<div class="lib">
-  <div class="lib-grid lib-grid--rail">
-    <div class="lib-main">
+{{!-- A topic page in the layout of Apple's Human Interface Guidelines hub: the navigator on the left; title, intro, then
+     sections of image tiles (fundamentals, buyer's guides, new and updated), the full post list, and topic cards. --}}
+<div class="wrap">
+  <div class="doc">
+    <aside class="sidebar" aria-label="Blog topics">{{> sidebar mode="desktop"}}</aside>
+    <div class="content">
       {{> browse}}
       {{> breadcrumbs breadcrumbs=page.breadcrumbs}}
-      <div class="read">
-        <header class="topic-head">
-          <p class="eyebrow">{{category.hub.name}}</p>
-          <h1 class="h1-xl mt-3">{{category.name}}{{#unless category.isFirst}}, Page {{category.pageNumber}}{{/unless}}</h1>
-          <p class="lead-xl">{{#if category.description}}{{category.description}}{{else}}{{category.count}} posts on {{category.name}} from the Legiit blog, newest first.{{/if}}</p>
-        </header>
+      <h1>{{category.name}}{{#unless category.isFirst}}, page {{category.pageNumber}}{{/unless}}</h1>
+      <p class="lead-xl">{{category.description}}</p>
 
-        <div class="post-hero">{{> art art=category.art size="banner"}}</div>
-
-        <div class="topic-cta">{{> cta-inline cta=category.cta placement="category"}}</div>
-
-        {{#if category.guides.length}}
-        <section id="buyers-guides" aria-labelledby="buyers-guides-heading" class="lib-section">
-          <h2 id="buyers-guides-heading" class="h2-lib">Buyer’s guides</h2>
-          <p class="sec-desc">Shortlists and comparisons in {{category.name}}, for when you are ready to hire or buy.</p>
-          <div class="tiles tiles--tight">
-            {{#each category.guides}}
-            {{> post-card}}
-            {{/each}}
-          </div>
-        </section>
-        {{/if}}
-
-        <section id="all-posts" aria-labelledby="all-posts-heading" class="lib-section">
-          <h2 id="all-posts-heading" class="h2-lib">{{#if category.isFirst}}All {{category.name}} posts{{else}}Page {{category.pageNumber}} of {{category.totalPages}}{{/if}}</h2>
-          <p class="sec-desc">{{category.count}} posts, newest first.</p>
-          <ol class="rows">
-            {{#each category.posts}}
-            {{> post-row withExcerpt=true}}
-            {{/each}}
-          </ol>
-          {{> pagination pagination=category.pagination}}
-        </section>
-
-        {{#if category.related.length}}
-        <section id="related-topics" aria-labelledby="related-topics-heading" class="lib-section">
-          <h2 id="related-topics-heading" class="h2-lib">More in {{category.hub.name}}</h2>
-          <ul class="topic-links">
-            {{#each category.related}}
-            <li>
-              <a href="{{url}}" class="topic-link btn-focus">
-                <svg class="ico topic-link-icon" aria-hidden="true" focusable="false"><use href="#i-{{icon}}" /></svg>
-                <span class="topic-link-name">{{name}}</span>
-                <span class="topic-link-count">{{count}} posts</span>
-              </a>
-            </li>
-            {{/each}}
-          </ul>
-        </section>
-        {{/if}}
-      </div>
-    </div>
-
-    <aside class="lib-rail" aria-label="On this page and next step">
-      <div class="rail-inner">
-        <div class="toc-desktop">
-          {{> toc toc=category.sections}}
+      {{#if category.isFirst}}
+      {{#if category.fundamentals.length}}
+      <section aria-labelledby="c1">
+        <h2 id="c1" class="h2-lib">Start with the fundamentals</h2>
+        <p>{{category.fundamentalsBlurb}}</p>
+        <a class="h2-more chev btn-focus" href="#all-posts">View all</a>
+        <div class="topic-tiles">
+          {{#each category.fundamentals}}
+          <a href="{{url}}" class="btn-focus"><span class="tile-media">{{> post-image post=this}}</span><span>{{title}}</span></a>
+          {{/each}}
         </div>
-        {{> cta-rail cta=category.cta}}
-      </div>
-    </aside>
+      </section>
+      {{/if}}
 
-    <aside class="lib-side" aria-label="Blog topics">
-      {{> sidebar mode="desktop"}}
-    </aside>
+      {{#if category.guides.length}}
+      <section id="buyers-guides" aria-labelledby="c2">
+        <h2 id="c2" class="h2-lib">Compare before you hire</h2>
+        <p>{{#if category.isGuides}}Shortlists of agencies, services and tools across every topic, with prices and who each suits.{{else}}Shortlists of {{category.name}} agencies, services and tools, with prices and who each suits.{{/if}}</p>
+        <a class="h2-more chev btn-focus" href="{{url.guides}}">View all</a>
+        <div class="topic-tiles">
+          {{#each category.guides}}
+          <a href="{{url}}" class="btn-focus"><span class="tile-media">{{> post-image post=this}}</span><span>{{title}}</span></a>
+          {{/each}}
+        </div>
+      </section>
+      {{/if}}
+
+      {{#if category.recent.length}}
+      <section aria-labelledby="c3">
+        <h2 id="c3" class="h2-lib">New and updated</h2>
+        <p>The newest {{category.name}} guides, newest first.</p>
+        <a class="h2-more chev btn-focus" href="#all-posts">View all</a>
+        <div class="topic-tiles">
+          {{#each category.recent}}
+          <a href="{{url}}" class="btn-focus"><span class="tile-media">{{> post-image post=this}}</span><span>{{title}}</span><span class="vgrid-sub"><time datetime="{{publishedISO}}">{{publishedText}}</time></span></a>
+          {{/each}}
+        </div>
+      </section>
+      {{/if}}
+      {{/if}}
+
+      <section id="all-posts" aria-labelledby="c6">
+        <h2 id="c6" class="h2-lib">{{#if category.isFirst}}{{#if category.isGuides}}All buyer’s guides{{else}}All {{category.name}} posts{{/if}}{{else}}Page {{category.pageNumber}} of {{category.totalPages}}{{/if}}</h2>
+        <p>{{category.count}} posts, newest first.</p>
+        <ul class="post-list">
+          {{#each category.posts}}
+          {{> post-row}}
+          {{/each}}
+        </ul>
+        {{> pagination pagination=category.pagination}}
+      </section>
+
+      {{#if category.related.length}}
+      <section id="related-topics" aria-labelledby="c4">
+        <h2 id="c4" class="h2-lib">More in {{category.hub.name}}</h2>
+        <div class="topic-cards">
+          {{#each category.related}}
+          <div>
+            <a href="{{url}}" class="btn-focus"><span class="tile-media">{{> post-image post=post}}</span></a>
+            <h3>{{name}}</h3>
+            <p>{{count}} {{about}}.</p>
+            <a class="text-link chev btn-focus" href="{{url}}">View all</a>
+          </div>
+          {{/each}}
+        </div>
+      </section>
+      {{/if}}
+
+      <section aria-labelledby="c5">
+        {{> cta-inline cta=category.cta placement="category"}}
+      </section>
+    </div>
   </div>
 </div>
 

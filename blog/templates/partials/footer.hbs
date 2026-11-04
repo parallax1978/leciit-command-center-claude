@@ -1,47 +1,70 @@
-{{!-- Quiet grey footer in the Apple manner: the goal hubs, the blog's own pages and Legiit's main links. --}}
+{{!-- Navy footer in Apple's directory layout: a breadcrumb row, four link columns, a legal row. --}}
 <footer class="foot">
-  <div class="lib">
+  <div class="wrap">
+    <nav class="foot-crumbs" aria-label="Footer breadcrumb">
+      <a href="{{site.homeUrl}}" aria-label="Legiit home"><img src="{{site.logo}}" alt="" width="36" height="14" loading="lazy" decoding="async" /></a>
+      {{#each page.breadcrumbs}}{{#unless @first}}
+      <span class="sep" aria-hidden="true">›</span>
+      {{#if url}}<a href="{{url}}">{{name}}</a>{{else}}<span>{{name}}</span>{{/if}}
+      {{/unless}}{{/each}}
+    </nav>
     <div class="foot-grid">
-      <div class="foot-brand">
-        <img src="{{site.logo}}" alt="Legiit" width="48" height="22" class="h-[22px] w-auto" loading="lazy" decoding="async" />
-        <p class="mt-3 max-w-xs">{{stats.posts}} guides on SEO, marketing, freelancing and running a business, from the Legiit marketplace.</p>
-      </div>
-      <nav aria-label="Goal hubs" class="foot-col">
-        <p class="foot-h">Browse By Goal</p>
+      <div>
+        <p class="foot-h">Topics</p>
         <ul>
-          {{#each nav.hubs}}
-          <li><a href="{{@root.url.index}}#hub-{{id}}" class="foot-link btn-focus">{{name}}</a></li>
+          {{#each nav.footerTopics}}
+          <li><a href="{{url}}" class="foot-link btn-focus">{{name}}</a></li>
           {{/each}}
         </ul>
-      </nav>
-      <nav aria-label="Blog" class="foot-col">
+        <p class="foot-h">More topics</p>
+        <ul>
+          {{#each nav.moreTopics}}
+          <li><a href="{{url}}" class="foot-link btn-focus">{{name}}</a></li>
+          {{/each}}
+        </ul>
+      </div>
+      <div>
         <p class="foot-h">Blog</p>
         <ul>
           <li><a href="{{url.latest}}" class="foot-link btn-focus">Latest posts</a></li>
           <li><a href="{{url.guides}}" class="foot-link btn-focus">Buyer’s guides</a></li>
-          <li><a href="{{url.topics}}" class="foot-link btn-focus">All topics</a></li>
+          {{#each nav.footerBlog}}
+          <li><a href="{{url}}" class="foot-link btn-focus">{{name}}</a></li>
+          {{/each}}
           <li><a href="{{url.archive}}" class="foot-link btn-focus">Archive by year</a></li>
+          {{#each nav.authors}}
+          <li><a href="{{url}}" class="foot-link btn-focus">Posts by {{name}}</a></li>
+          {{/each}}
           <li><a href="{{url.search}}" class="foot-link btn-focus">Search</a></li>
         </ul>
-      </nav>
-      <nav aria-label="Legiit" class="foot-col">
-        <p class="foot-h">Legiit</p>
+      </div>
+      <div>
+        <p class="foot-h">Marketplace</p>
         <ul>
-          <li><a href="{{site.marketplaceUrl}}" class="foot-link btn-focus">Marketplace</a></li>
-          <li><a href="{{site.pricingUrl}}" class="foot-link btn-focus">Command Center pricing</a></li>
+          <li><a href="{{site.seoCategoryUrl}}" class="foot-link btn-focus">SEO services</a></li>
+          <li><a href="{{site.socialCategoryUrl}}" class="foot-link btn-focus">Social media marketing</a></li>
+          <li><a href="{{site.devCategoryUrl}}" class="foot-link btn-focus">Websites and development</a></li>
+          <li><a href="{{site.marketplaceUrl}}" class="foot-link btn-focus">Browse all services</a></li>
+        </ul>
+        <p class="foot-h">Command Center</p>
+        <ul>
+          <li><a href="{{site.pricingUrl}}" class="foot-link btn-focus">Pricing</a></li>
+          <li><a href="{{site.trialUrl}}" class="foot-link btn-focus">Start a free trial</a></li>
           <li><a href="{{site.coursesUrl}}" class="foot-link btn-focus">Courses</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="foot-h">Account</p>
+        <ul>
+          <li><a href="{{site.signInUrl}}" class="foot-link btn-focus">Log in</a></li>
+          <li><a href="{{site.registerUrl}}" class="foot-link btn-focus">Sign up</a></li>
           <li><a href="{{site.supportUrl}}" class="foot-link btn-focus">Support</a></li>
         </ul>
-      </nav>
+      </div>
     </div>
     <div class="foot-legal">
       <p>Legiit Blog</p>
-      <nav aria-label="Legal">
-        <ul class="flex items-center gap-x-4">
-          <li><a href="{{site.privacyUrl}}" class="foot-link btn-focus">Privacy</a></li>
-          <li><a href="{{site.termsUrl}}" class="foot-link btn-focus">Terms</a></li>
-        </ul>
-      </nav>
+      <p><a href="{{site.termsUrl}}" class="foot-link btn-focus">Terms of use</a><a href="{{site.privacyUrl}}" class="foot-link btn-focus">Privacy policy</a></p>
     </div>
   </div>
 </footer>

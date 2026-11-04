@@ -1,69 +1,42 @@
-{{!-- One year of posts, grouped by month. The years are a segmented control; the months are the page's "On this page" list (a disclosure on phones). --}}
-<div class="lib">
-  <div class="lib-grid lib-grid--rail">
-    <div class="lib-main">
+{{!-- One year of posts, grouped by month. The years are a segmented control; the months are the page's "On this page" list. --}}
+<div class="wrap">
+  <div class="doc doc--rail">
+    <aside class="sidebar" aria-label="Blog topics">{{> sidebar mode="desktop"}}</aside>
+    <div class="content">
       {{> browse}}
       {{> breadcrumbs breadcrumbs=page.breadcrumbs}}
-      <div class="read">
-        <header class="topic-head">
-          <p class="eyebrow">Archive</p>
-          <h1 class="h1-xl mt-3">Posts From {{archive.year}}</h1>
-          <p class="lead-xl">{{archive.count}} posts, newest first. Every post is listed, so nothing is more than two clicks away.</p>
-        </header>
-        <nav aria-label="Years" class="seg-wrap">
-          <ul class="seg">
-            {{#each archive.years}}
-            <li><a href="{{url}}" class="seg-item btn-focus"{{#if active}} aria-current="page"{{/if}}><span class="seg-year">{{year}}</span><span class="seg-count">{{count}}</span></a></li>
-            {{/each}}
-          </ul>
-        </nav>
+      <h1>Posts from {{archive.year}}</h1>
+      <p class="lead-xl">{{archive.count}} posts, newest first. Every post is listed, so nothing is more than two clicks away.</p>
+      <nav aria-label="Years">
+        <ul class="seg">
+          {{#each archive.years}}
+          <li><a href="{{url}}" class="seg-item btn-focus"{{#if active}} aria-current="page"{{/if}}>{{year}}<span class="seg-count">{{count}}</span></a></li>
+          {{/each}}
+        </ul>
+      </nav>
 
-        <details class="toc-mobile">
-          <summary class="toc-mobile-summary btn-focus"><span>Jump To A Month</span><svg aria-hidden="true" focusable="false" class="ico toc-mobile-chev"><use href="#i-chev-down" /></svg></summary>
-          <nav aria-label="Months" class="toc">
-            <ol class="toc-list">
-              {{#each archive.months}}
-              <li><a href="#{{id}}" class="toc-link link-inline btn-focus">{{name}} <span class="toc-count">{{count}}</span></a></li>
-              {{/each}}
-            </ol>
-          </nav>
-        </details>
+      <details class="toc-mobile m-only">
+        <summary class="btn-focus">Jump to a month</summary>
+        {{> toc toc=archive.months}}
+      </details>
 
-        {{#each archive.months}}
-        <section id="{{id}}" aria-labelledby="{{id}}-heading" class="arch-month">
-          <h2 id="{{id}}-heading" class="arch-h">{{name}}<span class="arch-count">{{count}} posts</span></h2>
-          <ul class="arch-list">
-            {{#each posts}}
-            <li class="arch-row">
-              <time datetime="{{publishedISO}}" class="arch-date">{{publishedShort}}</time>
-              <a href="{{url}}" class="arch-title btn-focus">{{title}}</a>
-              <span class="arch-topic">{{category.name}}</span>
-            </li>
-            {{/each}}
-          </ul>
-        </section>
-        {{/each}}
-      </div>
+      {{#each archive.months}}
+      <section id="{{id}}" aria-labelledby="{{id}}-heading" class="arch-month">
+        <h2 id="{{id}}-heading" class="arch-h">{{text}}<span class="arch-count">{{count}} posts</span></h2>
+        <ul class="post-list">
+          {{#each posts}}
+          {{> post-row}}
+          {{/each}}
+        </ul>
+      </section>
+      {{/each}}
     </div>
 
-    <aside class="lib-rail" aria-label="Months and next step">
-      <div class="rail-inner">
-        <div class="toc-desktop">
-          <nav aria-label="Months" class="toc">
-            <p class="toc-label">Months</p>
-            <ol class="toc-list">
-              {{#each archive.months}}
-              <li><a href="#{{id}}" class="toc-link link-inline btn-focus">{{name}}</a></li>
-              {{/each}}
-            </ol>
-          </nav>
-        </div>
-        {{> cta-rail cta=archive.cta}}
-      </div>
-    </aside>
-
-    <aside class="lib-side" aria-label="Blog topics">
-      {{> sidebar mode="desktop"}}
+    <aside class="rail" aria-label="Months and next step">
+      <p class="rail-label">Year</p>
+      <p class="rail-value">{{archive.year}}</p>
+      {{> toc toc=archive.months}}
+      {{> cta-rail cta=archive.cta}}
     </aside>
   </div>
 </div>

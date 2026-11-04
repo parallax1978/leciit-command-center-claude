@@ -1,11 +1,2 @@
-{{!-- One post as a list row: a small tile, the title, then topic, date and reading time. Pass withExcerpt=true to add the first lines of the post. --}}
-<li class="row">
-  <a href="{{url}}" class="row-link btn-focus">
-    {{> art art=art size="mini"}}
-    <div class="row-text">
-      <h3 class="row-title">{{title}}</h3>
-      {{#if withExcerpt}}<p class="row-excerpt">{{excerpt}}</p>{{/if}}
-      <p class="row-meta"><span class="nowrap">{{category.name}}</span><span aria-hidden="true"> · </span><time datetime="{{publishedISO}}" class="nowrap">{{publishedText}}</time><span aria-hidden="true"> · </span><span class="nowrap">{{readingMinutes}} min read</span></p>
-    </div>
-  </a>
-</li>
+{{!-- One post as a list row: icon, title, date. Used by the "All posts" lists on topic, author and search pages. --}}
+<li><a href="{{url}}" class="btn-focus"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-news" /></svg><span>{{title}}</span><span class="when"><time datetime="{{publishedISO}}">{{publishedText}}</time></span></a></li>

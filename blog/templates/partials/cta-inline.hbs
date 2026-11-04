@@ -1,5 +1,6 @@
-{{!-- The topic's offer as one slim callout in the article's own type, placed right after the intro. Paragraphs only, so the outline is unchanged. --}}
+{{!-- The topic's offer as an off-white box in the article's own type: right after the intro, and again at the end. Paragraphs only, so the outline is unchanged. --}}
 <aside aria-label="{{cta.eyebrow}}" class="cta-inline" data-cta-placement="{{placement}}">
-  <p class="cta-inline-text"><strong class="cta-inline-label">{{cta.eyebrow}}.</strong> {{cta.title}}.</p>
-  <a href="{{cta.url}}" class="cta-inline-link btn-focus" data-cta="{{placement}}-primary">{{cta.ctaLabel}}<svg aria-hidden="true" focusable="false" class="ico"><use href="#i-arrow" /></svg></a>
+  <p class="eyebrow">{{cta.eyebrow}}</p>
+  <p><strong>{{cta.title}}.</strong> {{cta.body}}</p>
+  <a href="{{cta.url}}" class="btn-main btn-focus" data-cta="{{placement}}-primary">{{cta.ctaLabel}}</a>
 </aside>

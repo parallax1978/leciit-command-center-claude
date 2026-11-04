@@ -1,41 +1,35 @@
-{{!-- An author's posts in the library layout. Photo and bio show when the CMS supplies them. --}}
-<div class="lib">
-  <div class="lib-grid">
-    <div class="lib-main">
+{{!-- An author's posts. Photo and bio show when the CMS supplies them. --}}
+<div class="wrap">
+  <div class="doc">
+    <aside class="sidebar" aria-label="Blog topics">{{> sidebar mode="desktop"}}</aside>
+    <div class="content">
       {{> browse}}
       {{> breadcrumbs breadcrumbs=page.breadcrumbs}}
-      <div class="read">
-        <header class="topic-head author-head">
-          {{#if author.avatar}}
-          <img src="{{author.avatar}}" alt="" width="88" height="88" decoding="async" class="h-[88px] w-[88px] shrink-0 rounded-full object-cover" />
-          {{else}}
-          <span aria-hidden="true" class="author-initial author-initial--lg">{{author.initial}}</span>
-          {{/if}}
-          <div class="min-w-0">
-            <p class="eyebrow">Author</p>
-            <h1 class="h1-xl mt-2">{{author.name}}</h1>
-            {{#if author.role}}<p class="author-role">{{author.role}}</p>{{/if}}
-            <p class="lead-xl">{{author.count}} posts on the Legiit blog, newest first.</p>
-            {{#if author.bio}}<p class="mt-3 max-w-2xl text-[17px] leading-relaxed text-ink-soft">{{author.bio}}</p>{{/if}}
-            {{#if author.url}}<p class="mt-2"><a href="{{author.url}}" class="text-link btn-focus">Legiit profile</a></p>{{/if}}
-          </div>
-        </header>
+      <header class="author-head">
+        {{#if author.avatar}}
+        <img src="{{author.avatar}}" alt="" width="88" height="88" decoding="async" class="author-initial" style="object-fit:cover" />
+        {{else}}
+        <span aria-hidden="true" class="author-initial">{{author.initial}}</span>
+        {{/if}}
+        <div class="min-w-0">
+          <p class="eyebrow">Author</p>
+          <h1>{{author.name}}{{#unless author.isFirst}}, page {{author.pageNumber}}{{/unless}}</h1>
+          <p class="lead-xl">{{author.count}} posts on the Legiit blog, newest first.</p>
+          {{#if author.bio}}<p class="mt-3">{{author.bio}}</p>{{/if}}
+          {{#if author.url}}<p><a href="{{author.url}}" class="text-link chev btn-focus">Legiit profile</a></p>{{/if}}
+        </div>
+      </header>
 
-        <section aria-labelledby="author-posts-heading" class="lib-section">
-          <h2 id="author-posts-heading" class="h2-lib">Latest posts by {{author.name}}</h2>
-          <ol class="rows">
-            {{#each author.posts}}
-            {{> post-row withExcerpt=true}}
-            {{/each}}
-          </ol>
-          {{> pagination pagination=author.pagination}}
-        </section>
-      </div>
+      <section aria-labelledby="author-posts-heading">
+        <h2 id="author-posts-heading" class="h2-lib">{{#if author.isFirst}}Posts by {{author.name}}{{else}}Page {{author.pageNumber}} of {{author.totalPages}}{{/if}}</h2>
+        <ul class="post-list">
+          {{#each author.posts}}
+          {{> post-row}}
+          {{/each}}
+        </ul>
+        {{> pagination pagination=author.pagination}}
+      </section>
     </div>
-
-    <aside class="lib-side" aria-label="Blog topics">
-      {{> sidebar mode="desktop"}}
-    </aside>
   </div>
 </div>
 

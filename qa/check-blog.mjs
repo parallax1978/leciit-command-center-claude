@@ -8,10 +8,10 @@
  * no skipped heading levels, title, description, canonical and Open Graph tags, valid JSON-LD with
  * a BreadcrumbList that matches the visible breadcrumb, BlogPosting on posts, a table of contents
  * whose links resolve, no H1 or new-tab internal links inside the body, wrapped tables, lazy card
- * images and an eager hero, numbered pagination with real links, noindex on search, 44px targets,
- * Initial Caps button labels, no console errors. Then every internal link on every generated page
- * must resolve to a generated file (links to pages outside the preview sample open
- * not-in-preview.html). Screenshots go to qa/screenshots.
+ * images and an eager hero, numbered pagination with real links, noindex on search, 44px buttons
+ * and 24px links (WCAG 2.2 AA target size), sentence-case button labels, no console errors. Then
+ * every internal link on every generated page must resolve to a generated file. Screenshots go to
+ * qa/screenshots.
  */
 import { chromium } from 'playwright-core'
 import { existsSync, mkdirSync, readFileSync, readdirSync } from 'node:fs'
@@ -35,16 +35,11 @@ const SAMPLE = [
   { file: 'category-seo-page-2.html', type: 'category' },
   { file: longPost, type: 'post' },
   { file: 'post-legiit-updates-8-28-2018.html', type: 'post' },
+  { file: 'buyers-guides.html', type: 'category' },
   { file: 'search.html', type: 'search' },
   { file: 'archive-2026.html', type: 'archive' },
   { file: 'author-amit.html', type: 'author' },
 ].filter((s) => manifest.pages.includes(s.file))
-
-const isInitialCaps = (t) =>
-  t
-    .split(/\s+/)
-    .filter((w) => /[A-Za-z]/.test(w))
-    .every((w) => /^[^A-Za-z]*[A-Z0-9]/.test(w))
 
 for (const [width, height] of [
   [360, 640],
@@ -75,18 +70,22 @@ for (const [width, height] of [
           return { '@type': 'INVALID' }
         }
       })
-      const crumbs = Array.from(document.querySelectorAll('nav[aria-label="Breadcrumb"] li'))
+      // Phones and tablets get a breadcrumb list above the title; the blog home has only the footer breadcrumb (logo, then the trail).
+      const crumbNav = document.querySelector('nav[aria-label="Breadcrumb"]')
+      const crumbs = crumbNav ? Array.from(crumbNav.querySelectorAll('li')) : Array.from(document.querySelectorAll('.foot-crumbs > a, .foot-crumbs > span:not(.sep)'))
+      const crumbLast = crumbs[crumbs.length - 1]
       const content = document.getElementById('post-content')
-      const toc = Array.from(document.querySelectorAll('.toc-desktop .toc-link, .toc-mobile .toc-link')).map((a) => a.hash.slice(1))
-      const buttonLabels = Array.from(document.querySelectorAll('button, a.btn-brand, a[data-cta], .rte-call-action-button'))
+      const toc = Array.from(document.querySelectorAll('.rail .toc-link, .toc-mobile .toc-link')).map((a) => a.hash.slice(1))
+      const buttonLabels = Array.from(document.querySelectorAll('button, .btn-main, .btn-ghost, a[data-cta], .rte-call-action-button'))
         .filter((el) => el.offsetParent !== null)
         .map((el) => el.innerText.trim().replace(/\s+/g, ' '))
         .filter(Boolean)
-      const small = Array.from(document.querySelectorAll('a[href], button, summary'))
-        // Inline text links (card meta, table of contents, archive rows) follow the text; everything else is a 44px target.
-        .filter((el) => el.offsetParent !== null && !el.classList.contains('sr-only') && !el.classList.contains('link-inline') && !el.closest('.post-content') && getComputedStyle(el).display !== 'inline')
-        .map((el) => ({ t: (el.getAttribute('aria-label') || el.textContent || '').trim().slice(0, 30), h: Math.round(rect(el).height), w: Math.round(rect(el).width) }))
-        .filter((x) => x.h < 44 || x.w < 44)
+      // Buttons and calls to action are 44px targets. Text links in the bars, sidebar, rail, lists and cards follow the
+      // text, so they meet the 24px WCAG 2.2 AA minimum instead. Inline links inside a paragraph are exempt.
+      const targets = Array.from(document.querySelectorAll('a[href], button, summary')).filter((el) => el.offsetParent !== null && !el.classList.contains('sr-only') && !el.closest('.post-content') && getComputedStyle(el).display !== 'inline')
+      const box = (el) => ({ t: (el.getAttribute('aria-label') || el.textContent || '').trim().slice(0, 30), h: Math.round(rect(el).height), w: Math.round(rect(el).width) })
+      const isButton = (el) => (el.tagName === 'BUTTON' && !el.classList.contains('share-copy')) || el.matches('.btn-main, .btn-ghost, .pathway-actions a, .rte-call-action-button, .pager-num, .pager-step, .seg-item, .gbar-login, .sbar-menu > summary')
+      const small = targets.map((el) => ({ el, b: box(el) })).filter(({ el, b }) => (isButton(el) ? b.h < 44 || b.w < 44 : b.h < 24 || b.w < 24)).map(({ b }) => b)
       return {
         sw: document.documentElement.scrollWidth,
         iw: window.innerWidth,
@@ -102,7 +101,8 @@ for (const [width, height] of [
         breadcrumbLd: ld.find((x) => x['@type'] === 'BreadcrumbList'),
         posting: ld.find((x) => x['@type'] === 'BlogPosting'),
         crumbCount: crumbs.length,
-        crumbLastIsText: !!document.querySelector('nav[aria-label="Breadcrumb"] li:last-child [aria-current="page"]') && !document.querySelector('nav[aria-label="Breadcrumb"] li:last-child a'),
+        crumbLastIsText: !!crumbLast && !crumbLast.querySelector('a') && crumbLast.tagName !== 'A' && (!crumbNav || !!crumbLast.querySelector('[aria-current="page"]')),
+        postRows: document.querySelectorAll('.post-list li').length,
         contentH1: content ? content.querySelectorAll('h1').length : 0,
         contentH2: content ? content.querySelectorAll('h2').length : 0,
         contentNewTabInternal: content ? Array.from(content.querySelectorAll('a[target="_blank"]')).filter((a) => /legiit\.com/.test(a.href)).length : 0,
@@ -110,25 +110,20 @@ for (const [width, height] of [
         toc,
         tocMissing: toc.filter((id) => !document.getElementById(id)),
         inlineCta: !!document.querySelector('.post-content [data-cta-placement="post-inline"]'),
-        heroLazy: document.querySelector('article figure img')?.loading ?? 'none',
-        heroFetch: document.querySelector('article figure img')?.getAttribute('fetchpriority') ?? 'none',
-        cardImgs: Array.from(document.querySelectorAll('img.card-image')).map((i) => i.loading),
-        featuredEager: !document.querySelector('img.featured-image') || document.querySelector('img.featured-image').loading !== 'lazy',
+        heroLazy: document.querySelector('figure.post-hero img')?.loading ?? 'none',
+        heroFetch: document.querySelector('figure.post-hero img')?.getAttribute('fetchpriority') ?? 'none',
+        cardImgs: Array.from(document.querySelectorAll('.vgrid-media img, .tile-media img, .story-media img, .videos img')).map((i) => i.loading),
+        featuredEager: !document.querySelector('.hero-row img') || document.querySelector('.hero-row img').loading !== 'lazy',
+        contentWords: content ? content.innerText.split(/\s+/).filter(Boolean).length : 0,
         imgsNoAlt: Array.from(document.querySelectorAll('img')).filter((i) => !i.hasAttribute('alt') && !i.closest('.post-content')).length,
         contentImgsNoAlt: content ? Array.from(content.querySelectorAll('img')).filter((i) => !i.hasAttribute('alt')).length : 0,
         pagination: Array.from(document.querySelectorAll('nav[aria-label="Pagination"] a')).map((a) => ({ text: a.textContent.trim(), href: a.getAttribute('href'), rel: a.rel })),
         relPrev: document.querySelector('link[rel="prev"]')?.href ?? '',
         relNext: document.querySelector('link[rel="next"]')?.href ?? '',
-        notCaps: buttonLabels.filter((t) => !isInitialCapsText(t)),
+        badLabels: buttonLabels.filter((t) => !/^[A-Z0-9]/.test(t) || (t.length > 3 && t === t.toUpperCase())),
         small,
         timeCount: document.querySelectorAll('time[datetime]').length,
         bodyTime: document.querySelector('article time[datetime]')?.getAttribute('datetime') ?? '',
-      }
-      function isInitialCapsText(t) {
-        return t
-          .split(/\s+/)
-          .filter((w) => /[A-Za-z]/.test(w))
-          .every((w) => /^[^A-Za-z]*[A-Z0-9]/.test(w))
       }
     })
 
@@ -142,8 +137,8 @@ for (const [width, height] of [
     !m.ldTypes.includes('INVALID') && m.ldTypes.includes('BreadcrumbList') ? pass(`${tag}: JSON-LD parses and includes BreadcrumbList`) : fail(`${tag}: JSON-LD ${JSON.stringify(m.ldTypes)}`)
     m.breadcrumbLd && m.breadcrumbLd.itemListElement.length === m.crumbCount ? pass(`${tag}: BreadcrumbList matches the ${m.crumbCount} visible breadcrumb items`) : fail(`${tag}: breadcrumb items ${m.crumbCount} vs JSON-LD ${m.breadcrumbLd?.itemListElement?.length}`)
     m.crumbLastIsText ? pass(`${tag}: current page is plain text in the breadcrumb`) : fail(`${tag}: last breadcrumb item is a link`)
-    m.notCaps.length === 0 ? pass(`${tag}: every button label is Initial Caps`) : fail(`${tag}: labels not Initial Caps ${JSON.stringify(m.notCaps)}`)
-    m.small.length === 0 ? pass(`${tag}: all targets at least 44px`) : fail(`${tag}: small targets ${JSON.stringify(m.small.slice(0, 5))}`)
+    m.badLabels.length === 0 ? pass(`${tag}: every button label starts with a capital and is not all caps`) : fail(`${tag}: button labels ${JSON.stringify(m.badLabels)}`)
+    m.small.length === 0 ? pass(`${tag}: buttons at least 44px, links at least 24px`) : fail(`${tag}: small targets ${JSON.stringify(m.small.slice(0, 5))}`)
     m.imgsNoAlt === 0 ? pass(`${tag}: every template image has an alt attribute`) : fail(`${tag}: ${m.imgsNoAlt} template images without alt`)
     errors.length === 0 ? pass(`${tag}: no console errors`) : fail(`${tag}: console errors ${errors.join(' | ').slice(0, 200)}`)
 
@@ -154,13 +149,17 @@ for (const [width, height] of [
       m.contentNewTabInternal === 0 ? pass(`${tag}: no internal links open in a new tab`) : fail(`${tag}: ${m.contentNewTabInternal} internal links with target=_blank`)
       m.unwrappedTables === 0 ? pass(`${tag}: every table scrolls inside a wrapper`) : fail(`${tag}: ${m.unwrappedTables} unwrapped tables`)
       m.tocMissing.length === 0 ? pass(`${tag}: every table-of-contents link resolves (${m.toc.length / 2} entries)`) : fail(`${tag}: TOC targets missing ${JSON.stringify(m.tocMissing)}`)
-      m.contentH2 >= 3 === m.inlineCta ? pass(`${tag}: inline CTA ${m.inlineCta ? 'present' : 'absent'} for ${m.contentH2} H2s`) : fail(`${tag}: inline CTA ${m.inlineCta} with ${m.contentH2} H2s`)
+      const wantsCta = m.contentH2 >= 3 && m.contentWords >= 700
+      const noCta = m.contentH2 < 3 || m.contentWords < 600
+      ;(m.inlineCta ? !noCta : !wantsCta) ? pass(`${tag}: inline CTA ${m.inlineCta ? 'present' : 'absent'} for ${m.contentH2} H2s and ${m.contentWords} words`) : fail(`${tag}: inline CTA ${m.inlineCta} with ${m.contentH2} H2s and ${m.contentWords} words`)
       m.heroLazy === 'none' || (m.heroLazy !== 'lazy' && m.heroFetch === 'high') ? pass(`${tag}: hero image is eager`) : fail(`${tag}: hero loading=${m.heroLazy} fetchpriority=${m.heroFetch}`)
       m.bodyTime ? pass(`${tag}: published date uses <time datetime>`) : fail(`${tag}: no <time datetime> in the article`)
       if (m.contentImgsNoAlt) console.log(`note ${tag}: ${m.contentImgsNoAlt} body images without alt (CMS content)`)
     }
     if (sample.type === 'index' || sample.type === 'category') {
-      m.cardImgs.length > 0 && m.cardImgs.every((l) => l === 'lazy') && m.featuredEager ? pass(`${tag}: ${m.cardImgs.length} card images lazy-load, featured image eager`) : fail(`${tag}: card image loading ${JSON.stringify(m.cardImgs.slice(0, 4))}, featured eager ${m.featuredEager}`)
+      // Page 1 is cards with images; pages 2 and up are a plain list of posts, like Apple's archive pages.
+      if (/page-\d/.test(sample.file)) m.postRows >= 10 && m.cardImgs.length === 0 ? pass(`${tag}: list page shows ${m.postRows} posts`) : fail(`${tag}: list page has ${m.postRows} rows and ${m.cardImgs.length} card images`)
+      else m.cardImgs.length > 0 && m.cardImgs.every((l) => l === 'lazy') && m.featuredEager ? pass(`${tag}: ${m.cardImgs.length} card images lazy-load, featured image eager`) : fail(`${tag}: card image loading ${JSON.stringify(m.cardImgs.slice(0, 4))}, featured eager ${m.featuredEager}`)
       const nums = m.pagination.filter((p) => /^\d+$/.test(p.text))
       nums.length >= 3 && nums.every((p) => p.href && /\.html$/.test(p.href)) ? pass(`${tag}: numbered pagination with real links (${nums.length} pages shown)`) : fail(`${tag}: pagination ${JSON.stringify(m.pagination.slice(0, 4))}`)
       if (/page-2/.test(sample.file)) m.relPrev && m.relNext ? pass(`${tag}: rel prev and next set`) : fail(`${tag}: rel prev "${m.relPrev}" next "${m.relNext}"`)
@@ -196,8 +195,7 @@ for (const [width, height] of [
     for (const m of html.matchAll(/href="([^"#?:]+\.html)(#[^"]*)?"/g)) links.add(m[1]) // relative links only; external sites are not checked
   }
   const missing = [...links].filter((l) => !existsSync(`blog-preview/${l}`))
-  const outside = files.reduce((n, f) => n + (readFileSync(`blog-preview/${f}`, 'utf8').match(/data-preview-target=/g) || []).length, 0)
-  missing.length === 0 ? pass(`links: all ${links.size} internal page links on ${files.length} pages resolve (${outside} links to pages outside the sample open not-in-preview.html)`) : fail(`links: ${missing.length} dead links, e.g. ${missing.slice(0, 5).join(', ')}`)
+  missing.length === 0 ? pass(`links: all ${links.size} internal page links on ${files.length} pages resolve`) : fail(`links: ${missing.length} dead links, e.g. ${missing.slice(0, 5).join(', ')}`)
   // Anchors inside posts: table-of-contents targets exist in the same file.
   let badAnchors = 0
   for (const f of files.filter((f) => f.startsWith('post-'))) {

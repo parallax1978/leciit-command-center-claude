@@ -13,6 +13,7 @@
  * BLOG.md can point developers at the exact rules.
  */
 import Handlebars from 'handlebars'
+import { parseFragment, serialize } from 'parse5'
 import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { basename, join } from 'node:path'
@@ -22,7 +23,6 @@ const OUT = 'blog-preview'
 const SAMPLE = 'blog/sample'
 const TEMPLATES = 'blog/templates'
 const PER_PAGE = 12
-const PREVIEW_YEARS = ['2026']
 
 const SITE = {
   name: 'Legiit',
@@ -38,6 +38,10 @@ const SITE = {
   privacyUrl: 'https://legiit.com/privacy',
   termsUrl: 'https://legiit.com/terms',
   searchParam: 'search',
+  registerUrl: 'https://legiit.com/register',
+  seoCategoryUrl: 'https://legiit.com/categories/seo',
+  socialCategoryUrl: 'https://legiit.com/categories/social-media-marketing',
+  devCategoryUrl: 'https://legiit.com/categories/programming-technology',
 }
 
 /** Production URL patterns the CMS should serve. The preview uses flat files instead (see previewUrl). */
@@ -52,6 +56,7 @@ const PROD = {
   topics: 'https://legiit.com/blog#topics',
   latest: 'https://legiit.com/blog#latest',
   guides: 'https://legiit.com/blog#buyers-guides',
+  guidesAll: 'https://legiit.com/blog/buyers-guides',
 }
 const previewUrl = {
   index: 'index.html',
@@ -64,6 +69,7 @@ const previewUrl = {
   topics: 'index.html#topics',
   latest: 'index.html#latest',
   guides: 'index.html#buyers-guides',
+  guidesAll: (n = 1) => `buyers-guides${n > 1 ? `-page-${n}` : ''}.html`,
 }
 
 const read = (p) => readFileSync(p, 'utf8')
@@ -78,35 +84,40 @@ const json = (p) => JSON.parse(read(p))
 const HUBS = [
   {
     id: 'rank-higher-on-google',
-    name: 'Rank Higher On Google',
+    name: 'Rank higher on Google',
+    icon: 'chart',
     description: 'Search guides, from link building and local SEO to audits and the tools that track rankings.',
     topics: ['seo', 'website', 'ecommerce', 'case-studies'],
     art: { from: '#9F7AEA', to: '#DA8CD2', ink: '#3F0C86' },
   },
   {
     id: 'win-more-clients',
-    name: 'Win More Clients',
+    name: 'Win more clients',
+    icon: 'people',
     description: 'For freelancers and agencies who sell services: platforms, partners and ways to get more orders.',
     topics: ['freelancing', 'agency', 'success-stories'],
     art: { from: '#E27BB9', to: '#F4AECD', ink: '#740E54' },
   },
   {
     id: 'grow-on-social',
-    name: 'Grow On Social',
+    name: 'Grow on social',
+    icon: 'megaphone',
     description: 'Social media marketing on LinkedIn, TikTok and beyond, plus affiliate marketing.',
     topics: ['social-media-marketing', 'linkedin', 'tiktok', 'affiliate-marketing'],
     art: { from: '#C47EDB', to: '#EEA6D3', ink: '#640F62' },
   },
   {
     id: 'run-your-business',
-    name: 'Run Your Business',
+    name: 'Run your business',
+    icon: 'dashboard',
     description: 'Outsourcing, virtual assistants, analytics and the everyday work of running a small business.',
     topics: ['business', 'growth', 'outsourcing', 'virtual-assistant', 'get-more-stuff-done'],
     art: { from: '#A88EEF', to: '#DCC6F8', ink: '#3A0B7C' },
   },
   {
     id: 'legiit-news',
-    name: 'Legiit News',
+    name: 'Legiit news',
+    icon: 'news',
     description: 'Product updates, best-seller roundups and stories from the Legiit community.',
     topics: ['announcements', 'roundup', 'community', 'page'],
     art: { from: '#DDBAF3', to: '#F7CFE4', ink: '#5E127C' },
@@ -121,7 +132,7 @@ const TOPIC = {
   'case-studies': { icon: 'chart', angle: 240, about: 'case studies from SEO campaigns, from local map rankings to link building tests' },
   freelancing: { icon: 'laptop', angle: 120, about: 'guides for freelancers, from finding first clients to selling services on Legiit' },
   agency: { icon: 'building', angle: 160, about: 'guides for agencies and the people who hire them, from white-label partners to agency shortlists' },
-  'success-stories': { icon: 'award', angle: 200, about: 'stories from sellers who built a business on Legiit' },
+  'success-stories': { icon: 'trophy', angle: 200, about: 'stories from sellers who built a business on Legiit' },
   'social-media-marketing': { icon: 'share', angle: 120, about: 'guides to social media marketing, from content scheduling to AI tools and paid campaigns' },
   linkedin: { icon: 'briefcase', angle: 160, about: 'guides to LinkedIn marketing, from profile tips to cold messaging' },
   tiktok: { icon: 'music', angle: 200, about: 'guides to TikTok for business, from content ideas and ads to the algorithm' },
@@ -278,7 +289,10 @@ function truncate(text, max) {
  *     header row, so phones show one card per row instead of a table that scrolls sideways (see wrapTable).
  * The topic's call to action is placed by the post template, right after the intro (see splitIntro).
  */
-function processBody(html) {
+function processBody(html, groupTitle = 'The list') {
+  // Some bodies in the feed are cut off inside a tag, and old ones carry unclosed or stray tags. Parsing and
+  // serializing with the browser's own algorithm (parse5) gives well-formed HTML that every tool downstream accepts.
+  html = serialize(parseFragment(html))
   let s = html
   // A "<" that does not start a tag (for example "<20%") must be escaped, or the page is invalid HTML.
   s = s.replace(/<(?![a-zA-Z/!?])/g, '&lt;')
@@ -303,17 +317,38 @@ function processBody(html) {
   })
   const used = new Set()
   const toc = []
+  // Numbered items ("#1. Name", "2) Name") written as H2s are a list under one topic, so they become H3s
+  // under one shared H2 ("Top N ..." from the post title, or "The list"), as the brand brief asks.
+  const NUMBERED = /^\s*#?\s*(\d{1,2})[.):]\s+/
+  const h2Texts = [...s.matchAll(/<h2(?:\s[^>]*)?>([\s\S]*?)<\/h2>/gi)].map((m) => decode(strip(m[1])))
+  const numbered = h2Texts.filter((t) => NUMBERED.test(t)).length
+  const groupNumbered = numbered >= 3
+  let groupOpen = false
   s = s.replace(/<(h2|h3)(\s[^>]*)?>([\s\S]*?)<\/\1>/gi, (m, tag, attrs = '', inner) => {
-    const text = decode(strip(inner))
+    let text = decode(strip(inner))
     if (!text) return m
+    let level = tag.toLowerCase()
+    let prefix = ''
+    if (groupNumbered && level === 'h2' && NUMBERED.test(text)) {
+      if (!groupOpen) {
+        groupOpen = true
+        const gid = 'the-list'
+        used.add(gid)
+        toc.push({ id: gid, text: groupTitle, children: [] })
+        prefix = `<h2 id="${gid}">${groupTitle}</h2>`
+      }
+      level = 'h3'
+      text = text.replace(NUMBERED, '')
+      inner = inner.replace(/^\s*(?:<[^>]+>\s*)*#?\s*\d{1,2}[.):]\s+/, (lead) => lead.replace(/#?\s*\d{1,2}[.):]\s+$/, ''))
+    } else if (level === 'h2') groupOpen = false
     const base = slugify(text) || 'section'
     let id = base
     for (let n = 2; used.has(id); n++) id = `${base}-${n}`
     used.add(id)
     const entry = { id, text, children: [] }
-    if (tag.toLowerCase() === 'h2' || !toc.length) toc.push(entry)
+    if (level === 'h2' || !toc.length) toc.push(entry)
     else toc[toc.length - 1].children.push(entry)
-    return `<${tag} id="${id}"${attrs.replace(/\sid="[^"]*"/i, '')}>${inner}</${tag}>`
+    return `${prefix}<${level} id="${id}"${attrs.replace(/\sid="[^"]*"/i, '')}>${inner}</${level}>`
   })
   s = s.replace(/<img\b([^>]*?)\/?>/gi, (m, attrs) => {
     let a = attrs.replace(/\sstyle="[^"]*"/gi, '').replace(/\s+$/, '')
@@ -389,7 +424,7 @@ function splitIntro(html, title) {
 
 // ---------- Handlebars ----------
 
-Handlebars.registerHelper('json', (v) => JSON.stringify(v))
+Handlebars.registerHelper('json', (v) => JSON.stringify(v).replace(/</g, '\\u003c'))
 Handlebars.registerHelper('eq', (a, b) => a === b)
 /** Separator for "A, B and C" lists: pass @index and the list length. */
 Handlebars.registerHelper('andSep', (i, n) => (i >= n - 1 ? '' : i === n - 2 ? ' and ' : ', '))
@@ -443,12 +478,22 @@ const authorRecord = (creator) => {
   return { ...a, initial: a.name.slice(0, 1).toUpperCase(), pageUrl: previewUrl.author(a.slug), pageUrlProd: PROD.author(a.slug) }
 }
 
+
+/** The post's featured image: the live page's og:image, or the first image in the body. The build has one for every post. */
+function imageFor(p) {
+  const img = images[p.slug]
+  if (img) return { ...img }
+  const m = p.rawBody.match(/<img\b[^>]*?\ssrc="(https?:\/\/[^"]+)"/i)
+  return m ? { src: m[1].replace(/&amp;/g, '&'), width: 1200, height: 675 } : { src: '', width: 1200, height: 675 }
+}
+
+/** A short title for the rail: the title up to its first colon, dash or " to ", at most 60 characters. */
+const shortTitle = (t) => truncate(t.split(/:| - | – | — /)[0].trim(), 60)
+
 function enrich(p) {
   const primary = categoryBySlug.get(slugify(p.categories[0] || 'Business')) || categories[0]
   const words = strip(p.rawBody).split(' ').filter(Boolean).length
   const meta = seoMeta[p.slug] || {}
-  const img = images[p.slug]
-  const image = img ? { ...img, alt: '' } : null
   const hub = hubOf.get(primary.slug)
   const isGuide = GUIDE_RX.test(p.title) && !NOT_GUIDE_RX.test(p.title) && hub.id !== NEWS_HUB
   return {
@@ -464,60 +509,54 @@ function enrich(p) {
     description: meta.description || excerptOf(p.rawBody),
     publishedText: fmt(monthLong, p.publishedISO),
     publishedShort: fmt(monthShort, p.publishedISO),
-    image,
+    image: imageFor(p),
     author: authorRecord(p.creator),
-    art: artFor(primary.slug, p.title, isGuide),
     isGuide,
+    shortTitle: shortTitle(p.title),
   }
 }
 const posts = allPosts.map(enrich)
 const guides = posts.filter((p) => p.isGuide)
 const inTopic = new Map(categories.map((c) => [c.slug, posts.filter((p) => p.categories.some((n) => slugify(n) === c.slug))]))
-
-// Which posts get their own preview page: this year's posts plus everything a generated listing links to.
-const generated = new Set(posts.filter((p) => PREVIEW_YEARS.includes(p.publishedISO.slice(0, 4))).map((p) => p.slug))
-const listingsNeed = []
+const withImage = posts.filter((p) => p.image.src)
+console.log(`${withImage.length} of ${posts.length} posts have a featured image`)
 
 const BAND = {
   title: 'Need it done, not just explained?',
   body: 'Hire a reviewed freelancer on the Legiit marketplace, or run your business from one dashboard with Command Center.',
-  primaryLabel: 'Browse The Marketplace',
+  primaryLabel: 'Browse the marketplace',
   primaryUrl: SITE.marketplaceUrl,
-  secondaryLabel: 'Start My 7-Day Free Trial',
+  secondaryLabel: 'Start a free trial',
   secondaryUrl: SITE.trialUrl,
 }
-const ctaFor = (slug) => ctas.byCategory[slug] || ctas.default
+/** The topic's call to action, with the two short forms the rail card needs. */
+const ctaFor = (slug) => {
+  const c = ctas.byCategory[slug] || ctas.default
+  return { ...c, short: truncate(firstSentences(c.body, 1), 90), railLabel: c.railLabel || c.ctaLabel.replace(/^See Agency /, 'See ').replace(/^Start My 7-Day Free Trial$/, 'Start free trial').replace(/^Browse The /, 'Browse ') }
+}
 
-/**
- * The sidebar topic tree: every hub with its topics (icon and count). The current topic is marked, and
- * on a post page it lists its five most recent posts plus the current post, which is marked as well.
- */
-function treeFor(activeSlug, post) {
+/** The sidebar topic tree: every hub with its topics (icon and count). The current topic is marked. */
+function treeFor(activeSlug) {
   return HUBS.map((h) => {
     const topics = h.topics
       .map((slug) => categoryBySlug.get(slug))
       .filter(Boolean)
-      .map((c) => {
-        const active = c.slug === activeSlug
-        let recent = null
-        if (active && post) {
-          recent = inTopic.get(c.slug).slice(0, 5)
-          if (!recent.some((p) => p.slug === post.slug)) recent.push(post)
-          recent = recent.map((p) => ({ title: p.title, url: p.url, current: p.slug === post.slug }))
-        }
-        return { name: c.name, slug: c.slug, url: categoryUrl(c.slug), count: c.count, icon: topicInfo(c.slug).icon, active, recent }
-      })
-    return { id: h.id, name: h.name, open: topics.some((t) => t.active), topics }
+      .map((c) => ({ name: c.name, slug: c.slug, url: categoryUrl(c.slug), count: c.count, icon: topicInfo(c.slug).icon, active: c.slug === activeSlug }))
+    return { id: h.id, name: h.name, icon: h.icon, open: topics.some((t) => t.active), topics }
   })
 }
 
-const navFor = (activeSlug, post = null) => ({
-  primaryTopics: categories.slice(0, 3).map((c) => ({ name: c.name, url: categoryUrl(c.slug) })),
-  footerTopics: categories.slice(0, 6).map((c) => ({ name: c.name, url: categoryUrl(c.slug) })),
-  topics: categories.map((c) => ({ name: c.name, url: categoryUrl(c.slug), count: c.count, active: c.slug === activeSlug })),
-  allActive: activeSlug === 'all',
-  hubs: treeFor(activeSlug, post),
-  isPost: !!post,
+const authorList = Object.keys(authorsById)
+  .filter((k) => !k.startsWith('_') && posts.some((p) => p.creator === k))
+  .map((k) => authorRecord(k))
+const navFor = (activeSlug, section = '') => ({
+  section,
+  primaryTopics: categories.slice(0, 4).map((c) => ({ name: c.name, url: categoryUrl(c.slug) })),
+  footerTopics: categories.slice(0, 7).map((c) => ({ name: c.name, url: categoryUrl(c.slug) })),
+  moreTopics: categories.slice(7, 13).map((c) => ({ name: c.name, url: categoryUrl(c.slug) })),
+  footerBlog: categories.filter((c) => ['case-studies', 'success-stories', 'announcements'].includes(c.slug)).map((c) => ({ name: c.name, url: categoryUrl(c.slug) })),
+  authors: authorList.filter((a) => a.slug === 'amit').map((a) => ({ name: a.name, url: a.pageUrl })),
+  hubs: treeFor(activeSlug),
 })
 
 function paginationFor(current, total, urlFor) {
@@ -538,7 +577,7 @@ const breadcrumbLd = (items) => ({
   '@type': 'BreadcrumbList',
   itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, ...(it.prodUrl ? { item: it.prodUrl } : {}) })),
 })
-const HOME = { name: 'Home', url: SITE.homeUrl, prodUrl: SITE.homeUrl }
+const HOME = { name: 'Legiit', url: SITE.homeUrl, prodUrl: SITE.homeUrl }
 const BLOG = { name: 'Blog', url: previewUrl.index, prodUrl: PROD.index }
 
 mkdirSync(OUT, { recursive: true })
@@ -557,46 +596,36 @@ const yearList = (active = '') => years.map((y) => ({ year: y, count: posts.filt
 const stats = {
   posts: posts.length.toLocaleString('en-US'),
   topics: categories.length,
-  authors: Object.keys(authorsById).filter((k) => !k.startsWith('_')).length,
+  authors: authorList.length,
   firstYear: years[years.length - 1],
+  lastYear: years[0],
   years: years.length,
 }
-// Templates get plain URL strings. "Archive" links (header, footer, index) open the newest year.
 const common = {
   site: SITE,
   stats,
-  url: { index: previewUrl.index, archive: previewUrl.archive(years[0]), search: previewUrl.search, topics: previewUrl.topics, latest: previewUrl.latest, guides: previewUrl.guides },
+  url: { index: previewUrl.index, archive: previewUrl.archive(years[0]), search: previewUrl.search, topics: previewUrl.topics, latest: previewUrl.latest, guides: previewUrl.guides, guidesAll: previewUrl.guidesAll(1) },
 }
 
-// Index pages: page 1 is the library home (buyer's guides, one section per goal hub, latest posts,
-// archive); pages 2 and on are a plain list. Every page holds 12 posts, newest first.
+// ---------- Blog home and its numbered pages ----------
 const indexTotal = Math.ceil(posts.length / PER_PAGE)
-const indexPages = [1, 2, 3, indexTotal - 1, indexTotal]
-const homeGuides = guides.slice(0, 6)
-const moreGuides = guides.slice(6, 12)
-const hubSections = HUBS.map((h) => ({
-  id: h.id,
-  name: h.name,
-  description: h.description,
-  topics: h.topics
-    .map((slug) => categoryBySlug.get(slug))
-    .filter(Boolean)
-    .map((c) => ({ name: c.name, url: categoryUrl(c.slug), count: c.count })),
-  posts: posts.filter((p) => h.topics.includes(p.category.slug) && !p.isGuide).slice(0, 3),
-}))
-for (const n of indexPages) {
+const top = categories[0]
+const hubCards = HUBS.map((h) => {
+  const list = posts.filter((p) => h.topics.includes(p.category.slug))
+  const names = h.topics.map((s) => categoryBySlug.get(s)).filter(Boolean).map((c) => c.name)
+  return { name: h.name, url: `${previewUrl.index}#hub-${h.id}`, count: list.length.toLocaleString('en-US'), topicNames: names.slice(0, 3).join(', ') + (names.length > 3 ? ` and ${names.length - 3} more` : ''), post: list.find((p) => p.image.src) || withImage[0], hubUrl: categoryUrl(h.topics[0]) }
+}).map((c) => ({ ...c, url: c.hubUrl }))
+for (let n = 1; n <= indexTotal; n++) {
   const start = (n - 1) * PER_PAGE
   const slice = posts.slice(start, start + PER_PAGE)
-  listingsNeed.push(...slice.map((p) => p.slug))
-  if (n === 1) listingsNeed.push(...homeGuides.map((p) => p.slug), ...moreGuides.map((p) => p.slug), ...hubSections.flatMap((h) => h.posts.map((p) => p.slug)))
   const crumbs = n === 1 ? [HOME, { name: 'Blog' }] : [HOME, BLOG, { name: `Page ${n}` }]
   render(
     'index',
     {
       ...common,
-      nav: navFor('all'),
+      nav: navFor('all', n === 1 ? 'overview' : 'latest'),
       page: {
-        title: n === 1 ? 'Legiit Blog: SEO, Marketing And Business Growth Guides' : `Legiit Blog, page ${n}`,
+        title: n === 1 ? 'Legiit Blog: Guides To Grow Your Business' : `Latest posts, page ${n} | Legiit Blog`,
         description: 'Practical guides on SEO, marketing, freelancing and running a business, from the Legiit marketplace. New posts every week.',
         canonical: PROD.page(n),
         ogType: 'website',
@@ -609,16 +638,13 @@ for (const n of indexPages) {
         isFirst: n === 1,
         pageNumber: n,
         totalPages: indexTotal,
-        h1: n === 1 ? 'The Legiit Blog' : `Latest Guides, Page ${n}`,
-        intro: n === 1 ? `${stats.posts} guides to SEO, marketing, freelancing and running a business, sorted by what you want to get done.` : `Posts ${start + 1} to ${start + slice.length} of ${stats.posts}, newest first.`,
-        postCount: stats.posts,
-        guides: n === 1 ? homeGuides : [],
-        moreGuides: n === 1 ? moreGuides : [],
-        hubs: n === 1 ? hubSections : [],
-        posts: slice,
-        gridTitle: n === 1 ? 'Latest' : `Page ${n} of ${indexTotal}`,
+        intro: `Posts ${start + 1} to ${start + slice.length} of ${stats.posts}, newest first.`,
+        heroPosts: guides.filter((p) => p.image.src).slice(0, 3),
+        topTopic: { name: top.name, url: categoryUrl(top.slug), blurb: `${top.count} ${topicInfo(top.slug).about}.`, post: inTopic.get(top.slug).find((p) => p.image.src) },
+        guides: n === 1 ? guides.slice(0, 6) : [],
+        posts: n === 1 ? slice.slice(0, 3) : slice,
+        hubs: hubCards,
         pagination: paginationFor(n, indexTotal, previewUrl.page),
-        topics: categories.map((c) => ({ name: c.name, url: categoryUrl(c.slug), count: c.count })),
         years: yearList(),
         band: BAND,
       },
@@ -627,36 +653,51 @@ for (const n of indexPages) {
   )
 }
 
-// Category pages (page 1 of every topic, page 2 of the largest)
-for (const c of categories) {
-  const list = inTopic.get(c.slug)
-  const total = Math.ceil(list.length / PER_PAGE)
-  const pagesToBuild = c === categories[0] ? [1, 2] : [1]
-  const hub = hubOf.get(c.slug)
-  const topicGuides = list.filter((p) => p.isGuide).slice(0, 3)
-  const related = hub.topics
-    .filter((s) => s !== c.slug)
-    .map((s) => categoryBySlug.get(s))
-    .filter(Boolean)
-    .map((r) => ({ name: r.name, url: categoryUrl(r.slug), count: r.count, icon: topicInfo(r.slug).icon }))
-  for (const n of pagesToBuild) {
-    const slice = list.slice((n - 1) * PER_PAGE, n * PER_PAGE)
-    const shownGuides = n === 1 ? topicGuides : []
-    listingsNeed.push(...slice.map((p) => p.slug), ...shownGuides.map((p) => p.slug))
-    const crumbs = n === 1 ? [HOME, BLOG, { name: c.name }] : [HOME, BLOG, { name: c.name, url: categoryUrl(c.slug), prodUrl: PROD.category(c.slug) }, { name: `Page ${n}` }]
-    const sections = [
-      ...(shownGuides.length ? [{ id: 'buyers-guides', text: 'Buyer’s guides' }] : []),
-      { id: 'all-posts', text: n === 1 ? `All ${c.name} posts` : `Page ${n} of ${total}` },
-      ...(related.length ? [{ id: 'related-topics', text: `More in ${hub.name}` }] : []),
-    ]
+// ---------- Buyer's guides listing (every commercial-intent post) ----------
+{
+  const total = Math.ceil(guides.length / PER_PAGE)
+  for (let n = 1; n <= total; n++) {
+    const slice = guides.slice((n - 1) * PER_PAGE, n * PER_PAGE)
+    const crumbs = n === 1 ? [HOME, BLOG, { name: 'Buyer’s guides' }] : [HOME, BLOG, { name: 'Buyer’s guides', url: previewUrl.guidesAll(1), prodUrl: PROD.guidesAll }, { name: `Page ${n}` }]
     render(
       'category',
       {
         ...common,
-        nav: navFor(c.slug),
+        nav: navFor('', 'guides'),
+        page: { title: `Buyer’s guides${n > 1 ? `, page ${n}` : ''} | Legiit Blog`, description: 'Shortlists and comparisons of agencies, services and tools, with what each costs and who it suits.', canonical: `${PROD.guidesAll}${n > 1 ? `/page/${n}` : ''}`, ogType: 'website', prevUrl: n > 1 ? `${PROD.guidesAll}${n > 2 ? `/page/${n - 1}` : ''}` : '', nextUrl: n < total ? `${PROD.guidesAll}/page/${n + 1}` : '', breadcrumbs: crumbs, jsonld: [breadcrumbLd(crumbs)] },
+        category: { name: 'Buyer’s guides', isGuides: true, count: guides.length.toLocaleString('en-US'), description: `${guides.length} shortlists and side-by-side comparisons of agencies, services and tools, newest first.`, isFirst: n === 1, pageNumber: n, totalPages: total, hub: { name: '' }, fundamentals: [], guides: n === 1 ? guides.filter((p) => p.image.src).slice(0, 6) : [], recent: [], posts: slice, pagination: paginationFor(n, total, previewUrl.guidesAll), related: [], cta: ctaFor('agency'), band: BAND },
+      },
+      previewUrl.guidesAll(n),
+    )
+  }
+}
+
+// ---------- Topic pages (every page of every topic) ----------
+for (const c of categories) {
+  const list = inTopic.get(c.slug)
+  const total = Math.ceil(list.length / PER_PAGE)
+  const hub = hubOf.get(c.slug)
+  const topicGuides = list.filter((p) => p.isGuide && p.image.src).slice(0, 6)
+  const guideSlugs = new Set(topicGuides.map((p) => p.slug))
+  const nonGuides = list.filter((p) => !guideSlugs.has(p.slug) && p.image.src)
+  const fundamentals = nonGuides.slice(0, 3)
+  const recent = nonGuides.slice(3, 9)
+  const related = hub.topics
+    .filter((s) => s !== c.slug)
+    .map((s) => categoryBySlug.get(s))
+    .filter(Boolean)
+    .map((r) => ({ name: r.name, url: categoryUrl(r.slug), count: r.count, about: topicInfo(r.slug).about || `posts on ${r.name.toLowerCase()}`, post: inTopic.get(r.slug).find((p) => p.image.src) || withImage[0] }))
+  for (let n = 1; n <= total; n++) {
+    const slice = list.slice((n - 1) * PER_PAGE, n * PER_PAGE)
+    const crumbs = n === 1 ? [HOME, BLOG, { name: c.name }] : [HOME, BLOG, { name: c.name, url: categoryUrl(c.slug), prodUrl: PROD.category(c.slug) }, { name: `Page ${n}` }]
+    render(
+      'category',
+      {
+        ...common,
+        nav: navFor(c.slug, 'topics'),
         page: {
-          title: `${c.name} Articles${n > 1 ? `, page ${n}` : ''} | Legiit Blog`,
-          description: `${c.count} posts on ${c.name.toLowerCase()} from the Legiit blog: guides, comparisons and case studies, newest first.`,
+          title: `${c.name} guides${n > 1 ? `, page ${n}` : ''} | Legiit Blog`,
+          description: `${c.count} ${topicInfo(c.slug).about || `posts on ${c.name.toLowerCase()}`}, from the Legiit blog.`,
           canonical: PROD.category(c.slug, n),
           ogType: 'website',
           prevUrl: n > 1 ? PROD.category(c.slug, n - 1) : '',
@@ -666,18 +707,19 @@ for (const c of categories) {
         },
         category: {
           name: c.name,
-          count: c.count,
-          description: topicInfo(c.slug).about ? `${c.count.toLocaleString('en-US')} ${topicInfo(c.slug).about}.` : '',
+          count: c.count.toLocaleString('en-US'),
+          description: `${c.count.toLocaleString('en-US')} ${topicInfo(c.slug).about || `posts on ${c.name.toLowerCase()}`}.`,
           isFirst: n === 1,
           pageNumber: n,
           totalPages: total,
           hub: { id: hub.id, name: hub.name },
-          art: artFor(c.slug),
-          guides: shownGuides,
+          fundamentals,
+          fundamentalsBlurb: `Three guides that explain ${c.name === 'SEO' ? 'how search works today' : `the basics of ${c.name.toLowerCase()}`}.`,
+          guides: n === 1 ? topicGuides : [],
+          recent: n === 1 ? recent : [],
           posts: slice,
           pagination: paginationFor(n, total, (k) => previewUrl.category(c.slug, k)),
-          related,
-          sections,
+          related: n === 1 ? related : [],
           cta: ctaFor(c.slug),
           band: BAND,
         },
@@ -687,12 +729,11 @@ for (const c of categories) {
   }
 }
 
-// Search (sample query)
+// ---------- Search (one sample query; the CMS runs real searches) ----------
 {
   const q = 'local seo'
   const hits = posts.filter((p) => p.title.toLowerCase().includes(q) || strip(p.rawBody).toLowerCase().includes(q))
-  const slice = hits.filter((p) => generated.has(p.slug)).slice(0, PER_PAGE)
-  listingsNeed.push(...slice.map((p) => p.slug))
+  const slice = hits.slice(0, PER_PAGE)
   const crumbs = [HOME, BLOG, { name: 'Search' }]
   render(
     'search',
@@ -706,14 +747,14 @@ for (const c of categories) {
   )
 }
 
-// Archive: one page per year, every post listed by month
+// ---------- Archive: one page per year, every post listed by month ----------
 for (const y of years) {
   const inYear = posts.filter((p) => p.publishedISO.startsWith(y))
   const months = []
   for (const p of inYear) {
     const key = p.publishedISO.slice(0, 7)
     let m = months.find((x) => x.key === key)
-    if (!m) months.push((m = { key, id: `m-${key}`, name: fmt(monthName, `${key}-01`), count: 0, posts: [] }))
+    if (!m) months.push((m = { key, id: `m-${key}`, text: fmt(monthName, `${key}-01`), count: 0, posts: [], children: [] }))
     m.count++
     m.posts.push(p)
   }
@@ -722,48 +763,50 @@ for (const y of years) {
     'archive',
     {
       ...common,
-      nav: navFor(''),
+      nav: navFor('', 'archive'),
       page: { title: `All ${y} posts | Legiit Blog`, description: `Every Legiit blog post published in ${y}, by month.`, canonical: PROD.archive(y), ogType: 'website', breadcrumbs: crumbs, jsonld: [breadcrumbLd(crumbs)] },
-      archive: { year: y, count: inYear.length, years: yearList(y), months, cta: ctas.default, band: BAND },
+      archive: { year: y, count: inYear.length, years: yearList(y), months, cta: ctaFor('default'), band: BAND },
     },
     previewUrl.archive(y),
   )
 }
 
-// Author pages (page 1 for every author)
-for (const creator of Object.keys(authorsById).filter((k) => !k.startsWith('_'))) {
-  const a = authorRecord(creator)
-  const mine = posts.filter((p) => p.creator === creator)
-  if (!mine.length) continue
-  const slice = mine.slice(0, PER_PAGE)
-  listingsNeed.push(...slice.map((p) => p.slug))
-  const crumbs = [HOME, BLOG, { name: a.name }]
-  render(
-    'author',
-    {
-      ...common,
-      nav: navFor(''),
-      page: { title: `Posts by ${a.name} | Legiit Blog`, description: `${mine.length} posts by ${a.name} on the Legiit blog.`, canonical: PROD.author(a.slug), ogType: 'profile', breadcrumbs: crumbs, jsonld: [{ '@context': 'https://schema.org', '@type': 'ProfilePage', mainEntity: { '@type': 'Person', name: a.name, ...(a.url ? { url: a.url } : {}) } }, breadcrumbLd(crumbs)] },
-      author: { ...a, count: mine.length, posts: slice, pagination: paginationFor(1, Math.ceil(mine.length / PER_PAGE), (k) => previewUrl.author(a.slug, k)), band: BAND },
-    },
-    previewUrl.author(a.slug),
-  )
+// ---------- Author pages (every page of every author) ----------
+for (const a of authorList) {
+  const mine = posts.filter((p) => authorRecord(p.creator).slug === a.slug)
+  const total = Math.ceil(mine.length / PER_PAGE)
+  for (let n = 1; n <= total; n++) {
+    const slice = mine.slice((n - 1) * PER_PAGE, n * PER_PAGE)
+    const crumbs = n === 1 ? [HOME, BLOG, { name: a.name }] : [HOME, BLOG, { name: a.name, url: a.pageUrl, prodUrl: a.pageUrlProd }, { name: `Page ${n}` }]
+    render(
+      'author',
+      {
+        ...common,
+        nav: navFor(''),
+        page: { title: `Posts by ${a.name}${n > 1 ? `, page ${n}` : ''} | Legiit Blog`, description: `${mine.length} posts by ${a.name} on the Legiit blog.`, canonical: PROD.author(a.slug, n), ogType: 'profile', prevUrl: n > 1 ? PROD.author(a.slug, n - 1) : '', nextUrl: n < total ? PROD.author(a.slug, n + 1) : '', breadcrumbs: crumbs, jsonld: [{ '@context': 'https://schema.org', '@type': 'ProfilePage', mainEntity: { '@type': 'Person', name: a.name, ...(a.url ? { url: a.url } : {}) } }, breadcrumbLd(crumbs)] },
+        author: { ...a, isFirst: n === 1, pageNumber: n, totalPages: total, count: mine.length, posts: slice, pagination: paginationFor(n, total, (k) => previewUrl.author(a.slug, k)), band: BAND },
+      },
+      previewUrl.author(a.slug, n),
+    )
+  }
 }
 
-// Post pages
-const OLD_POST = 'legiit-updates-8-28-2018'
-for (const s of [...listingsNeed, OLD_POST]) generated.add(s)
-const generatedPosts = posts.filter((p) => generated.has(p.slug))
-for (let i = 0; i < generatedPosts.length; i++) {
-  const p = generatedPosts[i]
+// ---------- Every post ----------
+const groupTitleFor = (p) => {
+  const m = p.title.match(/^(?:the\s+)?(\d{1,2})\s+best\b/i) || p.title.match(/^top\s+(\d{1,2})\b/i)
+  return m ? `Top ${m[1]} ${p.title.replace(/^(?:the\s+)?\d{1,2}\s+best\s+|^top\s+\d{1,2}\s+/i, '').split(/\s+(?:to|for|in|that|of)\s+/i)[0].toLowerCase()}` : 'The list'
+}
+for (let i = 0; i < posts.length; i++) {
+  const p = posts[i]
   const cta = ctaFor(p.category.slug)
-  // The in-content call to action goes in posts of 600+ words with at least three H2s.
-  const inlineCta = p.words >= 600 && (p.rawBody.match(/<h2\b/gi) || []).length >= 3
-  const { html, toc } = processBody(p.rawBody)
+  const { html, toc } = processBody(p.rawBody, groupTitleFor(p))
+  const inlineCta = p.words >= 600 && (html.match(/<h2\b/gi) || []).length >= 3
   const { lead, intro, body } = splitIntro(html, p.title)
-  const related = generatedPosts.filter((o) => o.slug !== p.slug && o.category.slug === p.category.slug).slice(0, 3)
-  const newer = generatedPosts[i - 1]
-  const older = generatedPosts[i + 1]
+  const sameTopic = inTopic.get(p.category.slug).filter((o) => o.slug !== p.slug)
+  const related = sameTopic.filter((o) => !o.isGuide).slice(0, 4)
+  const relatedGuides = sameTopic.filter((o) => o.isGuide && o.image.src).slice(0, 3)
+  const newer = posts[i - 1]
+  const older = posts[i + 1]
   const crumbs = [HOME, BLOG, { name: p.category.name, url: p.category.url, prodUrl: p.category.prodUrl }, { name: p.title }]
   const jsonld = [
     {
@@ -771,7 +814,7 @@ for (let i = 0; i < generatedPosts.length; i++) {
       '@type': 'BlogPosting',
       headline: p.title,
       description: p.description,
-      ...(p.image ? { image: [p.image.src] } : {}),
+      ...(p.image.src ? { image: [p.image.src] } : {}),
       datePublished: p.publishedISO,
       dateModified: p.updatedISO || p.publishedISO,
       author: { '@type': 'Person', name: p.author.name, url: p.author.url || p.author.pageUrlProd },
@@ -788,8 +831,8 @@ for (let i = 0; i < generatedPosts.length; i++) {
     'post',
     {
       ...common,
-      nav: navFor(p.category.slug, p),
-      page: { title: p.seoTitle, description: p.description, canonical, ogType: 'article', ogImage: p.image?.src || '', publishedISO: p.publishedISO, modifiedISO: p.updatedISO || '', breadcrumbs: crumbs, jsonld },
+      nav: navFor(p.category.slug, 'topics'),
+      page: { title: p.seoTitle, description: p.description, canonical, ogType: 'article', ogImage: p.image.src || '', publishedISO: p.publishedISO, modifiedISO: p.updatedISO || '', breadcrumbs: crumbs, jsonld },
       post: {
         ...p,
         leadHtml: lead,
@@ -797,9 +840,11 @@ for (let i = 0; i < generatedPosts.length; i++) {
         bodyHtml: body,
         inlineCta,
         toc,
+        tocTail: { id: 'resources', text: 'Resources' },
         cta,
         band: BAND,
         related,
+        relatedGuides,
         prev: older ? { title: older.title, url: older.url } : null,
         next: newer ? { title: newer.title, url: newer.url } : null,
         share: {
@@ -814,40 +859,5 @@ for (let i = 0; i < generatedPosts.length; i++) {
   )
 }
 
-// Preview only: the sample cannot hold every page (the artifact host takes about 500 files), so links to
-// pages outside the sample open one explanatory page instead of a 404. The CMS serves every page.
-{
-  const crumbs = [HOME, BLOG, { name: 'Not in this preview' }]
-  const body = Handlebars.compile(`<div class="lib">
-  <div class="lib-grid">
-    <div class="lib-main">
-      {{> browse}}
-      {{> breadcrumbs breadcrumbs=page.breadcrumbs}}
-      <div class="read topic-head">
-        <p class="eyebrow">Preview</p>
-        <h1 class="h1-xl mt-3">This Page Isn’t In The Preview</h1>
-        <p class="lead-xl">The preview holds a sample of {{sampleCount}} pages built from real Legiit posts. On the live blog, every listing page, post and archive link opens normally.</p>
-        <div class="cta-box-actions page-actions">
-          <a href="{{url.index}}" class="btn-brand btn-main btn-focus">Back To The Blog</a>
-          <a href="{{url.archive}}" class="btn-quiet btn-focus">Browse The Archive</a>
-        </div>
-      </div>
-    </div>
-    <aside class="lib-side" aria-label="Blog topics">{{> sidebar mode="desktop"}}</aside>
-  </div>
-</div>`)
-  const ctx = { ...common, nav: navFor(''), sampleCount: manifest.length + 1, page: { title: 'Not in this preview | Legiit Blog', description: 'This page is outside the preview sample.', robots: 'noindex, nofollow', ogType: 'website', breadcrumbs: crumbs, jsonld: [breadcrumbLd(crumbs)] } }
-  write('not-in-preview.html', layout({ ...ctx, body: body(ctx) }))
-  const built = new Set(manifest)
-  let rewritten = 0
-  for (const name of manifest) {
-    const file = join(OUT, name)
-    const html = read(file)
-    const out = html.replace(/href="([^"#?:/]+\.html)(#[^"]*)?"/g, (m, target) => (built.has(target) ? m : (rewritten++, `href="not-in-preview.html" data-preview-target="${target}"`)))
-    if (out !== html) writeFileSync(file, out)
-  }
-  console.log(`${rewritten} links point outside the sample and open not-in-preview.html`)
-}
-
-writeFileSync(join(OUT, 'manifest.json'), JSON.stringify({ pages: manifest, posts: generatedPosts.length, categories: categories.length, totalPosts: posts.length }, null, 1))
-console.log(`Wrote ${manifest.length} pages to ${OUT}/ (${generatedPosts.length} posts, ${categories.length} topics, ${posts.length} posts in the feed, ${guides.length} buyer's guides)`)
+writeFileSync(join(OUT, 'manifest.json'), JSON.stringify({ pages: manifest, posts: posts.length, categories: categories.length, totalPosts: posts.length, guides: guides.length }, null, 1))
+console.log(`Wrote ${manifest.length} pages to ${OUT}/ (${posts.length} posts, ${categories.length} topics, ${authorList.length} authors, ${years.length} archive years, ${guides.length} buyer's guides)`)

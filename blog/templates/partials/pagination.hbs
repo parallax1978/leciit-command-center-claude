@@ -4,9 +4,9 @@
   <ul class="pager-list">
     <li>
       {{#if pagination.prevUrl}}
-      <a href="{{pagination.prevUrl}}" rel="prev" class="pager-step btn-focus"><svg aria-hidden="true" focusable="false" class="ico pager-chev pager-chev--back"><use href="#i-chev-right" /></svg>Previous</a>
+      <a href="{{pagination.prevUrl}}" rel="prev" class="pager-step btn-focus">‹ Previous</a>
       {{else}}
-      <span aria-disabled="true" class="pager-step pager-step--off"><svg aria-hidden="true" focusable="false" class="ico pager-chev pager-chev--back"><use href="#i-chev-right" /></svg>Previous</span>
+      <span aria-disabled="true" class="pager-step pager-step--off">‹ Previous</span>
       {{/if}}
     </li>
     {{#each pagination.items}}
@@ -20,9 +20,9 @@
     {{/each}}
     <li>
       {{#if pagination.nextUrl}}
-      <a href="{{pagination.nextUrl}}" rel="next" class="pager-step btn-focus">Next<svg aria-hidden="true" focusable="false" class="ico pager-chev"><use href="#i-chev-right" /></svg></a>
+      <a href="{{pagination.nextUrl}}" rel="next" class="pager-step btn-focus">Next ›</a>
       {{else}}
-      <span aria-disabled="true" class="pager-step pager-step--off">Next<svg aria-hidden="true" focusable="false" class="ico pager-chev"><use href="#i-chev-right" /></svg></span>
+      <span aria-disabled="true" class="pager-step pager-step--off">Next ›</span>
       {{/if}}
     </li>
   </ul>

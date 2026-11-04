@@ -21,15 +21,18 @@
     <meta name="color-scheme" content="light" />
     <meta name="theme-color" content="#ffffff" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
     {{#each page.jsonld}}
     <script type="application/ld+json">{{{json this}}}</script>
     {{/each}}
     {{!-- Preview build only: Vite compiles this into the hashed blog CSS and JS files. In the CMS, link the built files from dist-blog/assets instead. --}}
     <script type="module" src="../src/blog/main.ts"></script>
   </head>
-  <body class="min-h-dvh bg-canvas text-ink">
+  <body class="bg-canvas">
     {{> art-defs}}
-    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-canvas focus:px-4 focus:py-3 focus:text-ink focus:shadow-frame btn-focus">Skip To Content</a>
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-canvas focus:px-4 focus:py-3 focus:text-ink btn-focus">Skip to content</a>
     {{> header}}
     <main id="main">
       {{{body}}}

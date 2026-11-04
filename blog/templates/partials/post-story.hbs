@@ -1,0 +1,10 @@
+{{!-- One post as a story card: image, title, meta line, excerpt, Read more. --}}
+<a href="{{url}}" class="story btn-focus">
+  <span class="story-media">{{> post-image post=this}}</span>
+  <span class="story-body">
+    <h3>{{title}}</h3>
+    <span class="story-meta">{{category.name}}<span aria-hidden="true"> · </span><time datetime="{{publishedISO}}">{{publishedText}}</time><span aria-hidden="true"> · </span>{{readingMinutes}} min read</span>
+    <p>{{excerpt}}</p>
+    <span class="story-more chev">Read more</span>
+  </span>
+</a>

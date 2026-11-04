@@ -10,7 +10,7 @@
 import './blog.css'
 
 function initToc() {
-  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.toc-desktop .toc-link'))
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.rail .toc-link'))
   if (!links.length) return
   const targets = links
     .map((link) => ({ link, el: document.getElementById(decodeURIComponent(link.hash.slice(1))) }))
@@ -94,9 +94,9 @@ function initFilter() {
 }
 
 function initSidebarScroll() {
-  const side = document.querySelector<HTMLElement>('.lib-side > .side')
+  const side = document.querySelector<HTMLElement>('.sidebar .side')
   if (!side || side.scrollHeight <= side.clientHeight) return
-  const current = side.querySelector<HTMLElement>('.side-post[aria-current], .side-topic[aria-current]')
+  const current = side.querySelector<HTMLElement>('[data-topic] a[aria-current]')
   if (!current) return
   const top = current.getBoundingClientRect().top - side.getBoundingClientRect().top + side.scrollTop
   if (top + current.offsetHeight > side.clientHeight) side.scrollTop = top - side.clientHeight / 3

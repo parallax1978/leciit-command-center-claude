@@ -1,111 +1,94 @@
-{{!-- Three columns on desktop: the topic tree on the left, the reading column in the middle, "On this page" and the topic's offer on the right.
-     The article comes first in the source, so readers and crawlers reach the content before the navigation. --}}
-<div class="lib">
-  <div class="lib-grid lib-grid--rail">
-    <article class="lib-main">
+{{!-- A post in the layout of an Apple guideline page: the navigator on the left, a 692px reading column, "On this page" and
+     the topic's offer on the right. Title, summary, 14px byline, the featured image, the intro, the topic's offer, the body. --}}
+<div class="wrap">
+  <div class="doc doc--rail post">
+    <aside class="sidebar" aria-label="Blog topics">{{> sidebar mode="desktop"}}</aside>
+    <article class="content">
       {{> browse}}
       {{> breadcrumbs breadcrumbs=page.breadcrumbs}}
-      <div class="read">
-        <header id="post-top" class="post-head">
-          <div class="note">
-            {{#if post.updatedISO}}
-            <p class="note-date">Updated <time datetime="{{post.updatedISO}}">{{post.updatedText}}</time></p>
-            <p class="note-text">First published <time datetime="{{post.publishedISO}}">{{post.publishedText}}</time><span aria-hidden="true"> · </span>By {{#if post.author.pageUrl}}<a href="{{post.author.pageUrl}}" rel="author" class="note-link btn-focus">{{post.author.name}}</a>{{else}}{{post.author.name}}{{/if}}<span aria-hidden="true"> · </span>{{post.readingMinutes}} min read</p>
-            {{else}}
-            <p class="note-date"><time datetime="{{post.publishedISO}}">{{post.publishedText}}</time></p>
-            <p class="note-text">By {{#if post.author.pageUrl}}<a href="{{post.author.pageUrl}}" rel="author" class="note-link btn-focus">{{post.author.name}}</a>{{else}}{{post.author.name}}{{/if}}<span aria-hidden="true"> · </span>{{post.readingMinutes}} min read<span aria-hidden="true"> · </span><a href="{{post.category.url}}" class="note-link btn-focus">{{post.category.name}}</a></p>
-            {{/if}}
-          </div>
-          <h1 class="h1-xl post-title">{{post.title}}</h1>
-          {{#if post.summary}}
-          <p class="lead-xl">{{post.summary}}</p>
-          {{else}}{{#if post.leadHtml}}
-          <p class="lead-xl">{{{post.leadHtml}}}</p>
-          {{/if}}{{/if}}
-        </header>
+      <h1>{{post.title}}</h1>
+      {{#if post.summary}}
+      <p class="lead-xl">{{post.summary}}</p>
+      {{else}}{{#if post.leadHtml}}
+      <p class="lead-xl">{{{post.leadHtml}}}</p>
+      {{/if}}{{/if}}
+      <p class="byline">By {{#if post.author.pageUrl}}<a href="{{post.author.pageUrl}}" rel="author" class="btn-focus">{{post.author.name}}</a>{{else}}{{post.author.name}}{{/if}}<span aria-hidden="true"> · </span>{{post.readingMinutes}} min read<span aria-hidden="true"> · </span><a href="{{post.category.url}}" class="btn-focus">{{post.category.name}}</a><span aria-hidden="true"> · </span><time datetime="{{post.publishedISO}}">{{post.publishedText}}</time>{{#if post.updatedISO}}<span aria-hidden="true"> · </span>Updated <time datetime="{{post.updatedISO}}">{{post.updatedText}}</time>{{/if}}</p>
 
-        <div class="post-hero">{{> art art=post.art size="hero"}}</div>
+      <figure class="post-hero">
+        <img src="{{post.image.src}}" alt="" width="{{post.image.width}}" height="{{post.image.height}}" fetchpriority="high" decoding="async" />
+      </figure>
 
-        {{#if post.toc.length}}
-        <details class="toc-mobile">
-          <summary class="toc-mobile-summary btn-focus"><span>On This Page</span><svg aria-hidden="true" focusable="false" class="ico toc-mobile-chev"><use href="#i-chev-down" /></svg></summary>
-          {{> toc toc=post.toc}}
-        </details>
-        {{/if}}
+      {{#if post.toc.length}}
+      <details class="toc-mobile m-only">
+        <summary class="btn-focus">On this page</summary>
+        {{> toc toc=post.toc}}
+      </details>
+      {{/if}}
 
-        <div class="post-content" id="post-content">
-          {{{post.introHtml}}}
-          {{#if post.inlineCta}}{{> cta-inline cta=post.cta placement="post-inline"}}{{/if}}
-          {{#if post.image}}
-          <figure class="post-figure">
-            <img src="{{post.image.src}}" alt="{{post.image.alt}}" width="{{post.image.width}}" height="{{post.image.height}}" loading="eager" fetchpriority="high" decoding="async" />
-          </figure>
-          {{/if}}
-          {{{post.bodyHtml}}}
-        </div>
-
-        {{> cta-box cta=post.cta placement="post-end" art=post.art}}
-
-        <div class="share">
-          <span class="share-label">Share</span>
-          <a href="{{post.share.x}}" class="chip btn-focus">X</a>
-          <a href="{{post.share.linkedin}}" class="chip btn-focus">LinkedIn</a>
-          <a href="{{post.share.facebook}}" class="chip btn-focus">Facebook</a>
-          <button type="button" class="chip btn-focus" data-copy-link="{{page.canonical}}">Copy Link</button>
-        </div>
-
-        {{> author-box author=post.author}}
-
-        <nav aria-label="Previous and next posts" class="pn">
-          {{#if post.prev}}
-          <a href="{{post.prev.url}}" rel="prev" class="pn-link btn-focus">
-            <span class="pn-label">Older post</span>
-            <span class="pn-title">{{post.prev.title}}</span>
-          </a>
-          {{else}}<span></span>{{/if}}
-          {{#if post.next}}
-          <a href="{{post.next.url}}" rel="next" class="pn-link pn-link--next btn-focus">
-            <span class="pn-label">Newer post</span>
-            <span class="pn-title">{{post.next.title}}</span>
-          </a>
-          {{/if}}
-        </nav>
-
-        <section id="comments" aria-labelledby="comments-heading" class="comments">
-          <h2 id="comments-heading" class="comments-h">Comments</h2>
-          {{!-- CMS: render the comment list and form here. --}}
-          <p class="mt-2 text-[15px] text-ink-muted">{{post.commentsNote}}</p>
-        </section>
-
-        {{#if post.related.length}}
-        <section aria-labelledby="related-heading" class="lib-section">
-          <div class="sec-head">
-            <h2 id="related-heading" class="h2-lib">More on {{post.category.name}}</h2>
-            <a href="{{post.category.url}}" class="text-link btn-focus">All {{post.category.name}} posts</a>
-          </div>
-          <div class="tiles tiles--tight">
-            {{#each post.related}}
-            {{> post-card}}
-            {{/each}}
-          </div>
-        </section>
-        {{/if}}
+      <div class="post-content" id="post-content">
+        {{{post.introHtml}}}
+        {{#if post.inlineCta}}{{> cta-inline cta=post.cta placement="post-inline"}}{{/if}}
+        {{{post.bodyHtml}}}
       </div>
+
+      <div class="share">
+        <span class="share-label">Share</span>
+        <a href="{{post.share.x}}" rel="noopener" class="btn-focus">X</a>
+        <a href="{{post.share.linkedin}}" rel="noopener" class="btn-focus">LinkedIn</a>
+        <a href="{{post.share.facebook}}" rel="noopener" class="btn-focus">Facebook</a>
+        <button type="button" class="share-copy btn-focus" data-copy-link="{{page.canonical}}">Copy link</button>
+      </div>
+
+      {{> cta-inline cta=post.cta placement="post-end"}}
+
+      <p class="author-line">
+        {{#if post.author.avatar}}<img src="{{post.author.avatar}}" alt="" width="36" height="36" loading="lazy" decoding="async" class="author-avatar" />{{else}}<span class="author-avatar" aria-hidden="true">{{post.author.initial}}</span>{{/if}}
+        <span><b>{{post.author.name}}</b>, {{post.author.role}}{{#if post.author.pageUrl}}<span aria-hidden="true"> · </span><a href="{{post.author.pageUrl}}" class="btn-focus" style="color:var(--purple)">More posts by {{post.author.name}}</a>{{/if}}</span>
+      </p>
+
+      <nav aria-label="Previous and next posts" class="pn">
+        {{#if post.prev}}
+        <a href="{{post.prev.url}}" rel="prev" class="pn-link btn-focus"><span class="pn-label">Older post</span><span class="pn-title">{{post.prev.title}}</span></a>
+        {{else}}<span></span>{{/if}}
+        {{#if post.next}}
+        <a href="{{post.next.url}}" rel="next" class="pn-link pn-link--next btn-focus"><span class="pn-label">Newer post</span><span class="pn-title">{{post.next.title}}</span></a>
+        {{/if}}
+      </nav>
+
+      <section class="resources" id="resources" aria-labelledby="res-h">
+        <h2 id="res-h" class="h2-lib">Resources</h2>
+        {{#if post.related.length}}
+        <h3>Related</h3>
+        <ul>
+          {{#each post.related}}
+          <li><a href="{{url}}" class="chev btn-focus">{{title}}</a></li>
+          {{/each}}
+        </ul>
+        {{/if}}
+        {{#if post.relatedGuides.length}}
+        <h3>Buyer’s guides</h3>
+        <div class="videos">
+          {{#each post.relatedGuides}}
+          <a href="{{url}}" class="btn-focus"><span class="tile-media">{{> post-image post=this}}</span>{{title}}</a>
+          {{/each}}
+        </div>
+        {{/if}}
+        <h3>Change log</h3>
+        <div class="table-scroll post-content"><table><thead><tr><th>Date</th><th>Changes</th></tr></thead><tbody>{{#if post.updatedISO}}<tr><td><time datetime="{{post.updatedISO}}">{{post.updatedText}}</time></td><td>Updated.</td></tr>{{/if}}<tr><td><time datetime="{{post.publishedISO}}">{{post.publishedText}}</time></td><td>Published.</td></tr></tbody></table></div>
+      </section>
+
+      <section id="comments" aria-labelledby="comments-heading">
+        <h2 id="comments-heading" class="comments-h">Comments</h2>
+        {{!-- CMS: render the comment list and form here. --}}
+        <p class="mt-2 text-[15px]" style="color:var(--ink-muted)">{{post.commentsNote}}</p>
+      </section>
     </article>
 
-    <aside class="lib-rail" aria-label="On this page and next step">
-      <div class="rail-inner">
-        {{#if post.toc.length}}
-        <div class="toc-desktop">
-          {{> toc toc=post.toc topLink=true}}
-        </div>
-        {{/if}}
-        {{> cta-rail cta=post.cta}}
-      </div>
-    </aside>
-
-    <aside class="lib-side" aria-label="Blog topics">
-      {{> sidebar mode="desktop"}}
+    <aside class="rail" aria-label="On this page and next step">
+      <p class="rail-label">Category</p>
+      <p class="rail-value"><a href="{{post.category.url}}" class="btn-focus">{{post.category.name}}</a></p>
+      {{> toc toc=post.toc top=post.shortTitle tail=post.tocTail}}
+      {{> cta-rail cta=post.cta}}
     </aside>
   </div>
 </div>

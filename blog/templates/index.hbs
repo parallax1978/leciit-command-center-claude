@@ -1,78 +1,144 @@
-{{!-- The blog home as a library, like the Human Interface Guidelines index: the topic tree on the left; in the main column a large title and lead,
-     buyer's guides first, one section per goal hub, the latest posts with numbered pages, and every archive year.
-     Pages 2 and on keep only the list, the pagination and the archive. --}}
-<div class="lib">
-  <div class="lib-grid">
-    <div class="lib-main">
+{{!-- The blog home in the layout of developer.apple.com/design: hero, start-here cards, Tools from Legiit, buyer's guides,
+     latest posts with a stats band, the archive years, then the closing panel. Pages 2 and on are the plain list. --}}
+{{#if index.isFirst}}
+<section class="hero" aria-label="Introduction">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow">The Legiit Blog</p>
+      <h1>Practical guides to grow your business</h1>
+      <p class="hero-lead">{{stats.posts}} guides on SEO, marketing, freelancing and running a business, written by the people who sell those services every day.</p>
+      <form class="hero-search" role="search" action="{{url.search}}" method="get">
+        <label class="sr-only" for="hero-search">Search the blog</label>
+        <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-search" /></svg>
+        <input id="hero-search" type="search" name="{{site.searchParam}}" placeholder="Search {{stats.posts}} guides" />
+        <button type="submit">Search</button>
+      </form>
+      <p class="hero-links">Popular: {{#each nav.primaryTopics}}<a href="{{url}}" class="btn-focus">{{name}}</a>{{/each}}</p>
+    </div>
+    <div class="hero-row" aria-hidden="true">
+      {{#each index.heroPosts}}
+      <img src="{{image.src}}" alt="" width="{{image.width}}" height="{{image.height}}"{{#if @first}} fetchpriority="high"{{else}} loading="lazy"{{/if}} decoding="async" />
+      {{/each}}
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="start-heading">
+  <div class="wrap">
+    <h2 id="start-heading" class="sr-only">Start here</h2>
+    <div class="tiles tiles--2">
+      <a class="tile btn-focus" href="{{index.topTopic.url}}">
+        <span class="tile-media">{{> post-image post=index.topTopic.post}}</span>
+        <span class="tile-body"><h3>{{index.topTopic.name}} guides</h3><p>{{index.topTopic.blurb}}</p><span class="tile-more chev">View all</span></span>
+      </a>
+      <a class="tile btn-focus" href="#buyers-guides">
+        <span class="tile-media">{{> post-image post=index.guides.[0]}}</span>
+        <span class="tile-body"><h3>Buyer’s guides</h3><p>Shortlists and side-by-side comparisons of agencies, tools and marketplaces, for when you are ready to hire.</p><span class="tile-more chev">View all</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt" aria-labelledby="tools-heading">
+  <div class="wrap">
+    <h2 id="tools-heading">Tools from Legiit</h2>
+    <p class="h2-sub">Hire the work out, run it yourself, or learn how it is done.</p>
+    <div class="tiles tiles--3">
+      <a class="tile tile--tool btn-focus" href="{{site.marketplaceUrl}}"><span class="tile-glyph"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-store" /></svg></span><h3>Legiit marketplace</h3><p>Hire reviewed freelancers for SEO, content, design and development, with prices shown up front.</p><span class="tile-more chev">Browse the marketplace</span></a>
+      <a class="tile tile--tool btn-focus" href="{{site.pricingUrl}}"><span class="tile-glyph"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-dashboard" /></svg></span><h3>Command Center</h3><p>Run your business from one dashboard: SEO score, priorities, content and a brief builder.</p><span class="tile-more chev">See Command Center pricing</span></a>
+      <a class="tile tile--tool btn-focus" href="{{site.coursesUrl}}"><span class="tile-glyph"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-compass" /></svg></span><h3>Courses</h3><p>Learn SEO, freelancing and marketing from the people who sell those services every day.</p><span class="tile-more chev">Browse courses</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="buyers-guides" aria-labelledby="guides-heading">
+  <div class="wrap">
+    <h2 id="guides-heading">Compare before you hire</h2>
+    <p class="h2-sub">Independent shortlists of agencies, services and tools, with what each one costs and who it suits.</p>
+    <a class="h2-more chev btn-focus" href="{{url.guidesAll}}">View all</a>
+    <div class="vgrid">
+      {{#each index.guides}}
+      {{> post-card}}
+      {{/each}}
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt" id="latest" aria-labelledby="latest-heading">
+  <div class="wrap">
+    <h2 id="latest-heading">Latest posts</h2>
+    <p class="h2-sub">The newest guides across every topic.</p>
+    <a class="h2-more chev btn-focus" href="{{index.pagination.nextUrl}}">View all</a>
+    <div class="tiles tiles--3">
+      {{#each index.posts}}
+      {{> post-story}}
+      {{/each}}
+    </div>
+    {{> pagination pagination=index.pagination}}
+    <div class="stats">
+      <div class="stats-band">
+        <div><b>{{stats.posts}}</b><span>posts</span></div>
+        <div><b>{{stats.topics}}</b><span>topics</span></div>
+        <div><b>{{stats.authors}}</b><span>authors</span></div>
+        <div><b>{{stats.years}}</b><span>years of archives</span></div>
+      </div>
+      <div class="stats-panel">
+        <h3>Every post, by year</h3>
+        <p>Browse the whole archive from {{stats.firstYear}} to {{stats.lastYear}}. Every post is listed, so nothing is more than two clicks away.</p>
+        <a class="text-link chev btn-focus" href="#archive">View all</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="topics" aria-labelledby="topics-heading">
+  <div class="wrap">
+    <h2 id="topics-heading">Topics</h2>
+    <p class="h2-sub">Every guide, grouped by what you want to get done.</p>
+    <div class="vgrid">
+      {{#each index.hubs}}
+      <a href="{{url}}" class="btn-focus">
+        <span class="vgrid-media">{{> post-image post=post}}</span>
+        <span class="vgrid-cap">{{name}}</span>
+        <span class="vgrid-sub">{{count}} posts in {{topicNames}}</span>
+      </a>
+      {{/each}}
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt" id="archive" aria-labelledby="archive-heading">
+  <div class="wrap">
+    <h2 id="archive-heading">Archive</h2>
+    <p class="h2-sub">Pick a year to see every post from it, newest first.</p>
+    <div class="vgrid vgrid--year">
+      {{#each index.years}}
+      <a href="{{url}}" class="btn-focus"><span class="vgrid-media"><span>{{year}}</span></span><span class="vgrid-sub">{{count}} posts</span></a>
+      {{/each}}
+    </div>
+  </div>
+</section>
+{{else}}
+<div class="wrap">
+  <div class="doc">
+    <aside class="sidebar" aria-label="Blog topics">{{> sidebar mode="desktop"}}</aside>
+    <div class="content">
       {{> browse}}
       {{> breadcrumbs breadcrumbs=page.breadcrumbs}}
-      <header class="home-head">
-        <h1 class="h1-xl">{{index.h1}}</h1>
-        <p class="lead-xl">{{index.intro}}</p>
-      </header>
-
-      {{#if index.isFirst}}
-      <section id="buyers-guides" aria-labelledby="buyers-guides-heading" class="lib-section lib-section--first">
-        <h2 id="buyers-guides-heading" class="h2-lib">Compare Before You Hire</h2>
-        <p class="sec-desc">Shortlists and side-by-side comparisons of agencies, tools and marketplaces. Start here when you are ready to buy.</p>
-        <div class="tiles">
-          {{#each index.guides}}
-          {{> post-card}}
-          {{/each}}
-        </div>
-        {{#if index.moreGuides.length}}
-        <div class="more">
-          <h3 class="more-title">More comparisons</h3>
-          <ul class="more-list">
-            {{#each index.moreGuides}}
-            <li><a href="{{url}}" class="more-link btn-focus"><svg class="ico more-icon" aria-hidden="true" focusable="false"><use href="#i-{{art.icon}}" /></svg><span>{{title}}</span></a></li>
-            {{/each}}
-          </ul>
-        </div>
-        {{/if}}
-      </section>
-
-      <div id="topics" class="hubs">
-        {{#each index.hubs}}
-        <section id="hub-{{id}}" aria-labelledby="hub-{{id}}-heading" class="lib-section">
-          <h2 id="hub-{{id}}-heading" class="h2-lib">{{name}}</h2>
-          <p class="sec-desc">{{description}} See all in {{#each topics}}<a href="{{url}}" class="sec-link">{{name}}</a>{{andSep @index ../topics.length}}{{/each}}.</p>
-          <div class="tiles">
-            {{#each posts}}
-            {{> post-card}}
-            {{/each}}
-          </div>
-        </section>
-        {{/each}}
-      </div>
-      {{/if}}
-
-      <section id="latest" aria-labelledby="latest-heading" class="lib-section{{#unless index.isFirst}} lib-section--first{{/unless}}">
-        <h2 id="latest-heading" class="h2-lib">{{index.gridTitle}}</h2>
-        {{#if index.isFirst}}<p class="sec-desc">Every post, newest first. The numbered pages below go back to {{stats.firstYear}}.</p>{{/if}}
-        <ol class="rows rows--2">
+      <h1>Latest posts, page {{index.pageNumber}}</h1>
+      <p class="lead-xl">{{index.intro}}</p>
+      <section aria-labelledby="list-heading">
+        <h2 id="list-heading" class="sr-only">Posts</h2>
+        <ul class="post-list">
           {{#each index.posts}}
           {{> post-row}}
           {{/each}}
-        </ol>
+        </ul>
         {{> pagination pagination=index.pagination}}
       </section>
-
-      <section id="archive" aria-labelledby="archive-heading" class="lib-section">
-        <h2 id="archive-heading" class="h2-lib">Archive</h2>
-        <p class="sec-desc">Every post since {{stats.firstYear}}, listed by year and month.</p>
-        <ul class="years">
-          {{#each index.years}}
-          <li><a href="{{url}}" class="year btn-focus"><span class="year-n">{{year}}</span><span class="year-c">{{count}} posts</span></a></li>
-          {{/each}}
-        </ul>
-      </section>
     </div>
-
-    <aside class="lib-side" aria-label="Blog topics">
-      {{> sidebar mode="desktop"}}
-    </aside>
   </div>
 </div>
+{{/if}}
 
 {{> cta-band band=index.band}}

@@ -1,58 +1,50 @@
-{{!-- Two tiers, like Apple's developer pages: a thin global bar for Legiit itself, then the blog's own section bar.
-     On desktop the header sticks with the global bar scrolled away, so the section bar stays in view.
-     On phones the section links fold into a disclosure that opens in the page flow (no overlay). --}}
-<header class="site-head">
+{{!-- Two tiers, like developer.apple.com: a 44px global bar for Legiit itself, then the blog's own 52px sticky section bar.
+     On phones the global links hide behind a search icon and the section links fold into a menu. --}}
+<header>
   <div class="gbar">
-    <div class="lib gbar-row">
+    <div class="wrap gbar-row">
       <a href="{{site.homeUrl}}" class="gbar-logo btn-focus" aria-label="Legiit home">
-        <img src="{{site.logo}}" alt="Legiit" width="57" height="26" class="h-[22px] w-auto" decoding="async" />
+        <img src="{{site.logo}}" alt="Legiit" width="57" height="26" class="h-5 w-auto" decoding="async" />
       </a>
       <nav aria-label="Legiit" class="gbar-nav">
-        <ul class="flex items-center">
-          <li><a href="{{site.pricingUrl}}" class="gbar-link btn-focus">Command Center</a></li>
+        <ul>
           <li><a href="{{site.marketplaceUrl}}" class="gbar-link btn-focus">Marketplace</a></li>
+          <li><a href="{{site.pricingUrl}}" class="gbar-link btn-focus">Command Center</a></li>
           <li><a href="{{site.coursesUrl}}" class="gbar-link btn-focus">Courses</a></li>
+          <li><a href="{{url.index}}" class="gbar-link btn-focus" aria-current="page">Blog</a></li>
           <li><a href="{{site.supportUrl}}" class="gbar-link btn-focus">Support</a></li>
         </ul>
       </nav>
-      <div class="ml-auto flex items-center">
-        <a href="{{site.signInUrl}}" class="gbar-link btn-focus">Log In</a>
-        <a href="{{site.trialUrl}}" class="gbar-cta btn-focus" data-cta="header-trial"><span class="gbar-pill btn-brand">Start Free Trial</span></a>
+      <div class="gbar-right">
+        <a href="{{url.search}}" class="gbar-icon btn-focus" aria-label="Search the blog"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-search" /></svg></a>
+        <a href="{{site.signInUrl}}" class="gbar-link gbar-login btn-focus">Log in</a>
+        <a href="{{site.trialUrl}}" class="gbar-pill btn-focus" data-cta="header-trial">Start free trial</a>
       </div>
     </div>
   </div>
   <div class="sbar">
-    <div class="lib sbar-row">
+    <div class="wrap sbar-row">
       <a href="{{url.index}}" class="wordmark btn-focus">Blog</a>
       <nav aria-label="Blog sections" class="sbar-nav">
-        <ul class="flex items-center">
-          <li><a href="{{url.latest}}" class="sbar-link btn-focus">Latest</a></li>
-          <li><a href="{{url.topics}}" class="sbar-link btn-focus">Topics</a></li>
-          <li><a href="{{url.guides}}" class="sbar-link btn-focus">Buyer’s Guides</a></li>
-          <li><a href="{{url.archive}}" class="sbar-link btn-focus">Archive</a></li>
+        <ul>
+          <li><a href="{{url.index}}" class="sbar-link btn-focus"{{#if (eq nav.section "overview")}} aria-current="page"{{/if}}>Overview</a></li>
+          <li><a href="{{url.latest}}" class="sbar-link btn-focus"{{#if (eq nav.section "latest")}} aria-current="page"{{/if}}>Latest</a></li>
+          <li><a href="{{url.guides}}" class="sbar-link btn-focus"{{#if (eq nav.section "guides")}} aria-current="page"{{/if}}>Buyer’s guides</a></li>
+          <li><a href="{{url.topics}}" class="sbar-link btn-focus"{{#if (eq nav.section "topics")}} aria-current="page"{{/if}}>Topics</a></li>
+          <li><a href="{{url.archive}}" class="sbar-link btn-focus"{{#if (eq nav.section "archive")}} aria-current="page"{{/if}}>Archive</a></li>
         </ul>
       </nav>
-      <form action="{{url.search}}" method="get" role="search" class="sbar-search">
-        <label class="sbar-field">
-          <svg class="sbar-field-icon ico" aria-hidden="true" focusable="false"><use href="#i-search" /></svg>
-          <span class="sr-only">Search the blog</span>
-          <input type="search" name="{{site.searchParam}}" placeholder="Search {{stats.posts}} guides" class="sbar-input btn-focus" />
-        </label>
-      </form>
-      <a href="{{url.search}}" class="sbar-icon btn-focus" aria-label="Search the blog"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-search" /></svg></a>
+      <details class="sbar-menu">
+        <summary class="btn-focus" aria-label="Blog sections"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-menu" /></svg></summary>
+        <nav aria-label="Blog sections" class="sbar-panel">
+          <a href="{{url.index}}"{{#if (eq nav.section "overview")}} aria-current="page"{{/if}}>Overview</a>
+          <a href="{{url.latest}}"{{#if (eq nav.section "latest")}} aria-current="page"{{/if}}>Latest</a>
+          <a href="{{url.guides}}"{{#if (eq nav.section "guides")}} aria-current="page"{{/if}}>Buyer’s guides</a>
+          <a href="{{url.topics}}"{{#if (eq nav.section "topics")}} aria-current="page"{{/if}}>Topics</a>
+          <a href="{{url.archive}}"{{#if (eq nav.section "archive")}} aria-current="page"{{/if}}>Archive</a>
+          <a href="{{site.signInUrl}}">Log in</a>
+        </nav>
+      </details>
     </div>
-    <details class="sbar-menu">
-      <summary class="sbar-menu-btn btn-focus" aria-label="Blog Sections"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-chev-down" /></svg></summary>
-      <nav aria-label="Blog sections" class="sbar-panel">
-        <ul class="lib">
-          <li><a href="{{url.latest}}" class="sbar-panel-link btn-focus">Latest</a></li>
-          <li><a href="{{url.topics}}" class="sbar-panel-link btn-focus">Topics</a></li>
-          <li><a href="{{url.guides}}" class="sbar-panel-link btn-focus">Buyer’s Guides</a></li>
-          <li><a href="{{url.archive}}" class="sbar-panel-link btn-focus">Archive</a></li>
-          <li><a href="{{site.pricingUrl}}" class="sbar-panel-link btn-focus">Command Center</a></li>
-          <li><a href="{{site.marketplaceUrl}}" class="sbar-panel-link btn-focus">Marketplace</a></li>
-        </ul>
-      </nav>
-    </details>
   </div>
 </header>

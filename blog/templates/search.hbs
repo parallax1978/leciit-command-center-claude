@@ -1,40 +1,33 @@
-{{!-- Search results in the library layout. The query is the reader's own text, so it sits in the lead, not the H1. --}}
-<div class="lib">
-  <div class="lib-grid">
-    <div class="lib-main">
+{{!-- Search results. The query is the reader's own text, so it sits in the lead, not the H1. --}}
+<div class="wrap">
+  <div class="doc">
+    <aside class="sidebar" aria-label="Blog topics">{{> sidebar mode="desktop"}}</aside>
+    <div class="content">
       {{> browse}}
       {{> breadcrumbs breadcrumbs=page.breadcrumbs}}
-      <div class="read">
-        <header class="topic-head">
-          <h1 class="h1-xl">Search Results</h1>
-          <p class="lead-xl">{{#if search.query}}{{search.total}} posts match “{{search.query}}”.{{else}}Type a topic, a tool or a question.{{/if}}</p>
-          <form action="{{url.search}}" method="get" role="search" class="search-big">
-            <label for="search-page-input" class="sr-only">Search the blog</label>
-            <svg class="ico search-big-icon" aria-hidden="true" focusable="false"><use href="#i-search" /></svg>
-            <input id="search-page-input" type="search" name="{{site.searchParam}}" value="{{search.query}}" placeholder="Search {{search.postCount}} posts" class="search-big-input btn-focus" />
-            <button type="submit" class="btn-brand btn-main btn-focus">Search</button>
-          </form>
-        </header>
+      <h1>Search results</h1>
+      <p class="lead-xl">{{#if search.query}}{{search.total}} posts match “{{search.query}}”.{{else}}Type a topic, a tool or a question.{{/if}}</p>
+      <form action="{{url.search}}" method="get" role="search" class="search-big">
+        <label for="search-page-input" class="sr-only">Search the blog</label>
+        <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-search" /></svg>
+        <input id="search-page-input" type="search" name="{{site.searchParam}}" value="{{search.query}}" placeholder="Search {{search.postCount}} posts" />
+        <button type="submit" class="btn-main btn-focus">Search</button>
+      </form>
 
-        <section aria-labelledby="results-heading" class="lib-section search-results">
-          <h2 id="results-heading" class="sr-only">Results</h2>
-          {{#if search.posts.length}}
-          <ol class="rows">
-            {{#each search.posts}}
-            {{> post-row withExcerpt=true}}
-            {{/each}}
-          </ol>
-          {{> pagination pagination=search.pagination}}
-          {{else}}
-          <p class="sec-desc">No posts match. Try a shorter word, or browse the topics.</p>
-          {{/if}}
-        </section>
-      </div>
+      <section aria-labelledby="results-heading">
+        <h2 id="results-heading" class="sr-only">Results</h2>
+        {{#if search.posts.length}}
+        <ul class="post-list">
+          {{#each search.posts}}
+          {{> post-row}}
+          {{/each}}
+        </ul>
+        {{> pagination pagination=search.pagination}}
+        {{else}}
+        <p>No posts match. Try a shorter word, or browse the topics.</p>
+        {{/if}}
+      </section>
     </div>
-
-    <aside class="lib-side" aria-label="Blog topics">
-      {{> sidebar mode="desktop"}}
-    </aside>
   </div>
 </div>
 

@@ -1,34 +1,26 @@
-{{!-- The library index: a filter box over every topic, grouped into goal hubs, each topic with its icon and post count.
-     The current topic is marked; on a post it also lists its latest posts with the current post marked.
-     Rendered twice per page (desktop sidebar, phone "Browse Topics" disclosure), so pass mode="desktop" or mode="phone".
-     Without JavaScript the filter box is a plain search form; main.ts makes typing filter the tree. --}}
+{{!-- Apple's navigator: a Filter box, then two levels (goal hub > topic). Every item has a Lucide-style icon; the current item is
+     bold with a purple icon, its open parent group bold with a black icon. Rendered twice per page (desktop sidebar, phone
+     "Browse topics" disclosure), so pass mode="desktop" or mode="phone". Without JavaScript the filter box is a search form. --}}
 <div class="side" data-side>
   <form action="{{url.search}}" method="get" role="search" class="side-filter">
     <label for="side-filter-{{mode}}" class="sr-only">Filter topics, or press Enter to search every post</label>
-    <svg class="side-filter-icon ico" aria-hidden="true" focusable="false"><use href="#i-filter" /></svg>
-    <input id="side-filter-{{mode}}" type="search" name="{{site.searchParam}}" placeholder="Filter" autocomplete="off" enterkeyhint="search" class="side-filter-input btn-focus" data-filter-input />
+    <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-filter" /></svg>
+    <input id="side-filter-{{mode}}" type="search" name="{{site.searchParam}}" placeholder="Filter" autocomplete="off" enterkeyhint="search" data-filter-input />
   </form>
-  <nav aria-label="Topics" class="side-tree">
-    <ul>
+  <nav aria-label="Topics">
+    <ul class="tree">
       {{#each nav.hubs}}
       <li data-hub>
-        <details class="side-hub"{{#if open}} open{{/if}}>
-          <summary class="side-hub-name btn-focus"><svg class="side-chev ico" aria-hidden="true" focusable="false"><use href="#i-chev-right" /></svg><span>{{name}}</span></summary>
-          <ul class="side-topics">
+        <details{{#if open}} open{{/if}}>
+          <summary class="btn-focus"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-{{icon}}" /></svg><span>{{name}}</span></summary>
+          <ul>
             {{#each topics}}
             <li data-topic>
-              <a href="{{url}}" class="side-topic btn-focus"{{#if active}} aria-current="{{#if recent}}true{{else}}page{{/if}}"{{/if}}>
-                <svg class="side-icon ico" aria-hidden="true" focusable="false"><use href="#i-{{icon}}" /></svg>
+              <a href="{{url}}" class="btn-focus"{{#if active}} aria-current="page"{{/if}}>
+                <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-{{icon}}" /></svg>
                 <span class="side-name">{{name}}</span>
                 <span class="side-count">{{count}}</span>
               </a>
-              {{#if recent}}
-              <ul class="side-posts">
-                {{#each recent}}
-                <li data-post><a href="{{url}}" class="side-post btn-focus"{{#if current}} aria-current="page"{{/if}}>{{title}}</a></li>
-                {{/each}}
-              </ul>
-              {{/if}}
             </li>
             {{/each}}
           </ul>
